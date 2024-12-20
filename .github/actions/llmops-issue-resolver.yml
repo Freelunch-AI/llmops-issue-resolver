@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: "Target issue"
+      repository_name:
+        required: true
+        type: string
+        description: "Name of the repository"
     secrets:
       PAT_TOKEN:
         required: true
@@ -46,7 +50,7 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
           label: 'assigned-to-llmops-issue-resolver'
           slug_as_folder_name: false
-          dest: issues
+          dest: 'issues'
 
       - name: Run LLMOps Issue Resolver
         run: |
@@ -56,8 +60,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: '$PAT_TOKEN'
-          commit-message: issue-resolving attempt
-          title: Changes by create-pull-request action
-          author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
-          title: LLMOps Issue Resolver's attempt to solve the issue
-          # need to find a way to link the PR to "$github.event.inputs.issue_number"
+          commit-message: 'issue-resolving attempt'
+          title: 'Changes by create-pull-request action'
+          author: 'LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>'
+          title: '[BrunoScaglione/${{inputs.repository_name}}#${{inputs.issue_number}}] LLMOps Issue Resolver's attempt to solve the issue
