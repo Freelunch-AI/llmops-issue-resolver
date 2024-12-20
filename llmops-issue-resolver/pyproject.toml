@@ -1,0 +1,21 @@
+[project]
+name = "llmops-issue-resolver"
+version = "0.1.0"
+description = """
+                Automatically resolves issues of LLMOps projects. 
+                Receives as input a repo and an issue to resolve, outputs a repo with the issue resolved.
+            """
+requires-python = ">=3.12"
+readme = "README.md"
+authors = [
+    { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
+]
+license = {file = "LICENSE"}
+dependencies = []
+
+[project.scripts]
+llmops-issue-resolver-cli = "llmops_issue_resolver.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

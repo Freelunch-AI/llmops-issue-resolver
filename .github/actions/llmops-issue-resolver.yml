@@ -9,9 +9,7 @@ on:
         description: "Target issue"
     secrets:
       PAT_TOKEN:
-        required: false
-      PAT_USERNAME:
-        required: false
+        required: true
 
 permissions:
   contents: write
@@ -39,12 +37,20 @@ jobs:
 
       - name: Install LLMOps Issue Resolver
       - run: |
-        uv init
-        uv add llmops-issue-resolver
+          uv init
+          uv add llmops-issue-resolver
+
+      - name: Store issue body in ./issues/<issue_number>/issue.md
+        uses: eunjae-lee/issue-to-markdown@v1
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          label: 'assigned-to-llmops-issue-resolver'
+          slug_as_folder_name: false
+          dest: issues
 
       - name: Run LLMOps Issue Resolver
         run: |
-          uv run llmops-issue-resolver solve-issue --issue_number $ISSUE_NUMBER
+          uv run llmops-issue-resolver-cli resolve_issue
 
       - name: Create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
