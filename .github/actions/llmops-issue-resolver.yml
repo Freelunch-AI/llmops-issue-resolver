@@ -1,0 +1,57 @@
+name: Auto-Fix Tagged Issue with LLMOps Issue Resolver
+
+on:
+  workflow_call:
+    inputs:
+      issue_number:
+        required: true
+        type: string
+        description: "Target issue"
+    secrets:
+      PAT_TOKEN:
+        required: false
+      PAT_USERNAME:
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-fix:
+    if: github.event_name == 'workflow_call' 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull llmops-issue-resolver repo
+        uses: actions/checkout@v4
+        with:
+          repository: '$GH_REPO'
+          token: '$PAT_TOKEN'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install LLMOps Issue Resolver
+      - run: |
+        uv init
+        uv add llmops-issue-resolver
+
+      - name: Run LLMOps Issue Resolver
+        run: |
+          uv run llmops-issue-resolver solve-issue --issue_number $ISSUE_NUMBER
+
+      - name: Create patch branch, commit the changes to it, push & make a PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: '$PAT_TOKEN'
+          commit-message: issue-resolving attempt
+          title: Changes by create-pull-request action
+          author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
+          title: LLMOps Issue Resolver's attempt to solve the issue
+          # need to find a way to link the PR to "$github.event.inputs.issue_number"
