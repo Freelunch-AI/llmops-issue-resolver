@@ -55,12 +55,12 @@ jobs:
       - name: Run LLMOps Issue Resolver
         run: |
           uv run llmops-issue-resolver-cli resolve_issue
+          export COMMIT_MESSAGE = $(uv run llmops-issue-resolver-cli get_commit_message)
 
-      - name: Create patch branch, commit the changes to it, push & make a PR
+      - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
         with:
           token: '$PAT_TOKEN'
-          commit-message: 'issue-resolving attempt'
-          title: 'Changes by create-pull-request action'
+          commit-message: '[issue-resolving attempt] $COMMIT_MESSAGE'
           author: 'LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>'
-          title: '[BrunoScaglione/${{inputs.repository_name}}#${{inputs.issue_number}}] LLMOps Issue Resolver's attempt to solve the issue
+          title: '[BrunoScaglione/${{inputs.repository_name}}#${{inputs.issue_number}}] $COMMIT_MESSAGE'

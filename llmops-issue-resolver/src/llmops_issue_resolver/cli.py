@@ -3,6 +3,8 @@ import typer
 
 app = typer.Typer()
 
+commit_message = "placeholder"
+
 @app.callback()
 def callback():
     """
@@ -19,4 +21,14 @@ def resolve_issue():
     # placeholder
     os.rename('toy.py', 'renamed-toy.py')
 
+    global commit_message
+    commit_message = "commit_message_goes_here"
+
     typer.echo("Finished Issue Resolution Attempt")
+
+@app.command()
+def get_commit_message():
+    """
+    Prints commit message related to last issue resolution
+    """
+    typer.echo(commit_message)
