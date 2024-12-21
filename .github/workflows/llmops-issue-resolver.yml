@@ -28,8 +28,8 @@ jobs:
       - name: 'Pull llmops-issue-resolver repo'
         uses: 'actions/checkout@v4'
         with:
-          repository: '$GH_REPO'
-          token: '$PAT_TOKEN'
+          repository: ${{ inputs.repository_name }}
+          token: ${{ secrets.PAT_TOKEN }}   
 
       - name: 'Install uv'
         uses: astral-sh/setup-uv@v4
@@ -59,8 +59,11 @@ jobs:
 
       - name: 'Stash changes, create patch branch, commit the changes to it, push & make a PR'
         uses: 'peter-evans/create-pull-request@v7'
+        env:
+          REPOSITORY_NAME: ${{ inputs.repository_name }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
         with:
-          token: '$PAT_TOKEN'
+          token: ${{ secrets.PAT_TOKEN }} 
           commit-message: '[issue-resolving attempt] $COMMIT_MESSAGE'
           author: 'LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>'
-          title: '[BrunoScaglione/${{inputs.repository_name}}#${{inputs.issue_number}}] $COMMIT_MESSAGE'
+          title: '[BrunoScaglione/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE'
