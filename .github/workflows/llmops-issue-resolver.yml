@@ -6,11 +6,11 @@ on:
       issue_number:
         required: true
         type: string
-        description: 'Target issue'
+        description: target issue
       repository_name:
         required: true
         type: string
-        description: 'Name of the repository'
+        description: name of the repository
 
 permissions:
   contents: write
@@ -19,48 +19,47 @@ permissions:
 
 jobs:
   auto-fix:
-    if: github.event_name == 'workflow_call' 
     runs-on: ubuntu-latest
     steps:
-      - name: 'Pull llmops-issue-resolver repo'
-        uses: 'actions/checkout@v4'
+      - name: Pull llmops-issue-resolver repo
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository_name }}
           token: $PAT_TOKEN   
 
-      - name: 'Install uv'
+      - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: 'Install Python'
-        uses: 'actions/setup-python@v5'
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: 'Install LLMOps Issue Resolver'
+      - name: Install LLMOps Issue Resolver
         run: |
           uv init
           uv add llmops-issue-resolver
 
-      - name: 'Store issue body in ./issues/<issue_number>/issue.md'
-        uses: 'eunjae-lee/issue-to-markdown@v1'
+      - name: Store issue body in ./issues/<issue_number>/issue.md
+        uses: eunjae-lee/issue-to-markdown@v1
         with:
           token: $PAT_TOKEN  
-          label: 'assigned-to-llmops-issue-resolver'
+          label: assigned-to-llmops-issue-resolver
           slug_as_folder_name: false
-          dest: 'issues'
+          dest: issues
 
-      - name: 'Run LLMOps Issue Resolver'
+      - name: run LLMOps Issue Resolver
         run: |
           uv run llmops-issue-resolver-cli resolve_issue
           export COMMIT_MESSAGE = $(uv run llmops-issue-resolver-cli get_commit_message)
 
-      - name: 'Stash changes, create patch branch, commit the changes to it, push & make a PR'
-        uses: 'peter-evans/create-pull-request@v7'
+      - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
+        uses: peter-evans/create-pull-request@v7
         env:
           REPOSITORY_NAME: ${{ inputs.repository_name }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
         with:
           token: $PAT_TOKEN   
           commit-message: '[issue-resolving attempt] $COMMIT_MESSAGE'
-          author: 'LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>'
+          author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
           title: '[BrunoScaglione/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE'
