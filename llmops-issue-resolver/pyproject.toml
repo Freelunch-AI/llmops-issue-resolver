@@ -11,7 +11,9 @@ authors = [
     { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
 ]
 license = {file = "LICENSE"}
-dependencies = []
+dependencies = [
+    "typer>=0.15.1",
+]
 
 [project.scripts]
 llmops-issue-resolver-cli = "llmops_issue_resolver.cli:app"
