@@ -42,7 +42,7 @@ jobs:
       - name: Install LLMOps Issue Resolver
         run: |
           uv init
-          uv venv .
+          uv venv
           uv pip install $WHEEL_PATH
 
       - name: Store issue body in ./issues/<issue_number>/issue.md
