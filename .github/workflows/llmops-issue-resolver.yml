@@ -20,6 +20,9 @@ permissions:
   pull-requests: write
   issues: write
 
+env:
+  WHEEL_PATH: https://github.com/BrunoScaglione/llmops-issue-resolver/blob/main/llmops-issue-resolver/dist/llmops_issue_resolver-0.1.0-py3-none-any.whl
+
 jobs:
   auto-fix:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
       - name: Install LLMOps Issue Resolver
         run: |
           uv init
-          uv add llmops-issue-resolver
+          uv pip install $WHEEL_PATH
 
       - name: Store issue body in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
