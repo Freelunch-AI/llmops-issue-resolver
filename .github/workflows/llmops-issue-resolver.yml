@@ -33,12 +33,19 @@ jobs:
           repository: ${{ inputs.repository_name }}
           token: ${{ secrets.PAT_TOKEN }} 
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4    
+
       - name: Install Python
         uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
 
       - name: Install LLMOps Issue Resolver
         run: |
-          pip install $WHEEL_PATH
+          uv init
+          uv venv
+          uv pip install $WHEEL_PATH
 
       - name: Store issue body in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
