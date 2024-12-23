@@ -46,7 +46,7 @@ jobs:
           uv venv
           uv pip install $WHEEL_PATH
 
-      - name: Store issue body in ./issues/<issue_number>/issue.md
+      - name: Store issue in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
         with:
           token: ${{ secrets.PAT_TOKEN }}
