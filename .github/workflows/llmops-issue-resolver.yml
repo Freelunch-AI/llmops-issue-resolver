@@ -21,7 +21,7 @@ permissions:
   issues: write
 
 env:
-  WHEEL_PATH: https://github.com/BrunoScaglione/llmops-issue-resolver/blob/main/llmops-issue-resolver/dist/llmops_issue_resolver-0.1.0-py3-none-any.whl
+  WHEEL_PATH: https://github.com/Freelunch-AI/llmops-issue-resolver/blob/main/llmops-issue-resolver/dist/llmops_issue_resolver-0.1.0-py3-none-any.whl
 
 jobs:
   auto-fix:
@@ -66,4 +66,4 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}   
           commit-message: '[issue-resolving attempt] $COMMIT_MESSAGE'
           author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
-          title: '[BrunoScaglione/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE'
+          title: '[Freelunch-AI/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE'
