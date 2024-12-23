@@ -5,7 +5,7 @@ description = """
                 Automatically resolves issues of LLMOps projects. 
                 Receives as input a repo and an issue to resolve, outputs a repo with the issue resolved.
             """
-requires-python = ">=3.9"
+requires-python = "3.9"
 readme = "README.md"
 authors = [
     { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
