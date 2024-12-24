@@ -42,7 +42,7 @@ jobs:
       - name: Install LLMOps Issue Resolver
         run: |
           uv venv
-          uv add llmops-issue-resolver
+          uv add llmops-issue-resolver --default-index https://test.pypi.org/simple/
 
       - name: Store issue in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
