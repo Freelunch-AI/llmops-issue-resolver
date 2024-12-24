@@ -42,7 +42,7 @@ jobs:
       - name: Install LLMOps Issue Resolver
         run: |
           uv venv
-          uv pip install $WHEEL_PATH
+          uv add llmops-issue-resolver
 
       - name: Store issue in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
