@@ -18,7 +18,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: write
+  issues: read
 
 env:
   WHEEL_PATH: https://github.com/Freelunch-AI/llmops-issue-resolver/blob/main/llmops-issue-resolver/dist/llmops_issue_resolver-0.1.0-py3-none-any.whl
