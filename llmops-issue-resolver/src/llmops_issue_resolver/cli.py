@@ -22,6 +22,7 @@ def resolve_issue():
     os.rename('toy.py', 'renamed-toy.py')
 
     global commit_message
+    # placeholder
     commit_message = "commit_message_goes_here"
 
     typer.echo("Finished Issue Resolution Attempt")
