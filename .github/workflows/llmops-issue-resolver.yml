@@ -49,7 +49,7 @@ jobs:
           slug_as_folder_name: false
           dest: issues
           authors:
-            - Freelunch-AI
+            - BrunoScaglione
 
       - name: run LLMOps Issue Resolver
         run: |
