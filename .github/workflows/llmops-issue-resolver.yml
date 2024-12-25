@@ -50,6 +50,7 @@ jobs:
           dest: issues
           authors:
             - BrunoScaglione
+            - lbVictor
 
       - name: run LLMOps Issue Resolver
         run: |
