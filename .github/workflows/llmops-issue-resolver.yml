@@ -51,8 +51,8 @@ jobs:
           authors:
             - BrunoScaglione
             - lbVictor
-
-      - name: run LLMOps Issue Resolver
+            
+      - name: "run LLMOps Issue Resolver"
         run: |
           uv run llmops-issue-resolver-cli resolve_issue
           export COMMIT_MESSAGE = $(uv run llmops-issue-resolver-cli get_commit_message)
