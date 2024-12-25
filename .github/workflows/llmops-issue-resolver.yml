@@ -48,10 +48,9 @@ jobs:
           label: assigned-to-llmops-issue-resolver
           slug_as_folder_name: false
           dest: issues
-          authors:
-            - Freelunch-AI
-            - BrunoScaglione
-            - lbVictor
+          authors: |
+            BrunoScaglione
+            lbVictor
 
       - name: "run LLMOps Issue Resolver"
         run: |
