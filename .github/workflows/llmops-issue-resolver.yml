@@ -49,9 +49,10 @@ jobs:
           slug_as_folder_name: false
           dest: issues
           authors:
+            - Freelunch-AI
             - BrunoScaglione
             - lbVictor
-            
+
       - name: "run LLMOps Issue Resolver"
         run: |
           uv run llmops-issue-resolver-cli resolve_issue
