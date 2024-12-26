@@ -5,12 +5,6 @@ app = typer.Typer()
 
 commit_message = "placeholder"
 
-@app.callback()
-def callback():
-    """
-    LLMOps Issue Resolver
-    """
-
 @app.command()
 def resolve_issue():
     """
