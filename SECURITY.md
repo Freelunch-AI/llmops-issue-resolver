@@ -7,7 +7,7 @@ being security-checked.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.0   | :x: |
+| 0.1.1   | :x: |
 
 ## Reporting a Vulnerability
 
