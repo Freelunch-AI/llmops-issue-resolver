@@ -16,7 +16,6 @@ body:
       label: Bug Description
       description: Describe the bug you encountered.
       placeholder: "Placeholder"
-      value: "Placeholder"
     validations:
       required: true
 
@@ -26,7 +25,6 @@ body:
       label: Expected bahaviour
       description: Describe the expected behaviour
       placeholder: "Placeholder"
-      value: "Placeholder"
     validations:
       required: true
 
@@ -35,8 +33,7 @@ body:
     attributes:
       label: Bug reproduction
       description: Describe how to reproduce the bug
-      placeholder: "Placeholder"
-      value: "Placeholder"
+      placeholder: "E.g., 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error"
     validations:
       required: true
 
@@ -52,8 +49,7 @@ body:
     attributes:
       label: Additional context
       description: Please cprovide any additional context that might help solving this issue.
-      placeholder: "Placeholder"
-      value: "Placeholder"
+      placeholder: "E.g., screenshots, OS, browser, etc."
     
   - type: checkboxes
     id: terms
