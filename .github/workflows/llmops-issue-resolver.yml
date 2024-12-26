@@ -57,7 +57,7 @@ jobs:
         run: |
           uv run llmops-issue-resolver-cli resolve-issue
           COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
-          echo $COMMIT_MESSAGE >> $GITHUB_OUTPUT
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
