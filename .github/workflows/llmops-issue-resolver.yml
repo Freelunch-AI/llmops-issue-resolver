@@ -55,7 +55,7 @@ jobs:
       - name: "run LLMOps Issue Resolver"
         run: |
           uv run llmops-issue-resolver-cli resolve-issue
-          export COMMIT_MESSAGE = $(uv run llmops-issue-resolver-cli get-commit-message)
+          export COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
 
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
