@@ -66,5 +66,5 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: "[issue-resolving attempt] ${{ env.COMMIT_MESSAGE }}"
           author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
-          title: "[Freelunch-AI/${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
+          title: "[${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
           branch: patch/${{ env.ISSUE_NUMBER }}
