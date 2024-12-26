@@ -55,7 +55,7 @@ jobs:
       - name: "run LLMOps Issue Resolver"
         run: |
           uv run llmops-issue-resolver-cli resolve-issue
-          export COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
+          COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
 
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
@@ -63,8 +63,8 @@ jobs:
           REPOSITORY_NAME: ${{ inputs.repository_name }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
         with:
-          token: ${{ secrets.PAT_TOKEN }}   
-          commit-message: "[issue-resolving attempt] $COMMIT_MESSAGE"
+          token: ${{ secrets.PAT_TOKEN }}
+          commit-message: "[issue-resolving attempt] ${{ env.COMMIT_MESSAGE }}"
           author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
-          title: "[Freelunch-AI/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE"
-          branch: "patch/$ISSUE_NUMBER"
+          title: "[Freelunch-AI/${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
+          branch: patch/${{ env.ISSUE_NUMBER }}
