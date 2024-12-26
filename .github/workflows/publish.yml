@@ -14,7 +14,7 @@ jobs:
         persist-credentials: false
 
     - name: Install uv
-        uses: astral-sh/setup-uv@v4    
+      uses: astral-sh/setup-uv@v4    
 
     - name: Set up Python
       run: uv python install
@@ -38,15 +38,15 @@ jobs:
       name: pypi
       url: https://pypi.org/p/llmops-issue-resolver
 
-   steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-        path: dist/
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
-    - name: Publish distribution to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-to-testpypi:
     name: Publish distribution to TestPyPI
