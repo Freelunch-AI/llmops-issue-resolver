@@ -66,7 +66,7 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           COMMIT_MESSAGE: ${{ steps.llmops-issue-resolving.outputs.COMMIT_MESSAGE }}
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "[issue-resolving attempt] ${{ env.COMMIT_MESSAGE }}"
           author: github-actions\[bot] <ceo@freelunch.com>
           title: "[${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
