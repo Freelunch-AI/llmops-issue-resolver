@@ -12,7 +12,9 @@ on:
         type: string
         description: name of the repository
     secrets:
-      PAT_TOKEN:
+      LLMOPS_ISSUE_RESOLVER_APP_ID:
+        required: true
+      LLMOPS_ISSUE_RESOLVER_APP_PRIVATE_KEY:
         required: true
 
 permissions:
@@ -24,11 +26,18 @@ jobs:
   auto-fix:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate github app token
+        uses: actions/create-github-app-token@v1
+        id: generate-token
+        with:
+          app-id: ${{ secrets.LLMOPS_ISSUE_RESOLVER_APP_ID }}
+          private-key: ${{ secrets.LLMOPS_ISSUE_RESOLVER_APP_PRIVATE_KEY }}
+
       - name: Pull toy-issues-with-github-actions repo
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository_name }}
-          token: ${{ secrets.PAT_TOKEN }} 
+          token: ${{ steps.generate-token.outputs.token }} 
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4    
@@ -44,7 +53,7 @@ jobs:
       - name: Store issue in ./issues/<issue_number>/issue.md
         uses: eunjae-lee/issue-to-markdown@v1
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           label: assigned-to-llmops-issue-resolver
           slug_as_folder_name: false
           dest: issues
@@ -66,7 +75,7 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           COMMIT_MESSAGE: ${{ steps.llmops-issue-resolving.outputs.COMMIT_MESSAGE }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           commit-message: "[issue-resolving attempt] ${{ env.COMMIT_MESSAGE }}"
           author: github-actions\[bot] <ceo@freelunch.com>
           title: "[${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
