@@ -72,6 +72,5 @@ jobs:
           title: "[${{ env.REPOSITORY_NAME }}#${{ env.ISSUE_NUMBER }}] ${{ env.COMMIT_MESSAGE }}"
           body: Fixes /#${{ env.ISSUE_NUMBER }}. Automated changes by [create-pull-request](https://github.com/peter-evans/create-pull-request) GitHub action.    
           branch: patch/llmops-issue-resolver/${{ env.ISSUE_NUMBER }}
-          reviewers: BrunoScaglione, lbVictor
           sign-commits: true
           
