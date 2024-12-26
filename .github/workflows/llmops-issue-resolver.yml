@@ -1,4 +1,4 @@
-name: 'Auto-Fix Tagged Issue with LLMOps Issue Resolver'
+name: Auto-Fix Tagged Issue with LLMOps Issue Resolver
 
 on:
   workflow_call:
