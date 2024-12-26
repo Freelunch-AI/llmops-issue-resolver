@@ -8,17 +8,14 @@ commit_message = "placeholder"
 
 @app.command()
 def resolve_issue():
-    """
+    """git
     Resolve issue located in issue.txt
     """
     typer.echo("Started Issue Resolution Attempt")
 
-    # placeholder
-    os.rename('toy.py', 'renamed-toy.py')
-
+    os.rename('toy.py', 'renamed-toy.py')  # placeholder
     global commit_message
-    # placeholder
-    commit_message = "commit_message_goes_here"
+    commit_message = "commit_message_goes_here"  # placeholder
 
     typer.echo("Finished Issue Resolution Attempt")
 
