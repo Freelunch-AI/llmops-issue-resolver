@@ -5,6 +5,7 @@ app = typer.Typer()
 
 commit_message = "placeholder"
 
+
 @app.command()
 def resolve_issue():
     """
@@ -20,6 +21,7 @@ def resolve_issue():
     commit_message = "commit_message_goes_here"
 
     typer.echo("Finished Issue Resolution Attempt")
+
 
 @app.command()
 def get_commit_message():

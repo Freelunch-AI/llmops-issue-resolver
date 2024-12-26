@@ -64,6 +64,6 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
         with:
           token: ${{ secrets.PAT_TOKEN }}   
-          commit-message: '[issue-resolving attempt] $COMMIT_MESSAGE'
+          commit-message: \[issue-resolving attempt] $(COMMIT_MESSAGE)
           author: LLMOps Issue Resolver <41898282+github-actions[bot]@users.noreply.github.com>
-          title: '[Freelunch-AI/$REPOSITORY_NAME#$ISSUE_NUMBER] $COMMIT_MESSAGE'
+          title: \[Freelunch-AI/$(REPOSITORY_NAME)#$(ISSUE_NUMBER)] $(COMMIT_MESSAGE)
