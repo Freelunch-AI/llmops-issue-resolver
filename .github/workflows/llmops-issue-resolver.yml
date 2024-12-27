@@ -68,6 +68,10 @@ jobs:
           COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
           echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
+      - name: Clean up issue files
+        run: |
+          rm -rf ./issues
+
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
         env:
