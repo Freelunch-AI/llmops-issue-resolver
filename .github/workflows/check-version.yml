@@ -19,7 +19,7 @@ jobs:
       - name: Get current version from release branch
         id: get-release-version
         run: |
-          git pull origin release:release
+          git fetch origin release:release
           git checkout release
           RELEASE_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "RELEASE_VERSION"
@@ -28,7 +28,7 @@ jobs:
       - name: Get version from main branch
         id: get-main-version
         run: |
-          git pull origin main:main
+          git fetch origin main:main
           git checkout main
           MAIN_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_ENV
@@ -43,7 +43,7 @@ jobs:
             echo "Main branch version ($MAIN_VERSION) is higher than release branch version ($RELEASE_VERSION). Pull request is allowed"
             echo "PR_ALLOWED=1" >> $GITHUB_OUTPUT
           fi
-
+      
       - name: Set status check
         if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
         run: exit 1
