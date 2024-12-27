@@ -20,6 +20,7 @@ jobs:
         id: get-release-version
         run: |
           git fetch origin release:release
+          git checkout release
           RELEASE_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "RELEASE_VERSION"
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
@@ -28,6 +29,7 @@ jobs:
         id: get-main-version
         run: |
           git fetch origin main:main
+          git checkout main
           MAIN_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_ENV
 
@@ -42,12 +44,6 @@ jobs:
             echo "PR_ALLOWED=1" >> $GITHUB_OUTPUT
           fi
       
-      - name: Comment PR
-        if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: "Version isn't higher than release branch. Please review the PR and update the version in pyproject.toml in the main branch to be higher than the version in the release branch"
-
       - name: Set status check
         if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
         run: exit 1
