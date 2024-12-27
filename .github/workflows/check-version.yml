@@ -41,12 +41,6 @@ jobs:
             echo "Main branch version ($MAIN_VERSION) is higher than release branch version ($RELEASE_VERSION). Pull request is allowed"
             echo "PR_ALLOWED=1" >> $GITHUB_OUTPUT
           fi
-      
-      - name: Comment PR
-        if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: "Version isn't higher than release branch. Please review the PR and update the version in pyproject.toml in the main branch to be higher than the version in the release branch"
 
       - name: Set status check
         if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
