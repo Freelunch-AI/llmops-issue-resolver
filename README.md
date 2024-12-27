@@ -12,4 +12,3 @@ bash init-env.sh
 7. Test changes locally
 8. Push to your patch/feature branch
 9. Make a PR
-
