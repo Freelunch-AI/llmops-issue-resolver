@@ -43,7 +43,7 @@ jobs:
             echo "Main branch version ($MAIN_VERSION) is higher than release branch version ($RELEASE_VERSION). Pull request is allowed"
             echo "PR_ALLOWED=1" >> $GITHUB_OUTPUT
           fi
-
+      
       - name: Set status check
         if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
         run: exit 1
