@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install gh cli
+        uses: ksivamuthu/actions-setup-gh-cli@3
+
       - name: Get current version from release branch
         id: get-release-version
         run: |
@@ -55,19 +58,36 @@ jobs:
           echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION_PLUS_ONE=$RELEASE_VERSION_PLUS_ONE" >> $GITHUB_OUTPUT
 
+      - name: Get PR number, title and body
+        id: get-pr-info
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
+          echo "PR_BODY=$PR_BODY" >> $GITHUB_ENV
+
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
         env:
           REPOSITORY_NAME: ${{ github.repository }}
-          COMMIT_MESSAGE: Bumping version to one above release branch version, bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
+          COMMIT_MESSAGE: Bumping main version to one above release branch version (because it was equal or lower), bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ env.COMMIT_MESSAGE }}
           author: github-actions <ceo@freelunch.com>
-          title: "Bumping version to one above release branch version"
-          body: "Bumping version to one above release branch version"   
+          title: "[Version Bumped] ${{ steps.get-pr-info.outputs.PR_TITLE }}"
+          body: "[Version Bumped] ${{ steps.get-pr-info.outputs.PR_BODY }}"   
           branch: patch/version-bumping
           sign-commits: true
+      
+      - name: Close previous PR
+        env:
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" --delete-branch $PULL_REQUEST_NUMBER
          
       # - name: Set status check
       #   if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
