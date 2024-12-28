@@ -79,7 +79,7 @@ jobs:
         env:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" --delete-branch $PULL_REQUEST_NUMBER
+        run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" $PULL_REQUEST_NUMBER
          
       # - name: Set status check
       #   if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
