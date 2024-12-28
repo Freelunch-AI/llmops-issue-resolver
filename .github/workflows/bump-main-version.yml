@@ -58,28 +58,19 @@ jobs:
           echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION_PLUS_ONE=$RELEASE_VERSION_PLUS_ONE" >> $GITHUB_OUTPUT
 
-      - name: Get PR number, title and body
-        id: get-pr-info
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-        run: |
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
-          echo "PR_BODY=$PR_BODY" >> $GITHUB_ENV
-
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
         env:
           REPOSITORY_NAME: ${{ github.repository }}
           COMMIT_MESSAGE: Bumping main version to one above release branch version (because it was equal or lower), bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
+          PREVIOUS_PR_TITLE: ${{ github.event.pull_request.title }}
+          PREVIOUS_PR_BODY: ${{ github.event.pull_request.body }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ env.COMMIT_MESSAGE }}
           author: github-actions <ceo@freelunch.com>
-          title: "[Version Bumped] ${{ steps.get-pr-info.outputs.PR_TITLE }}"
-          body: "[Version Bumped] ${{ steps.get-pr-info.outputs.PR_BODY }}"   
+          title: "[Version Bumped] ${{ env.PREVIOUS_PR_TITLE }}"
+          body: "[Version Bumped] ${{ env.PREVIOUS_PR_BODY }}"   
           branch: patch/version-bumping
           sign-commits: true
       
