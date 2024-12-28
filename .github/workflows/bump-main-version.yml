@@ -74,6 +74,7 @@ jobs:
       
       # github cli comes pre-installed in all Github-hosted runners
       - name: Close previous PR
+        if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
         env:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
