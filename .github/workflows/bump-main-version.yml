@@ -65,12 +65,13 @@ jobs:
           COMMIT_MESSAGE: Bumping main version to one above release branch version (because it was equal or lower), bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
           PREVIOUS_PR_TITLE: ${{ github.event.pull_request.title }}
           PREVIOUS_PR_BODY: ${{ github.event.pull_request.body }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ env.COMMIT_MESSAGE }}
           author: github-actions <ceo@freelunch.com>
-          title: "[Version Bumped] ${{ env.PREVIOUS_PR_TITLE }}"
-          body: "[Version Bumped] ${{ env.PREVIOUS_PR_BODY }}"   
+          title: "[PR#{{ env.PULL_REQUEST_NUMBER  }} Version Bumped] ${{ env.PREVIOUS_PR_TITLE }}"
+          body: "Check PR#{{ env.PULL_REQUEST_NUMBER  }} in closed PRs to see the commits that were made and the passed checks"   
           branch: patch/version-bumping
           sign-commits: true
       
