@@ -1,4 +1,6 @@
-# For package contributors
+# Docs
+
+## For package contributors
 
 1. Pull/Clone this repo & create your patch/feature branch
 2. Install uv
@@ -14,3 +16,5 @@
 7. Test changes locally
 8. Push to your patch/feature branch
 9. Make a PR to main
+
+## For packages users
