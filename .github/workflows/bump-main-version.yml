@@ -10,8 +10,10 @@ on:
 
 jobs:
   check-version:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -43,7 +45,30 @@ jobs:
             echo "Main branch version ($MAIN_VERSION) is higher than release branch version ($RELEASE_VERSION). Pull request is allowed"
             echo "PR_ALLOWED=1" >> $GITHUB_OUTPUT
           fi
-      
-      - name: Set status check
+
+      - name: Bump main version to be one higher than release version
+        id: bump-version
         if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
-        run: exit 1
+        run: |
+          export RELEASE_VERSION_PLUS_ONE=$(echo $RELEASE_VERSION | awk -F. -v OFS=. '{$NF++; print}')
+          sed -i "s/version = \"$MAIN_VERSION\"/version = \"$RELEASE_VERSION_PLUS_ONE\"/" pyproject.toml
+          echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION_PLUS_ONE=$RELEASE_VERSION_PLUS_ONE" >> $GITHUB_OUTPUT
+
+      - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
+        uses: peter-evans/create-pull-request@v7
+        env:
+          REPOSITORY_NAME: ${{ github.repository }}
+          COMMIT_MESSAGE: Bumping version to one above release branch version, bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: ${{ env.COMMIT_MESSAGE }}
+          author: github-actions <ceo@freelunch.com>
+          title: "Bumping version to one above release branch version"
+          body: "Bumping version to one above release branch version"   
+          branch: patch/version-bumping
+          sign-commits: true
+         
+      # - name: Set status check
+      #   if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
+      #   run: exit 1
