@@ -18,9 +18,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install gh cli
-        uses: ksivamuthu/actions-setup-gh-cli@v3
-
       - name: Get current version from release branch
         id: get-release-version
         run: |
@@ -75,6 +72,7 @@ jobs:
           branch: patch/version-bumping
           sign-commits: true
       
+      # github cli comes pre-installed in all Github-hosted runners
       - name: Close previous PR
         env:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
