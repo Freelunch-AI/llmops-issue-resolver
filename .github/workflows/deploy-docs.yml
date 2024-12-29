@@ -1,0 +1,34 @@
+name: Deploy Documentation to GitHub Pages
+
+on:
+  pull_request:
+    branches:
+      - release
+
+jobs:
+  deploy:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4    
+
+    - name: Set up Python
+      run: uv python install
+
+    - name: Install MkDocs and Material theme
+      run: |
+        pip install mkdocs mkdocs-material
+
+    - name: Build documentation
+      run: mkdocs build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+        publish_branch: gh-pages
