@@ -1,0 +1,19 @@
+name: Auto Assign issues
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Auto-assign issue
+        uses: pozil/auto-assign-issue@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          assignees: ${{ github.event.label.name == 'bug' && 'BrunoScaglione' || github.event.label.name == 'enhancement' && 'lbVictor' }}
+          numOfAssignee: 1

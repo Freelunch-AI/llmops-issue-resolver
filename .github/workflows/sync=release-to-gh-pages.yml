@@ -1,9 +1,9 @@
-name: Sync main branch to main-for-forks branch
+name: Sync release branch to gh-pages branch
 
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   sync-branches:
@@ -25,5 +25,5 @@ jobs:
         uses: tretuna/sync-branches@1.4.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FROM_BRANCH: "main"
-          TO_BRANCH: "main-for-forks"
+          FROM_BRANCH: "release"
+          TO_BRANCH: "gh-pages"
