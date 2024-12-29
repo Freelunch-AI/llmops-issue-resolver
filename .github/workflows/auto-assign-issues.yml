@@ -17,8 +17,3 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: ${{ github.event.label.name == 'bug' && 'BrunoScaglione' || github.event.label.name == 'enhancement' && 'lbVictor' }}
           numOfAssignee: 1
-
-      - name: Auto-assign pull request
-        uses: kentaro-m/auto-assign-action@v2.0.0
-        with:
-          configuration-path: '.github/workflows/auto-assign-config.yml'
