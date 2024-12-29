@@ -1,6 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+      - release
+    paths-ignore:
+      - '*.md'
 
 jobs:
   build:
@@ -8,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4    
@@ -25,22 +31,28 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          ruff . --fix --output-format=github || exit 1
+          ruff . --fix --output-format=github > ruff-report.txt || exit 1
 
       - name: Run tests & code coverage
         run: |
-          coverage run -m pytest --junitxml=pytest-report.xml || exit 1
+          coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
           coverage report || exit 1
           coverage xml || exit 1
+
+      - name: Upload ruff lint report to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: ruff-lint-report
+          path: ci-reports/ruff-report.txt
 
       - name: Upload test report to GitHub
         uses: actions/upload-artifact@v2
         with:
           name: pytest-report
-          path: pytest-report.xml
+          path: ci-reports/pytest-report.xml
 
       - name: Upload coverage to GitHub
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: coverage.xml
+          path: ci-reports/coverage.xml
