@@ -36,7 +36,7 @@ jobs:
       - name: Run tests & code coverage
         run: |
           coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
-          coverage report || exit 1
+          coverage xml -o ci-reports/coverage.xml || exit 1
 
       - name: Upload ruff lint report to GitHub
         uses: actions/upload-artifact@v2
