@@ -2,6 +2,9 @@ name: Only allow PRs to release branch if they come from main branch
 
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
     branches:
       - release
 
