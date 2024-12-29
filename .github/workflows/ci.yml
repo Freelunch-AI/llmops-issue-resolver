@@ -31,13 +31,12 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          ruff . --fix --output-format=github > ruff-report.txt || exit 1
+          ruff . --fix --output-format=github > ci-reports/ruff-report.txt || exit 1
 
       - name: Run tests & code coverage
         run: |
           coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
           coverage report || exit 1
-          coverage xml || exit 1
 
       - name: Upload ruff lint report to GitHub
         uses: actions/upload-artifact@v2
