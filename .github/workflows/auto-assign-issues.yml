@@ -1,17 +1,14 @@
-name: Auto Assign issues and pull requests
+name: Auto Assign issues
 
 on:
   issues:
     types: [labeled]
-  pull_request:
-    types: [opened]
 
 jobs:
   run:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      pull-requests: write
 
     steps:
       - name: Auto-assign issue
@@ -24,9 +21,4 @@ jobs:
       - name: Auto-assign pull request
         uses: kentaro-m/auto-assign-action@v2.0.0
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          assignees: BrunoScaglione
-          reviewers: lbVictor
-          number-of-assignees: 1
-          number-of-reviewers: 1
-          configuration-path: '.github/auto-assign.yml'
+          configuration-path: '.github/workflows/auto-assign-config.yml'
