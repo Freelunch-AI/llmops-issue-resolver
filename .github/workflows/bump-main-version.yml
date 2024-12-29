@@ -1,12 +1,10 @@
 name: Check main version and bump main version if necessary
 
 on:
-  pull_request:
+  workflow_run:
+    workflows: [Only allow PRs to release branch if they come from main branch]
     types:
-      - opened
-      - reopened
-    branches:
-      - release
+      - completed
 
 jobs:
   check-version:
@@ -79,7 +77,4 @@ jobs:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" $PULL_REQUEST_NUMBER
-         
-      # - name: Set status check
-      #   if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
-      #   run: exit 1
+
