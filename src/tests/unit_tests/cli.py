@@ -1,39 +1,34 @@
 import os
-import sys
-from contextlib import contextmanager
 
+# import sys
+# from contextlib import contextmanager
 import pytest
 from typer.testing import CliRunner
 
-
-@contextmanager
-def temporary_sys_path(path):
-    """
-    A context manager to temporarily add a specified path to the system path.
-
-    This context manager appends the given path to `sys.path` and ensures that 
-    the original `sys.path` is restored after the context is exited.
-
-    Args:
-        path (str): The path to be temporarily added to `sys.path`.
-
-    Yields:
-        None: This context manager does not yield any value.
-
-    Example:
-        with temporary_sys_path('/some/path'):
-            # Perform operations that require the temporary path
-    """
-    original_sys_path = sys.path.copy()
-    sys.path.append(path)
-    try:
-        yield
-    finally:
-        sys.path = original_sys_path
-
-with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
-    '../../'))):
-    from llmops_issue_resolver.cli import app  # type: ignore
+# @contextmanager
+# def temporary_sys_path(path):
+#     """
+#     A context manager to temporarily add a specified path to the system path.
+#     This context manager appends the given path to `sys.path` and ensures that 
+#     the original `sys.path` is restored after the context is exited.
+#     Args:
+#         path (str): The path to be temporarily added to `sys.path`.
+#     Yields:
+#         None: This context manager does not yield any value.
+#     Example:
+#         with temporary_sys_path('/some/path'):
+#             # Perform operations that require the temporary path
+#     """
+#     original_sys_path = sys.path.copy()
+#     sys.path.append(path)
+#     try:
+#         yield
+#     finally:
+#         sys.path = original_sys_path
+# with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
+#     '../../'))):
+#     from llmops_issue_resolver.cli import app  # type: ignore
+from llmops_issue_resolver.cli import app
 
 runner = CliRunner()
 
