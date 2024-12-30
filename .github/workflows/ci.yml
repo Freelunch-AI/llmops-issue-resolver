@@ -43,7 +43,7 @@ jobs:
 
       - name: Type check with mypy & generate report
         run: |
-          uv run mypy --cobertura-xml-report ci-reports/type-report.xml
+          uv run mypy . --cobertura-xml-report ci-reports/type-report.xml
         
       - name: Run tests & code coverage & generate reports
         run: |
