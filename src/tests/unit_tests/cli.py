@@ -1,9 +1,23 @@
 import os
+import sys
+from contextlib import contextmanager
 
 import pytest
 from typer.testing import CliRunner
 
-from ...llmops_issue_resolver.cli import app
+
+@contextmanager
+def temporary_sys_path(path):
+    original_sys_path = sys.path.copy()
+    sys.path.append(path)
+    try:
+        yield
+    finally:
+        sys.path = original_sys_path
+
+with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
+    '../../'))):
+    from llmops_issue_resolver.cli import app
 
 runner = CliRunner()
 
