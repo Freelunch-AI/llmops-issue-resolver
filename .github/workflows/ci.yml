@@ -31,16 +31,18 @@ jobs:
 
       - name: Lint with ruff & generate report
         run: |
-          ruff check --output-format=github | tee ci-reports/lint-report.txt
+          ruff check --output-format=github | tee ci-reports/lint-report.txt || \
+          touch ci-reports/lint-report.txt && ruff check --output-format=github | tee ci-reports/lint-report.txt
 
       - name: Format with ruff & generate report 
         run: |
-          ruff format --output-format=github | tee ci-reports/format-report.txt
+          ruff format --output-format=github | tee ci-reports/format-report.txt || \
+          touch ci-reports/format-report.txt && ruff format --output-format=github | tee ci-reports/format-report.txt
 
       - name: Type check with mypy & generate report
-        run: | 
+        run: |
           mypy --cobertura-xml-report ci-reports/type-report.xml
-
+        
       - name: Run tests & code coverage & generate reports
         run: |
           coverage run -m pytest --junitxml=ci-reports/test-report.xml
