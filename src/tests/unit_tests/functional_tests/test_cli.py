@@ -80,7 +80,7 @@ def test_resolve_issue(setup_files):
         - The files 'renamed-toy.py' and 'commit_message.txt' are created.
         - The content of 'commit_message.txt' matches the expected commit message.
     """
-    result = runner.invoke(app, ["resolve_issue"])
+    result = runner.invoke(app, ["resolve-issue"])
     assert result.exit_code == 0
     assert "Started Issue Resolution Attempt" in result.output
     assert "Finished Issue Resolution Attempt" in result.output
@@ -106,7 +106,7 @@ def test_get_commit_message(setup_files):
         - The output contains the expected commit message.
         - The file 'commit_message.txt' is deleted after the command completes.
     """
-    result = runner.invoke(app, ["get_commit_message"])
+    result = runner.invoke(app, ["get-commit-message"])
     assert result.exit_code == 0
     assert result.output.strip() == "commit_message_goes_here"
     assert not os.path.exists('commit_message.txt')
