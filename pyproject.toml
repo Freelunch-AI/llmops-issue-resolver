@@ -15,6 +15,10 @@ dependencies = [
     "typer"
 ]
 
+[project.urls]
+Homepage = "https://github.com/Freelunch-AI/llmops-issue-resolver"
+Issues = "https://github.com/Freelunch-AI/llmops-issue-resolver/issues"
+
 [project.scripts]
 llmops-issue-resolver-cli = "llmops_issue_resolver.cli:app"
 
