@@ -29,7 +29,7 @@ jobs:
 
       - name: Install ci packages
         run: |
-          uv add ruff pytest coverage mypy
+          uv add ruff pytest coverage mypy lxml
 
       - name: Lint with ruff & generate report
         run: |
