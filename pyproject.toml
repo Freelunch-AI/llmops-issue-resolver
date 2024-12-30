@@ -51,7 +51,18 @@ docstring-code-line-length = 72
 minversion = "6.0"
 addopts = "-ra -q"
 testpaths = [
-    "src/tests/unit_tests/functional_tests",
+    "tests/unit_tests/functional_tests",
+    "tests/unit_tests/performance_tests",
+    "tests/integration_tests/functional_tests",
+    "tests/integration_tests/performance_tests",
+    "tests/dev_flow_tests/unit_tests/functional_tests",
+    "tests/dev_flow_tests/unit_tests/performance_tests",
+    "tests/dev_flow_tests/integration_tests/functional_tests",
+    "tests/dev_flow_tests/integration_tests/performance_tests",
+    "tests/product_tests/unit_tests/functional_tests",
+    "tests/product_tests/unit_tests/performance_evals",
+    "tests/product_tests/integration_tests/functional_tests",
+    "tests/product_tests/integration_tests/performance_evals",
 ]
 
 [tool.coverage.run]
