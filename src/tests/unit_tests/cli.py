@@ -3,7 +3,7 @@ import os
 import pytest
 from typer.testing import CliRunner
 
-from llmops_issue_resolver.cli import app
+from ...llmops_issue_resolver.cli import app
 
 runner = CliRunner()
 
