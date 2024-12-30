@@ -30,3 +30,6 @@ def get_commit_message():
         commit_message = file.read()
 
     typer.echo(commit_message)
+
+    # delete commit_message.txt
+    os.remove('commit_message.txt')
