@@ -31,18 +31,28 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          ruff . --fix --output-format=github > ci-reports/ruff-report.txt || exit 1
+          ruff check -output-format=github > ci-reports/lint-report.txt || exit 1
+
+      - name: Format with ruff
+        run: |
+          ruff format -output-format=github > ci-reports/format-report.txt || exit 1
 
       - name: Run tests & code coverage
         run: |
           coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
           coverage xml -o ci-reports/coverage.xml || exit 1
 
-      - name: Upload ruff lint report to GitHub
+      - name: Upload lint report to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: ruff-lint-report
-          path: ci-reports/ruff-report.txt
+          name: lint-report
+          path: ci-reports/lint-report.txt
+
+      - name: Upload format report to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: format-report
+          path: ci-reports/format-report.txt
 
       - name: Upload test report to GitHub
         uses: actions/upload-artifact@v4
