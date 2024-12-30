@@ -74,6 +74,6 @@ exclude_also = [
 ignore_errors = true
 
 [tool.mypy]
-python_version = "3.9.0"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
