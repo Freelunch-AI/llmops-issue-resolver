@@ -20,27 +20,31 @@ jobs:
         uses: astral-sh/setup-uv@v4    
 
       - name: Set up Python
-        run: uv python install || exit 1
+        run: uv python install
 
       - name: Install dependencies
-        run: uv sync || exit 1
+        run: uv sync
 
       - name: Install ci packages
         run: |
-          uv add ruff pytest coverage
+          uv add ruff pytest coverage mypy
 
-      - name: Lint with ruff
+      - name: Lint with ruff & generate report
         run: |
-          ruff check -output-format=github > ci-reports/lint-report.txt || exit 1
+          ruff check --output-format=github | tee ci-reports/lint-report.txt
 
-      - name: Format with ruff
+      - name: Format with ruff & generate report 
         run: |
-          ruff format -output-format=github > ci-reports/format-report.txt || exit 1
+          ruff format --output-format=github | tee ci-reports/format-report.txt
 
-      - name: Run tests & code coverage
+      - name: Type check with mypy & generate report
+        run: | 
+          mypy --cobertura-xml-report ci-reports/type-report.xml
+
+      - name: Run tests & code coverage & generate reports
         run: |
-          coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
-          coverage xml -o ci-reports/coverage.xml || exit 1
+          coverage run -m pytest --junitxml=ci-reports/test-report.xml
+          coverage xml -o ci-reports/coverage.xml
 
       - name: Upload lint report to GitHub
         uses: actions/upload-artifact@v4
@@ -53,15 +57,23 @@ jobs:
         with:
           name: format-report
           path: ci-reports/format-report.txt
+      
+      - name: Upload mypy report to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-report
+          path: ci-reports/type-report.xml
 
       - name: Upload test report to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report
-          path: ci-reports/pytest-report.xml
+          path: ci-reports/test-report.xml
 
       - name: Upload coverage to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: ci-reports/coverage.xml
+
+      
