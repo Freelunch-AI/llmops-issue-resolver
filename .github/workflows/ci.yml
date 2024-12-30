@@ -20,38 +20,64 @@ jobs:
         uses: astral-sh/setup-uv@v4    
 
       - name: Set up Python
-        run: uv python install || exit 1
+        run: uv python install
 
       - name: Install dependencies
-        run: uv sync || exit 1
+        run: |
+          uv venv
+          uv sync
 
       - name: Install ci packages
         run: |
-          uv add ruff pytest coverage
+          uv add ruff pytest coverage mypy lxml
 
-      - name: Lint with ruff
+      - name: Lint with ruff & generate report
         run: |
-          ruff . --fix --output-format=github > ci-reports/ruff-report.txt || exit 1
+          uv run ruff check --output-format=github | tee ci-reports/lint-report.txt || \
+          mkdir -p ci-reports && touch ci-reports/lint-report.txt && ruff check --output-format=github | tee ci-reports/lint-report.txt
 
-      - name: Run tests & code coverage
+      - name: Format with ruff & generate report 
         run: |
-          coverage run -m pytest --junitxml=ci-reports/pytest-report.xml || exit 1
-          coverage xml -o ci-reports/coverage.xml || exit 1
+          uv run ruff format --output-format=github | tee ci-reports/format-report.txt || \
+          touch ci-reports/format-report.txt && ruff format --output-format=github | tee ci-reports/format-report.txt
 
-      - name: Upload ruff lint report to GitHub
+      - name: Type check with mypy & generate report
+        run: |
+          uv run mypy . --explicit-package-bases --cobertura-xml-report ci-reports/type-report.xml
+        
+      - name: Run tests & code coverage & generate reports
+        run: |
+          uv run coverage run -m pytest --junitxml=ci-reports/test-report.xml
+          uv run coverage xml -o ci-reports/coverage.xml
+
+      - name: Upload lint report to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: ruff-lint-report
-          path: ci-reports/ruff-report.txt
+          name: lint-report
+          path: ci-reports/lint-report.txt
+
+      - name: Upload format report to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: format-report
+          path: ci-reports/format-report.txt
+      
+      - name: Upload mypy report to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-report
+          path: ci-reports/type-report.xml
 
       - name: Upload test report to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: pytest-report
-          path: ci-reports/pytest-report.xml
+          path: ci-reports/test-report.xml
 
       - name: Upload coverage to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: ci-reports/coverage.xml
+
+      
