@@ -1,4 +1,4 @@
-name: Only allow PRs to release branch if they come from main branch
+name: Release branch protection - blocking and version bumpings
 
 on:
   pull_request:
