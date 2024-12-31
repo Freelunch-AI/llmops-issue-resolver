@@ -24,5 +24,7 @@ jobs:
         uv venv
         uv add mkdocs-material
 
-    - name: Build and Deplot MkDocs
+    - name: Build and Deploy MkDocs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: uv run mkdocs gh-deploy --force
