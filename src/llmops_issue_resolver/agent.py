@@ -42,9 +42,9 @@ def get_directory_structure(path: str = "."):
         for item in sorted(os.listdir(path)):
             full_path = os.path.join(path, item)
             if os.path.isdir(full_path):
-                structure["children"].append(get_directory_structure(full_path))
+                structure["children"].append(get_directory_structure(full_path)) # type: ignore
             else:
-                structure["children"].append({
+                structure["children"].append({ # type: ignore
                     "name": item,
                     "nodeType": "file"
                 })
@@ -158,7 +158,7 @@ Follow these steps:
     7. Apply changes in the environment.
 """
 
-def should_continue(state: MessagesState) -> Literal["tools", END]:
+def should_continue(state: MessagesState) -> Literal["tools", END]: # type: ignore
     messages = state['messages']
     last_message = messages[-1]
     if last_message.tool_calls:
