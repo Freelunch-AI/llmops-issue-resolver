@@ -11,11 +11,17 @@ from typing import Annotated, List, Literal, Sequence, TypedDict
 
 import black
 from dotenv import load_dotenv
-from langchain_core.messages import BaseMessage # type: ignore
-from langchain_core.tools import tool # type: ignore
-from langchain_google_genai import ChatGoogleGenerativeAI # type: ignore
-from langgraph.graph import END, START, MessagesState, StateGraph, add_messages # type: ignore
-from langgraph.prebuilt import ToolNode # type: ignore
+from langchain_core.messages import BaseMessage  # type: ignore
+from langchain_core.tools import tool  # type: ignore
+from langchain_google_genai import ChatGoogleGenerativeAI  # type: ignore
+from langgraph.graph import (  # type: ignore
+    END,
+    START,
+    MessagesState,
+    StateGraph,
+    add_messages,
+)
+from langgraph.prebuilt import ToolNode  # type: ignore
 
 load_dotenv()
 
