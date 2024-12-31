@@ -20,7 +20,9 @@ jobs:
       run: uv python install
 
     - name: Install MkDocs and Material theme
-      run: uv add mkdocs-material
+      run: |
+        uv venv
+        uv add mkdocs-material
 
     - name: Build and Deplot MkDocs
-      run: mkdocs gh-deploy --force
+      run: uv run mkdocs gh-deploy --force
