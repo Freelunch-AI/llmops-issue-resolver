@@ -1,6 +1,6 @@
 [project]
 name = "llmops-issue-resolver"
-version = "0.1.5"
+version = "0.1.7"
 description = """
                 Automatically resolves issues of LLMOps projects. 
                 Receives as input a repo and an issue to resolve, outputs a repo with the issue resolved.
@@ -85,3 +85,6 @@ ignore_errors = true
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
+
+[tool.mypy-langgraph]
+ignore_errors = ["attr-defined"]

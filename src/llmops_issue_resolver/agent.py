@@ -1,7 +1,13 @@
-import json
 import os
+import sys
+
+sys.path.append(
+    os.join("relative_path_to_llmops_issue_resolver", os.path.dirname(__file__))
+)
+
+import json
 import shutil
-from typing import Annotated, Any, List, Literal, Sequence, TypedDict
+from typing import Annotated, List, Literal, Sequence, TypedDict
 
 import black
 from dotenv import load_dotenv

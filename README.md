@@ -18,5 +18,3 @@
 9. Make a PR to main.
 
 ## For packages users
-
-testing hypothesis

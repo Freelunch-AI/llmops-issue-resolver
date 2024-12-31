@@ -1,17 +1,30 @@
-name: Check main version and bump main version if necessary
+name: Release branch protection - blocking and version bumpings
 
 on:
-  workflow_run:
-    workflows: [Only allow PRs to release branch if they come from main branch]
+  pull_request:
     types:
-      - completed
+      - opened
+      - reopened
+    branches:
+      - release
 
 jobs:
-  check-version:
+  block-pr:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.ref != 'main' }}
+
+    steps:
+      - name: Block PR
+        run: |
+          echo "This PR is not allowed to be merged into the release branch. It must come from the main branch."
+          exit 1
+  bump-main-version:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.ref == 'main' }}
     permissions:
       contents: write
       pull-requests: write
-    runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -77,4 +90,7 @@ jobs:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" $PULL_REQUEST_NUMBER
+    
+
+
 
