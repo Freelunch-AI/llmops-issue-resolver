@@ -1,0 +1,20 @@
+name: Only allow PRs to release branch if they come from main branch
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - release
+
+jobs:
+  block-pr:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.ref != 'main' }}
+
+    steps:
+      - name: Block PR
+        run: |
+          echo "This PR is not allowed to be merged into the release branch. It must come from the main branch."
+          exit 1

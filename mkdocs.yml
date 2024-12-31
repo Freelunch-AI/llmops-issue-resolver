@@ -1,0 +1,29 @@
+site_name: LLMOPS Issue Resolver User
+site_url: https://freelunch-ai.github.io/llmops-issue-resolver/
+site_description: A sample documentation site using MkDocs
+site_author: Bruno Scaglione
+
+theme:
+  name: material
+    # You can customize the theme further here
+
+nav:
+  - Home: index.md
+  - About: about.md
+  - Documentation:
+      - Introduction: docs/introduction.md
+      - Getting Started: docs/getting_started.md
+      - API Reference: docs/api_reference.md
+
+# Plugins configuration
+plugins:
+  - search
+
+# Repository configuration
+repo_name: BrunoScaglione/llmops-issue-resolver
+repo_url: https://github.com/BrunoScaglione/llmops-issue-resolver
+
+# # Google Analytics configuration
+# google_analytics:
+#   - UA-XXXXXX-1
+#   - auto

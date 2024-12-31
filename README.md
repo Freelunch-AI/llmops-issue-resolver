@@ -9,7 +9,7 @@
 5. Set environment variables:
 
     ```bash
-    bash init-env.sh
+    bash start_env.sh
     ```
 
 6. Make changes & create new tests if necessary.
