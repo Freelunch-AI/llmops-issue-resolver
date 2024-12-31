@@ -20,15 +20,7 @@ jobs:
       run: uv python install
 
     - name: Install MkDocs and Material theme
-      run: |
-        pip install mkdocs mkdocs-material
+      run: uv add mkdocs-material
 
-    - name: Build documentation
-      run: mkdocs build
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site
-        publish_branch: gh-pages
+    - name: Build and Deplot MkDocs
+      run: mkdocs gh-deploy --force
