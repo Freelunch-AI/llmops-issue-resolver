@@ -1,9 +1,22 @@
 import os
+import sys
 
 import typer
 
 app = typer.Typer()
 
+# do imports 'assuming' that the package is installed
+# before: 'from agent import ..."
+# now: "from llmops_issue_resolver.agent import ..."
+# But why do this? 
+#     - Because mypy assumes this
+#     - Because it makes it clenar for doing imports within modules that are very deep 
+#     and want to import from modules that are near surface of the package directory 
+#     tree
+# All .py modules need to have this line, but with the more general form would be:
+# sys.path.append(os.join("relative_path_to_llmops_issue_resolver", \
+#     os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(__file__))
 
 @app.command()
 def resolve_issue():
