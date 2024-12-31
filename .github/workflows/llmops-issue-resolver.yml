@@ -16,6 +16,8 @@ on:
         required: true
       LLMOPS_ISSUE_RESOLVER_APP_PRIVATE_KEY:
         required: true
+      GOOGLE_API_KEY:
+        required: true
 
 permissions:
   contents: write
@@ -63,6 +65,8 @@ jobs:
 
       - name: Run LLMOps Issue Resolver
         id: llmops-issue-resolving
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           uv run llmops-issue-resolver-cli resolve-issue
           COMMIT_MESSAGE=$(uv run llmops-issue-resolver-cli get-commit-message)
