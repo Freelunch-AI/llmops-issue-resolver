@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.append(
-    os.join("relative_path_to_llmops_issue_resolver", os.path.dirname(__file__))
+    os.path.join("relative_path_to_llmops_issue_resolver", os.path.dirname(__file__))
 )
 
 import json
