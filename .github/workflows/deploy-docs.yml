@@ -1,7 +1,7 @@
 name: Deploy Documentation to GitHub Pages
 
 on:
-  pull_request:
+  push:
     branches:
       - release
 
@@ -20,7 +20,11 @@ jobs:
       run: uv python install
 
     - name: Install MkDocs and Material theme
-      run: uv add mkdocs-material
+      run: |
+        uv venv
+        uv add mkdocs-material
 
-    - name: Build and Deplot MkDocs
-      run: mkdocs gh-deploy --force
+    - name: Deploy docs
+      uses: mhausenblas/mkdocs-deploy-gh-pages@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
