@@ -27,6 +27,18 @@ def temporary_sys_path(path):
     finally:
         sys.path = original_sys_path
 
+# do some imports 'assuming' that the package is installed
+# before: 'from agent import ..."
+# now: "from llmops_issue_resolver.agent import ..."
+# But why do this? 
+#     - Because mypy assumes this notation when importing from modules within a package
+#     - Because it makes it cleanar for doing imports within modules that are very deep 
+#     and want to import from modules that are near surface of the package directory 
+#     tree
+# All .py modules need to have this line, but with the more general form of the import 
+# would be:
+# sys.path.append(os.join("relative_path_to_llmops_issue_resolver", \
+#     os.path.dirname(__file__)))
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
     '../../'))):
     from llmops_issue_resolver.cli import app  # type: ignore
