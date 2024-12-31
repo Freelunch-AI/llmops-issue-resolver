@@ -12,8 +12,8 @@ nav:
   - About: about.md
   - Documentation:
       - Introduction: docs/introduction.md
-      - Getting Started: docs/getting-started.md
-      - API Reference: docs/api-reference.md
+      - Getting Started: docs/getting_started.md
+      - API Reference: docs/api_reference.md
 
 # Plugins configuration
 plugins:

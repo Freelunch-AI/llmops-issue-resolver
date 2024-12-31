@@ -34,7 +34,7 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
 runner = CliRunner()
 
 @pytest.fixture 
-def setup_files():
+def setup_files_for_test_resolve_issue():
     """
         Fixture to set up and tear down files for testing.
 
@@ -50,10 +50,12 @@ def setup_files():
             - Removes 'renamed-toy.py' if it exists.
             - Removes 'commit_message.txt' if it exists.
     """
-    # Setup: create a dummy 'toy.py' file
+    # Setup: create a dummy files
     with open('toy.py', 'w') as f:
         f.write("print('This is a toy file')")
+
     yield
+
     # Teardown: remove created files
     if os.path.exists('toy.py'):
         os.remove('toy.py')
@@ -62,7 +64,31 @@ def setup_files():
     if os.path.exists('commit_message.txt'):
         os.remove('commit_message.txt')
 
-def test_resolve_issue(setup_files):
+@pytest.fixture 
+def setup_files_for_get_commit_message():
+    """
+        Fixture to set up and tear down files for testing.
+
+        This fixture creates a dummy 'commit_message.txt' file before the test and ensures 
+        its removal after the test completes.
+
+        Setup:
+            - Creates a 'commit_message.txt' file with a placeholder.
+
+        Teardown:
+            - Removes 'commit_message.txt' if it exists.
+    """
+    # Setup: create a dummy files
+    with open('commit_message.txt', 'w') as f:
+        f.write("commit_message_goes_here")
+
+    yield
+
+    # Teardown: remove created files
+    if os.path.exists('commit_message.txt'):
+        os.remove('commit_message.txt')
+
+def test_resolve_issue(setup_files_for_test_resolve_issue):
     """
     Test the 'resolve_issue' command of the CLI application.
 
@@ -71,7 +97,7 @@ def test_resolve_issue(setup_files):
     and produces the expected output and side effects.
 
     Args:
-        setup_files: A fixture that sets up the necessary files for the test.
+        etup_files_for_test_resolve_issue: A fixture that sets up the necessary files for the test.
 
     Assertions:
         - The command exits with a status code of 0.
@@ -80,7 +106,7 @@ def test_resolve_issue(setup_files):
         - The files 'renamed-toy.py' and 'commit_message.txt' are created.
         - The content of 'commit_message.txt' matches the expected commit message.
     """
-    result = runner.invoke(app, ["resolve_issue"])
+    result = runner.invoke(app, ["resolve-issue"])
     assert result.exit_code == 0
     assert "Started Issue Resolution Attempt" in result.output
     assert "Finished Issue Resolution Attempt" in result.output
@@ -90,7 +116,7 @@ def test_resolve_issue(setup_files):
         commit_message = file.read()
     assert commit_message == "commit_message_goes_here"
 
-def test_get_commit_message(setup_files):
+def test_get_commit_message(setup_files_for_get_commit_message):
     """
     Test the 'get_commit_message' command of the CLI application.
 
@@ -99,14 +125,15 @@ def test_get_commit_message(setup_files):
     and produces the expected output and side effects.
 
     Args:
-        setup_files: A fixture that sets up the necessary files for the test.
+        setup_files_for_get_commit_message: A fixture that sets up the necessary files 
+        for the test.
 
     Assertions:
         - The command exits with a status code of 0.
         - The output contains the expected commit message.
         - The file 'commit_message.txt' is deleted after the command completes.
     """
-    result = runner.invoke(app, ["get_commit_message"])
+    result = runner.invoke(app, ["get-commit-message"])
     assert result.exit_code == 0
     assert result.output.strip() == "commit_message_goes_here"
     assert not os.path.exists('commit_message.txt')
