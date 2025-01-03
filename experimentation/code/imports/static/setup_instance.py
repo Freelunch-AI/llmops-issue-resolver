@@ -1,1 +1,0 @@
-# Gets specific commit of the repo of a specific instance and creates issue.md, tips.txt and fail_to_pass.txt files
