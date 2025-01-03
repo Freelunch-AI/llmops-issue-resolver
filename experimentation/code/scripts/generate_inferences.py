@@ -5,6 +5,8 @@ import sys
 from contextlib import contextmanager
 from typing import List
 
+from pydantic import ValidationError
+
 
 @contextmanager
 def temporary_sys_path(path):
@@ -39,7 +41,8 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.abs(os.join("../../../", os.path.dirname(__file__)))):
     from experimentation.code.imports.run_ai import run_ai
-
+    from experimentation.code.imports.utils.schema_models import \
+    StringModel, IntModel, BoolModel
 
 def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
     number_of_instances: int, random_sampling: bool) -> List[str]:
@@ -53,6 +56,15 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
         Returns:
             List[str]: A list of instance ids.
     """
+    try:
+        StringModel(items=dataset_pointer_path)
+        StringModel(items=dataset_name)
+        IntModel(items=number_of_instances)
+        BoolModel(items=random_sampling)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+    
     return instances_ids
 
 def setup_instance(instance_id: str):
@@ -65,6 +77,13 @@ def setup_instance(instance_id: str):
         Returns:
             None
     """
+
+    try:
+        StringModel(items=instance_id)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
     return
 
 def append_to_inferences(inferences_path: str):
@@ -78,13 +97,20 @@ def append_to_inferences(inferences_path: str):
         Returns:
             None
     """
+
+    try:
+        StringModel(items=inferences_path)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
     return
 
 # <TODO> dataset-name, number_of_instances and random_sampling variabled are passed as 
 # command line arguments, 
 # example: python generate_inferences.py --dataset-name swe_bench_verified \
 # --number-of-instances 10 --random-sampling True
-def main():
+def main() -> None:
     """
     Main function to generate inferences.
 
@@ -109,6 +135,14 @@ def main():
     - The dataset pointer path is hardcoded in the function.
     - The inferences file path is also hardcoded in the function.
     """
+
+    try:
+        StringModel(items=dataset_name)
+        IntModel(items=number_of_instances)
+        BoolModel(items=random_sampling)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
 
     instances_ids = get_instances_ids(
         dataset_pointer_path="experimentation/datasets/datasets.yml", \

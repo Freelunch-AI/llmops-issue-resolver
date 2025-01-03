@@ -4,9 +4,11 @@ import os
 import sys
 from contextlib import contextmanager
 
+from pydantic import ValidationError
+
 
 @contextmanager
-def temporary_sys_path(path):
+def temporary_sys_path(path: str):
     """
     A context manager to temporarily add a specified path to the system path.
     This context manager appends the given path to `sys.path` and ensures that 
@@ -19,6 +21,13 @@ def temporary_sys_path(path):
         with temporary_sys_path('/some/path'):
             # Perform operations that require the temporary path
     """
+
+    try:
+        StringModel(items=path)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
     original_sys_path = sys.path.copy()
     sys.path.append(path)
     try:
@@ -41,9 +50,14 @@ with temporary_sys_path(os.abs(os.join("../../../", os.path.dirname(__file__))))
         calculate_kowinski_score,
         calculate_percentage_resolved,
     )
+    from experimentation.code.imports.utils.schema_models import (
+        Metrics,
+        RelevantSubresults,
+        StringModel,
+    )
 
 
-def get_relevant_subresults_data():
+def get_relevant_subresults_data() -> RelevantSubresults:
     """
     Retrieve the relevant subresults data from results/subsresults/report.json and 
     results/subsresults/summary.json files
@@ -52,9 +66,10 @@ def get_relevant_subresults_data():
         relevant_subresults_data (RelevantSubresults): data structure containing 
         relevant data for later calculating metrics.
     """
+    
     return relevant_subresults_data
 
-def build_metrics(relevant_subresults_data):
+def build_metrics(relevant_subresults_data: RelevantSubresults) -> Metrics:
     """
     Builds and returns metrics based on the provided relevant subresults data.
 
@@ -65,9 +80,16 @@ def build_metrics(relevant_subresults_data):
     Returns:
         metrics (Metrics): data structure containing the calculated metrics.
     """
+
+    try:
+        StringModel(items=relevant_subresults_data)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
     return metrics
 
-def write_metrics(metrics, path="results/metrics.yml"):
+def write_metrics(metrics: Metrics, path: str ="results/metrics.yml") -> None:
     """
     Writes the given metrics to a specified file in YAML format.
 
@@ -79,9 +101,17 @@ def write_metrics(metrics, path="results/metrics.yml"):
     Returns:
         None
     """
+
+    try:
+        Metrics(items=metrics)
+        StringModel(items=path)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
     return
 
-def main():
+def main() -> None:
     relevant_subresults_data = get_relevant_subresults_data()
     metrics = build_metrics(relevant_subresults_data)
     write_metrics(metrics)
