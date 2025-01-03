@@ -64,6 +64,14 @@ def calculate_kowinski_score(relevant_subresults_data: RelevantSubresults) -> fl
     """
     Calculate the Kowinski score based on the provided relevant subresults data.
 
+    Submissions are scored using a simple metric that incentivizes skipping an issue over 
+    submitting a bad patch.
+    
+        kowinski_score= (a - b)/ (a + b + c)
+        
+        where a, b, and c are respectively the number of correctly resolved issues, 
+        the number of failing issues, and the number of skipped issues.
+
     Args:
         relevant_subresults_data (RelevantSubresults): 
         A pydantic model containing the relevant subresults data 
