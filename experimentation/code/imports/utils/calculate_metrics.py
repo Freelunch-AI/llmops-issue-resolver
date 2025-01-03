@@ -37,52 +37,55 @@ def temporary_sys_path(path):
 # All .py modules need to have this line, but with the more general form of the import 
 
 with temporary_sys_path(os.abs(os.join("../../../../", os.path.dirname(__file__)))):
-    from experimentation.code.imports.utils.schema_models import RelevantSubresults
+    from experimentation.code.imports.utils.schema_models import IntModel
 
-def calculate_percentage_resolved(
-    relevant_subresults_data: RelevantSubresults) -> float:
-    """Calculates the percentage of resolved issues
+def calculate_percentage_resolved(resolved_instances: int, submitted_instances: int) \
+    -> float:
+    """Calculates the percentage of resolved instances.
 
     Args:
-        relevant_subresults_data (RelevantSubresults): relevant data, 
-        from results/subsresults/report.json results/subresults/summary.json
-        for calculating metrics
+        resolved_instances (int): The number of instances that have been resolved.
+        submitted_instances (int): The total number of instances that were submitted.
 
     Returns:
-        float: percentage of resolved issues
+        float: The percentage of resolved instances.
     """
 
     try:
-        RelevantSubresults(items=relevant_subresults_data)
+        IntModel(items=resolved_instances)
+        IntModel(items=submitted_instances)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise
 
     return
 
-def calculate_kowinski_score(relevant_subresults_data: RelevantSubresults) -> float:
+def calculate_kowinski_score(resolved_instances: int, submitted_instances: int, \
+                             skipped_instances: int) -> float:
     """
-    Calculate the Kowinski score based on the provided relevant subresults data.
+    Calculate the Kowinski score based on the number of resolved, submitted, 
+    and skipped instances.
 
-    Submissions are scored using a simple metric that incentivizes 
-    skipping an issue over submitting a bad patch.
+    The Kowinski score is calculated using the formula:
     
-        kowinski_score= (a - b)/ (a + b + c)
+        kowinski_score = (resolved_instances - submitted_instances) / 
+        (resolved_instances + submitted_instances + skipped_instances)
         
-        where a, b, and c are respectively the number of correctly resolved issues, 
-        the number of failing issues, and the number of skipped issues.
+    This metric incentivizes skipping an issue over submitting a bad patch.
 
     Args:
-        relevant_subresults_data (RelevantSubresults): 
-        A pydantic model containing the relevant subresults data 
-        required to calculate the Kowinski score.
+        resolved_instances (int): The number of instances that have been resolved.
+        submitted_instances (int): The total number of instances that were submitted.
+        skipped_instances (int): The number of instances that were skipped.
 
     Returns:
         float: The calculated Kowinski score.
     """
 
     try:
-        RelevantSubresults(items=relevant_subresults_data)
+        IntModel(items=resolved_instances)
+        IntModel(items=submitted_instances)
+        IntModel(items=skipped_instances)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise

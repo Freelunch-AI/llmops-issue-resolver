@@ -16,7 +16,9 @@ class StringListModel(BaseModel):
     items: List[str]
 
 class RelevantSubResults(BaseModel):
-    pass
+    submitted_instances: int
+    resolved_instances: int
+    skipped_instances: int
 
 class Metrics(BaseModel):
     pass
