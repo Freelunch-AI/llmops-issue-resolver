@@ -41,8 +41,11 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.abs(os.join("../../../", os.path.dirname(__file__)))):
     from experimentation.code.imports.run_ai import run_ai
-    from experimentation.code.imports.utils.schema_models import \
-    StringModel, IntModel, BoolModel
+    from experimentation.code.imports.utils.schema_models import (
+        BoolModel,
+        IntModel,
+        StringModel,
+    )
 
 def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
     number_of_instances: int, random_sampling: bool) -> List[str]:

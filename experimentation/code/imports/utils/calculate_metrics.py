@@ -64,8 +64,8 @@ def calculate_kowinski_score(relevant_subresults_data: RelevantSubresults) -> fl
     """
     Calculate the Kowinski score based on the provided relevant subresults data.
 
-    Submissions are scored using a simple metric that incentivizes skipping an issue over 
-    submitting a bad patch.
+    Submissions are scored using a simple metric that incentivizes 
+    skipping an issue over submitting a bad patch.
     
         kowinski_score= (a - b)/ (a + b + c)
         
