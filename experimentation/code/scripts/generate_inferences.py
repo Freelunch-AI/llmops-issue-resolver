@@ -44,7 +44,7 @@ def temporary_sys_path(path):
 #     tree
 # All .py modules need to have this line, but with the more general form of the import 
 
-with temporary_sys_path(os.abs(os.join("../../../", os.path.dirname(__file__)))):
+with temporary_sys_path(os.path.abspath(os.path.join("../../../", os.path.dirname(__file__)))):
     from experimentation.code.imports.run_ai import run_ai
     from experimentation.code.imports.utils.schema_models import (
         BoolModel,
@@ -248,6 +248,7 @@ def main() -> None:
     - The dataset pointer path is hardcoded in the function.
     - The inferences file path is also hardcoded in the function.
     """
+    print("-----------------Started generate_inferences.py>main---------------")
 
     parser = argparse.ArgumentParser(description="Generate inferences")
     parser.add_argument("--dataset-name", type=str, required=True, 
@@ -290,6 +291,7 @@ def main() -> None:
         else:
             skipped_instances += 1
     print(skipped_instances)
+    print("-----------------Finished generate_inferences.py>main---------------")
     return
 
 if __name__ == '__main__':

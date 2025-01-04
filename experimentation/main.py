@@ -2,8 +2,8 @@
 # usage: uv run main.py [-h] --dataset-name DATASET_NAME --number-of-instances 
 # NUMBER_OF_INSTANCES --random-sampling RANDOM_SAMPLING
 # Example: 
-# uv run main.py --dataset-name swe_bench_verified --number-of-instances 5 
-# --random-sampling 0
+# source .venv/bin/activate
+# uv run main.py --dataset-name swe_bench_verified --number-of-instances 5 --random-sampling 0
 
 import argparse
 import os
@@ -29,15 +29,20 @@ def main():
         print("Please run this script from the directory it is in")
         sys.exit(1)
 
-    # Source setup_results_generator.sh
-    print("Sourcing setup_results_generator.sh")
-    setup_script = os.path.join(script_dir, 'code', 'scripts', \
-                                'setup_results_generator.sh')
-    subprocess.run(['bash', '-c', f'chmod +x {setup_script}'], check=True)
-    subprocess.run(['bash', '-c', f'source {setup_script}'], check=True)
+    # Source setup_docker.sh
+    print("---------------Sourcing setup_docker.sh---------------")
+    setup_docker_script = os.path.join(script_dir, 'code', 'scripts', \
+                                'setup_docker.sh')
+    subprocess.run(['sudo', '-E', 'bash', '-c', f'source {setup_docker_script}'], check=True)
+
+    # Source setup_swe_bench.sh
+    print("---------------Sourcing setup_swe_bench.sh---------------")
+    setup_swe_script_script = os.path.join(script_dir, 'code', 'scripts', \
+                                'setup_swe_bench.sh')
+    subprocess.run(['bash', '-c', f'source {setup_swe_script_script}'], check=True)
 
     # Run generate_inferences.py
-    print("Running generate_inferences.py")
+    print("--------------Running generate_inferences.py--------------")
     generate_inferences_cmd = [
         'uv', 'run', 'python', 
         os.path.join('code', 'scripts', 'generate_inferences.py'),
@@ -50,15 +55,14 @@ def main():
     num_skipped_instances = result.stdout.strip()
 
     # Source generate_results.sh
-    print("Sourcing generate_results.sh")
+    print("--------------Sourcing generate_results.sh----------------")
     generate_results_script = os.path.join(script_dir, 'code', 'scripts', \
                                            'generate_results.sh')
-    subprocess.run(['bash', '-c', f'chmod +x {generate_results_script}'], check=True)
-    subprocess.run(['bash', '-c', f'source {generate_results_script} \
-                    --dataset-name {args.dataset_name}'], check=True)
+    subprocess.run(['bash', '-c', f'source {generate_results_script}'], 
+                   check=True)
 
     # Run generate_metrics.py
-    print("Running generate_metrics.py")
+    print("------------Running generate_metrics.py----------------")
     generate_metrics_cmd = [
         'uv', 'run', 'python', os.path.join('code', 'scripts', 'generate_metrics.py'),
         '--num-skipped-instances', num_skipped_instances
