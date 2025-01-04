@@ -29,37 +29,39 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 @tool
-def get_directory_structure(path: str = "."):
+def get_directory_structure(path: str = ".") -> str:
     """
     Call to get a JSON representing the hierarchical structure of the
     directories and files starting from the given 'path' default = ".".
     """
-    node_name = os.path.basename(path)
-    if not node_name:
-        node_name = path
+    def build_structure(current_path: str) -> dict:
+        node_name = os.path.basename(current_path) or current_path
+        if os.path.isdir(current_path):
+            structure = {
+                "name": node_name,
+                "nodeType": "directory",
+                "children": []
+            }
+            for item in sorted(os.listdir(current_path)):
+                if item in (".venv", "venv", ".git", "CURRENT-PROBLEMS.md"):
+                    continue
+                full_path = os.path.join(current_path, item)
+                if os.path.isdir(full_path):
+                    structure["children"].append(build_structure(full_path)) # type: ignore
+                else:
+                    structure["children"].append({ # type: ignore
+                        "name": item,
+                        "nodeType": "file"
+                    })
+        else:
+            structure = {
+                "name": node_name,
+                "nodeType": "file"
+            }
+        return structure
 
-    structure = {
-        "name": node_name,
-        "nodeType": "directory",
-        "children": []
-    }
-
-    if os.path.isdir(path):
-        for item in sorted(os.listdir(path)):
-            full_path = os.path.join(path, item)
-            if os.path.isdir(full_path):
-                structure["children"].append(get_directory_structure(full_path)) # type: ignore
-            else:
-                structure["children"].append({ # type: ignore
-                    "name": item,
-                    "nodeType": "file"
-                })
-    else:
-        structure = {
-            "name": node_name,
-            "nodeType": "file"
-        }
-    return json.dumps(structure)
+    directory_structure = build_structure(path)
+    return json.dumps(directory_structure)
 
 @tool
 def get_content_of_relevant_files(paths: List[str]) -> dict:
