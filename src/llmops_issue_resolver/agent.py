@@ -47,9 +47,9 @@ def get_directory_structure(path: str = ".") -> str:
                     continue
                 full_path = os.path.join(current_path, item)
                 if os.path.isdir(full_path):
-                    structure["children"].append(build_structure(full_path))
+                    structure["children"].append(build_structure(full_path)) # type: ignore
                 else:
-                    structure["children"].append({
+                    structure["children"].append({ # type: ignore
                         "name": item,
                         "nodeType": "file"
                     })
