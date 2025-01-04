@@ -1,9 +1,12 @@
 # Generates results/metrics.yml file
 
+import argparse
+import json
 import os
 import sys
 from contextlib import contextmanager
 
+import yaml
 from pydantic import ValidationError
 
 
@@ -113,8 +116,6 @@ def get_relevant_subresults_data(skipped_instances: int) -> RelevantSubresults:
         relevant data for later calculating metrics.
     """
 
-    import json
-
     summary_file_path = os.path.join("results", "subsresults", "summary.json")
     with open(summary_file_path, "r") as file:
         summary_data = json.load(file)
@@ -188,22 +189,18 @@ def write_metrics(metrics: Metrics, path: str ="results/metrics.yml") -> None:
         None
     """
 
-    import yaml
-
     with open(path, "w") as file:
         yaml.dump(metrics.dict(), file)
 
     print(f"Metrics written to {path}")
 
-def parse_arguments():
-    import argparse
-
+def parse_arguments() -> int:
 
     parser = argparse.ArgumentParser( \
         description="Generate metrics from subresults data.")
     parser.add_argument("--num-skipped-instances", type=int, required=True)
     args = parser.parse_args()
-    return args.num_skipped_instances
+    return int(args.num_skipped_instances)
 
 def main() -> None:
     skipped_instances = parse_arguments()

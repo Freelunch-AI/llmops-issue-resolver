@@ -21,4 +21,5 @@ class RelevantSubResults(BaseModel):
     skipped_instances: int
 
 class Metrics(BaseModel):
-    pass
+    percentage_resolved: float
+    kowinski_score: float

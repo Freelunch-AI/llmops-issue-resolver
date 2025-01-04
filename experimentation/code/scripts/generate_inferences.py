@@ -1,11 +1,15 @@
 # Generates results/subsresults/inferences.jsonl file
 
 import argparse
+import json
 import os
 import sys
 from contextlib import contextmanager
 from typing import List
 
+import datasets
+import pandas as pd
+import yaml
 from pydantic import ValidationError
 
 
@@ -71,9 +75,6 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
             List[str]: A list of instance ids.
     """
 
-    import datasets
-
-
     try:
         StringModel(items=dataset_pointer_path)
         StringModel(items=dataset_name)
@@ -132,10 +133,6 @@ def setup_instance(dataset_name:str, instance_id: str):
             None
     """
 
-    import pandas as pd
-    import yaml
-
-
     try:
         StringModel(items=instance_id)
         StringModel(items=dataset_name)
@@ -152,7 +149,8 @@ def setup_instance(dataset_name:str, instance_id: str):
         raise ValueError(f"Dataset {dataset_name} not found in datasets.yml")
 
     # Load the dataset from the local parquet file
-    dataset_path = "datasets/swe_bench_verified/swe_bench_verified.parquet"
+    dataset_path = os.path.join("datasets", "swe_bench_verified", 
+                                "swe_bench_verified.parquet")
     if not os.path.exists(dataset_path):
         raise ValueError(f"Dataset file not found at {dataset_path}")
 
@@ -205,9 +203,6 @@ def append_to_inferences(inferences_path: str, instance_id: str, experiment_name
             None
     """
 
-    import json
-
-
     try:
         StringModel(items=inferences_path)
         StringModel(items=instance_id)
@@ -242,8 +237,6 @@ def main() -> None:
     --random-sampling: bool
         Whether to randomly sample the instances or not (if not, then get the first 
         n instances).
-    --experiment-name: str
-        The name of the experiment.
 
     The function performs the following steps:
     1. Retrieves instance IDs from the specified dataset.
@@ -263,14 +256,12 @@ def main() -> None:
                         help="Number of instances to retrieve")
     parser.add_argument("--random-sampling", type=bool, required=True, 
                         help="Whether to randomly sample instances")
-    parser.add_argument("--experiment-name", type=str, required=True, 
-                        help="Name of the experiment")
 
     args = parser.parse_args()
 
     dataset_name = args.dataset_name
-    number_of_instances = args.number_of_instances
-    random_sampling = args.random_sampling
+    number_of_instances = int(args.number_of_instances)
+    random_sampling = bool(args.random_sampling)
 
     try:
         StringModel(items=dataset_name)
@@ -281,19 +272,21 @@ def main() -> None:
         raise
 
     instances_ids = get_instances_ids(
-        dataset_pointer_path="experimentation/datasets/datasets.yml", \
-        dataset_name=dataset_name, number_of_instances=number_of_instances, \
+        dataset_pointer_path=os.path.join(
+            "experimentation", "datasets", "datasets.yml"), 
+        dataset_name=dataset_name, number_of_instances=number_of_instances, 
         random_sampling=True
-        )
+    )
+    
     skipped_instances = 0
     for instance_id in instances_ids:
         setup_instance(dataset_name=dataset_name, instance_id=instance_id)
         experiment_name, skipped_instance = run_ai()
         if not skipped_instance:
-            append_to_inferences(inferences_path="src/llmops_issue_resolver/ \
-                                experimentation/results/subresults/inference.jsonl", \
+            append_to_inferences(inferences_path=os.path.join("results", 
+                                os.path.join("subresults", "inference.jsonl"), \
                                 instance_id=instance_id, \
-                                experiment_name=experiment_name) 
+                                experiment_name=experiment_name))
         else:
             skipped_instances += 1
     print(skipped_instances)

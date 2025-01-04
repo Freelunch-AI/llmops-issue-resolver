@@ -9,6 +9,9 @@ authors = [
 dependencies = [
     "pydantic",
     "langgraph",
+    "pyyaml",
+    "pandas",
+    "datasets"
 ]
 
 [[tool.uv.index]]

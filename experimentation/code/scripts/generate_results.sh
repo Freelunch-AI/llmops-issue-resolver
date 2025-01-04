@@ -27,6 +27,7 @@ main() {
     # move report file from logs/run_evaluation/validate-summary/summary/sympy__sympy-20590/report.json
     # to results/subresults/report.json
     mv logs/run_evaluation/validate-summary/summary/sympy__sympy-20590/report.json results/subresults/report.json
+    echo "Finished generate_results.sh>main"
 }
 
 main "$@"

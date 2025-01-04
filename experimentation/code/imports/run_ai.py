@@ -1,6 +1,7 @@
 # Runs the AI solution that first reads issue.md, tips.txt and fail_to_pass.txt; then 
 # modifies the repo to fix the issue.
 
+import os
 from typing import Tuple
 
 
@@ -13,6 +14,13 @@ def run_ai() -> Tuple[str, bool]:
     Returns:
         experiment_name (str): The name of the experiment.
     """
+
+    # placeholder: ai solution goes here
+    if os.path.exists("toy.txt"):
+        os.remove("toy.txt")
+    else:
+        with open("toy.txt", "w") as f:
+            f.write("This is a placeholder file.")
 
     # experiment_name should follow this schema: "<static-workflow OR dynamic-workflow>
     # __<dynamic-subworkflows-true OR false>__<additional_inference-time-data-available>

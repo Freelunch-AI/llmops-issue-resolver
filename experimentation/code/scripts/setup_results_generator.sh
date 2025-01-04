@@ -31,7 +31,9 @@ main() {
     sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     # Create the docker group
-    sudo groupadd docker
+    if ! getent group docker > /dev/null; then
+        sudo groupadd docker
+    fi
     # Add the current user to the docker group
     sudo usermod -aG docker "$USER"
     # Activate new group
@@ -39,9 +41,10 @@ main() {
 
     # -- Setup SWE-bench --
 
+    # <Todo> These lines are not running, dont know why
     git clone https://github.com/swe-bench/SWE-bench.git
-    cd SWE-bench
-    uv pip install -e .
+    sudo uv pip install -e SWE-bench
+    echo "Finished setup_results_generator.sh>main"
 }
 
 main "$@"
