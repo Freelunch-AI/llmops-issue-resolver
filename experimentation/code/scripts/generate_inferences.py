@@ -3,13 +3,14 @@
 import argparse
 import json
 import os
+import shutil
 import sys
 from contextlib import contextmanager
 from typing import List
 
-import datasets as ds
 import pandas as pd
 import yaml
+from datasets import load_dataset
 from pydantic import ValidationError
 
 
@@ -89,23 +90,23 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
     with open(dataset_pointer_path, "r") as f:
         datasets = yaml.safe_load(f)
 
-    dataset_hf_path = datasets[dataset_name]["url"]
-    print(f"Dataset hugging face path: {dataset_hf_path}")
+    dataset_hf_name= datasets[dataset_name]["hf_name"]
+    print(f"dataset_hf_name: {dataset_hf_name}")
 
-    # Load the dataset from the the huggin face dataset path
-    dataset = ds.load_dataset(dataset_hf_path, name=dataset_name)
+    # Load the dataset from the the hugging face dataset path
+    dataset = load_dataset(dataset_hf_name)
 
     # Store the dataset locally as parquet
     dataset_local_path = f"datasets/{dataset_name}/{dataset_name}.parquet"
     os.makedirs(os.path.dirname(dataset_local_path), exist_ok=True)
-    dataset.to_pandas().to_parquet(dataset_local_path)
+    dataset["test"].to_pandas().to_parquet(dataset_local_path)
 
     # Get the instance IDs
     if random_sampling:
-        instances_ids = dataset['train'].shuffle(DEFAULT_SEED).select( \
+        instances_ids = dataset["test"].shuffle(DEFAULT_SEED).select( \
                         range(number_of_instances))['instance_id']
     else:
-        instances_ids = dataset['train'].select(range(number_of_instances)) \
+        instances_ids = dataset["test"].select(range(number_of_instances)) \
                                                 ['instance_id']
 
     return instances_ids
@@ -149,7 +150,7 @@ def setup_instance(dataset_name:str, instance_id: str):
         raise
 
     # Load dataset information from datasets.yml
-    with open("/datasets/datasets.yml", "r") as f:
+    with open("datasets/datasets.yml", "r") as f:
         datasets = yaml.safe_load(f)
 
     dataset_info = datasets.get(dataset_name)
@@ -162,17 +163,20 @@ def setup_instance(dataset_name:str, instance_id: str):
     if not os.path.exists(dataset_path):
         raise ValueError(f"Dataset file not found at {dataset_path}")
 
-    dataset = pd.read_parquet(dataset_path).to_dict(orient="records")
+    dataset = pd.read_parquet(dataset_path)
 
-    # Find the instance by instance_id
-    instance = next((item for item in dataset if item["instance_id"] == instance_id), 
-                    None)
-    if not instance:
+    # Find the instance by instance_id 
+    instance = dataset[dataset["instance_id"] == instance_id].iloc[0]
+
+    if instance.empty:
         raise ValueError(f"Instance {instance_id} not found in dataset")
 
     # Pull the repo at the specific commit
     base_commit = instance["base_commit"]
-    os.system(f"git clone {dataset_info['repo_url']} repo")
+    # empty the repo directory
+    shutil.rmtree("repo")
+    # clone the repo
+    os.system(f"git clone https://github.com/{instance['repo']}.git repo")
     os.chdir("repo")
     os.system(f"git checkout {base_commit}")
 
@@ -289,12 +293,16 @@ def main() -> None:
     skipped_instances = 0
     for instance_id in instances_ids:
         setup_instance(dataset_name=dataset_name, instance_id=instance_id)
+        # change current working directory to the repo directory
+        os.chdir("repo")
         experiment_name, skipped_instance = run_ai()
+        # change current working directory to the parent directory
+        os.chdir("..")
         if not skipped_instance:
             append_to_inferences(inferences_path=os.path.join("results", 
-                                os.path.join("subresults", "inference.jsonl"), \
+                                os.path.join("subresults", "inferences.jsonl")), \
                                 instance_id=instance_id, \
-                                experiment_name=experiment_name))
+                                experiment_name=experiment_name)
         else:
             skipped_instances += 1
     print(skipped_instances)
