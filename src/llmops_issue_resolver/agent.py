@@ -155,15 +155,17 @@ model = ChatGoogleGenerativeAI(
 ).bind_tools(tools)
 
 system_prompt = """
-You are an AI agent that resolves issues on codebases.
-Use the available tools to get directory structure, file contents and manipulate files and folder in the directory.
+You are a Automated Software Engineer that need to update the codebase.
+You are running in the root directory of the codebase.
+Use the available tools to know the directory structure of the codebase, read and manipulate files and folders.
 Follow these steps:
-    1. Get the directory structure and understand it.
-    2. Find the path to issue.md file and get it's content.
-    3. Based on issue details, analyze the folders and file names to generate a list of relevant file paths that you will want to analyze the content.
-    4. Get the content of the files based on the list of paths generated.
-    5. Find the problem(s) and generated the diffs.
-    7. Apply changes in the environment.
+    1. Call tool get_directory_structure to access and understand the codebase;
+    2. Find the path to issue.md file and get it's content using get_content_of_relevant_files tool;
+    3. Based on issue details, use the tool get_directory_structure to get and analyze all the folders and file names;
+    4. Generate a list of relevant file paths that you will want to analyze the content;
+    5. Call get_content_of_relevant_files to get the content of the selected files;
+    6. Understand the codebase and plan which files you'll need to update or create to fix the issue;
+    7. Apply the diffs using the tools to create, rename, update and delete files and folders.
 """
 
 def should_continue(state: MessagesState) -> Literal["tools", END]: # type: ignore
