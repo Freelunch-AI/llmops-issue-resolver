@@ -48,7 +48,7 @@ def temporary_sys_path(path: str):
 #     tree
 # All .py modules need to have this line, but with the more general form of the import 
 
-with temporary_sys_path(os.path.abspath(os.join("../../../", os.path.dirname(__file__)))):
+with temporary_sys_path(os.path.abspath(os.join(os.path.dirname(__file__), "../../../"))):
     from experimentation.code.imports.utils.calculate_metrics import (
         calculate_kowinski_score,
         calculate_percentage_resolved,

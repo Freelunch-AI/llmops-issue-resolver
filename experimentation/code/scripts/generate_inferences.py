@@ -7,7 +7,7 @@ import sys
 from contextlib import contextmanager
 from typing import List
 
-import datasets
+import datasets as ds
 import pandas as pd
 import yaml
 from pydantic import ValidationError
@@ -44,7 +44,8 @@ def temporary_sys_path(path):
 #     tree
 # All .py modules need to have this line, but with the more general form of the import 
 
-with temporary_sys_path(os.path.abspath(os.path.join("../../../", os.path.dirname(__file__)))):
+with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                                     "../../../"))):
     from experimentation.code.imports.run_ai import run_ai
     from experimentation.code.imports.utils.schema_models import (
         BoolModel,
@@ -67,7 +68,7 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
             3. Get the instance ids from the dataset and put them in a list.
 
         Args:
-            dataset_pointer_path (str): The path to the dataset pointer.
+            dataset_pointer_path (str): The path to the dataset pointer .yml file.
             dataset_name (str): The name of the dataset.
             number_of_instances (int): The number of instances to retrieve.
             random_sampling (bool): Whether to sample instances randomly.
@@ -84,13 +85,20 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
         print(f"Validation error: {e}")
         raise
 
-    # Load the dataset from the pointer path
-    dataset = datasets.load_dataset(dataset_pointer_path, name=dataset_name)
+    # Get the dataset path by parsing the yaml dataset ointer file
+    with open(dataset_pointer_path, "r") as f:
+        datasets = yaml.safe_load(f)
+
+    dataset_hf_path = datasets[dataset_name]["url"]
+    print(f"Dataset hugging face path: {dataset_hf_path}")
+
+    # Load the dataset from the the huggin face dataset path
+    dataset = ds.load_dataset(dataset_hf_path, name=dataset_name)
 
     # Store the dataset locally as parquet
-    dataset_path = f"datasets/{dataset_name}/{dataset_name}.parquet"
-    os.makedirs(os.path.dirname(dataset_path), exist_ok=True)
-    dataset.to_pandas().to_parquet(dataset_path)
+    dataset_local_path = f"datasets/{dataset_name}/{dataset_name}.parquet"
+    os.makedirs(os.path.dirname(dataset_local_path), exist_ok=True)
+    dataset.to_pandas().to_parquet(dataset_local_path)
 
     # Get the instance IDs
     if random_sampling:
@@ -149,8 +157,8 @@ def setup_instance(dataset_name:str, instance_id: str):
         raise ValueError(f"Dataset {dataset_name} not found in datasets.yml")
 
     # Load the dataset from the local parquet file
-    dataset_path = os.path.join("datasets", "swe_bench_verified", 
-                                "swe_bench_verified.parquet")
+    dataset_path = os.path.join("datasets", f"{dataset_name}", 
+                                f"{dataset_name}.parquet")
     if not os.path.exists(dataset_path):
         raise ValueError(f"Dataset file not found at {dataset_path}")
 
@@ -273,8 +281,7 @@ def main() -> None:
         raise
 
     instances_ids = get_instances_ids(
-        dataset_pointer_path=os.path.join(
-            "experimentation", "datasets", "datasets.yml"), 
+        dataset_pointer_path=os.path.join("datasets", "datasets.yml"), 
         dataset_name=dataset_name, number_of_instances=number_of_instances, 
         random_sampling=True
     )
