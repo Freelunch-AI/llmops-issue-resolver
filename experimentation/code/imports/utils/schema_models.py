@@ -33,3 +33,12 @@ class PandasSeriesModel(BaseModel):
         if not isinstance(value, pd.Series):
             raise ValueError('The value must be a pandas Series')
         return value
+
+class PandasDataFrameModel(BaseModel):
+    dataframe: Any
+
+    @validator('dataframe')
+    def check_dataframe(cls, value):
+        if not isinstance(value, pd.DataFrame):
+            raise ValueError('The value must be a pandas DataFrame')
+        return value

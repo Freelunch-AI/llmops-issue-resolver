@@ -1,4 +1,6 @@
 # Generates results/subsresults/inferences.jsonl file
+# E.g., uv run code/scripts/generate_inferences.py --dataset-name \
+# princeton-nlp/SWE-bench_Verified --number-of-instances 1 --random-sampling 0
 
 import argparse
 import json
@@ -50,6 +52,7 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
     from experimentation.code.imports.utils.schema_models import (
         BoolModel,
         IntModel,
+        PandasDataFrameModel,
         PandasSeriesModel,
         StringModel,
     )
@@ -77,47 +80,6 @@ def get_dataset_path(dataset_name: str) -> str:
                                     f"{dataset_name_underline}.parquet")
         return dataset_path
 
-def get_instances_ids(dataset_name: str, \
-    number_of_instances: int, random_sampling: bool, dataset: pd.DataFrame) \
-        -> pd.Series:
-    """
-        Gets instance ids from the dataset and puts them in a list.
-        
-        Steps:
-            1. Use dataset_pointer_path to ge the dataset from hugginface. 
-            The http path is the value to the key url which is a property of 
-            <dataset_name>.
-            2. Store the dataset locally in datasets/swe_bench_verified/
-            swe_bench_verified.parquet
-            3. Get the instance ids from the dataset and put them in a list.
-
-        Args:
-            dataset_pointer_path (str): The path to the dataset pointer .yml file.
-            dataset_name (str): The name of the dataset.
-            number_of_instances (int): The number of instances to retrieve.
-            random_sampling (bool): Whether to sample instances randomly.
-        Returns:
-            List[str]: A list of instance ids.
-    """
-
-    try:
-        StringModel(items=dataset_name)
-        IntModel(items=number_of_instances)
-        BoolModel(items=random_sampling)
-    except ValidationError as e:
-        print(f"Validation error: {e}")
-        raise
-
-    # Get the instance IDs
-    if random_sampling:
-        instances_ids = \
-        dataset.sample(n=number_of_instances, random_state=DEFAULT_SEED) \
-        ['instance_id']
-    else:
-        instances_ids = dataset.head(number_of_instances)['instance_id']
-
-    return instances_ids
-
 def get_repo_name(instance: pd.Series) -> str:
             """
             Retrieves the repository name for a given dataset and instance ID.
@@ -141,7 +103,7 @@ def get_repo_name(instance: pd.Series) -> str:
 
             return repo_name
 
-def setup_instance(dataset_name:str, instance: pd.Series) -> str:
+def setup_instance(dataset_name:str, instance: pd.Series) -> None:
     """
         Sets up the stage for an AI solution to run inference for a specific instance.
 
@@ -191,7 +153,7 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> str:
     os.system(f"git clone https://github.com/{repo_path}.git")
     
     os.chdir(f"{repo_name}")
-    os.system(f"git checkout {base_commit} && git reset --hard {base_commit}")
+    os.system(f"git reset --hard {base_commit}")
 
     # Build helper files
     with open("issue.md", "w") as f:
@@ -203,13 +165,13 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> str:
     with open("fail_to_pass.txt", "w") as f:
         f.write(instance["FAIL_TO_PASS"])
 
-    setup_commit = os.popen("git rev-parse HEAD").read().strip()
+    os.system(f"git add . && git commit -m 'instance setup'")
 
     os.chdir("../../")
 
-    return setup_commit
+    return
 
-def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Series, \
+def append_to_inferences(inferences_path: str, instance: pd.Series, \
                          experiment_name: str) -> None:
     """
         Gets local git patch, builds inference instance json and appends it 
@@ -232,7 +194,7 @@ def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Se
 
     try:
         StringModel(items=inferences_path)
-        StringModel(items=instance_id)
+        PandasSeriesModel(series=instance)
         StringModel(items=experiment_name)
     except ValidationError as e:
         print(f"Validation error: {e}")
@@ -241,11 +203,12 @@ def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Se
     # <TODO: fix> the patch is always returning empty
     repo_name = get_repo_name(instance=instance)
     os.chdir(os.path.join("tmp", repo_name))
-    patch = os.popen("git diff --patch").read()
+    os.system("git branch")
+    patch = os.popen("git diff --patch HEAD~1 HEAD").read()
     os.chdir("../../")
 
     inference_instance = {
-        "instance_id": instance_id,
+        "instance_id": instance["instance_id"],
         "model_patch": patch,
         "model_name_or_path": experiment_name
     }
@@ -271,10 +234,11 @@ def main() -> None:
         n instances).
 
     The function performs the following steps:
-    1. Retrieves instance IDs from the specified dataset.
-    2. Sets up each instance using the retrieved instance IDs.
+    1. Iterates hrough the rows (instances)
+    2. Sets up the instance
     3. Runs the AI solution for each instance
-    4. Appends the inference results to a specified JSONL file.
+    4. Appends the patch (+ metadata) generated by the AI solution 
+    to the inferences.jsonl file.
 
     Note:
     - The dataset pointer path is hardcoded in the function.
@@ -308,43 +272,38 @@ def main() -> None:
         print(f"Validation error: {e}")
         raise
 
-    dataset = load_dataset(dataset_name)["test"].to_pandas()
+    df = load_dataset(dataset_name)["test"].to_pandas()
     dataset_path = get_dataset_path(dataset_name)
     os.makedirs(os.path.dirname(dataset_path), exist_ok=True)
-    dataset.to_parquet(dataset_path)
+    df.to_parquet(dataset_path)
 
-    instances_ids = get_instances_ids(
-        dataset_name=dataset_name, number_of_instances=number_of_instances, 
-        random_sampling=True,
-        dataset=dataset
-    )
+    # get only <number_of_instances> from df. Two options: random or not
+    df_sampled = df.sample(n=number_of_instances, random_state=DEFAULT_SEED) \
+        if random_sampling \
+        else df.head(number_of_instances)
 
-    dataset = pd.read_parquet(get_dataset_path(dataset_name))
-    
     skipped_instances = 0
-    for instance_id in instances_ids:
+    for _, instance in df_sampled.iterrows():
         # Find the instance by instance_id 
-        instance = dataset[dataset["instance_id"] == instance_id].iloc[0]
 
-        setup_commit = setup_instance(dataset_name=dataset_name, instance=instance)
-        
+        setup_instance(dataset_name=dataset_name, instance=instance)
         repo_name = get_repo_name(instance=instance)
 
         os.chdir(os.path.join("tmp", repo_name))
-        os.system(f"git reset --hard {setup_commit}")
         experiment_name, skipped_instance = run_ai()
+        os.system(f"git add . && git commit -m 'AI solution run'")
         os.chdir("../../")
 
         if not skipped_instance:
             append_to_inferences(inferences_path=os.path.join("results", 
                                 os.path.join("subresults", "inferences.jsonl")), \
-                                instance_id=instance_id, \
-                                instance = instance,
+                                instance = instance, \
                                 experiment_name=experiment_name)
         else:
             skipped_instances += 1
 
-        shutil.rmtree(os.path.join("tmp", repo_name))    
+        shutil.rmtree(os.path.join("tmp", repo_name))
+    shutil.rmtree("tmp")       
     print(skipped_instances)
     print("-----------------Finished generate_inferences.py>main---------------")
     return

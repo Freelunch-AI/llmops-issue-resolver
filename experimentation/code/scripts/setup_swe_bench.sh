@@ -12,8 +12,8 @@ fi
 main() {
     echo "------------------Started setup_swe_bench.sh>main----------------------"
     # -- Setup SWE-bench --
-    if [ ! -d "SWE-bench" ]; then
-        git clone https://github.com/swe-bench/SWE-bench.git
+    if [ ! -d "packages/SWE-bench" ]; then
+        git clone https://github.com/swe-bench/SWE-bench.git packages
     else
         echo "SWE-bench directory already exists. Skipping clone."
     fi
@@ -23,7 +23,7 @@ main() {
     deactivate
     source .venv/bin/activate
     # -e flag requires elevated privileges
-    uv pip install ./SWE-bench
+    uv pip install ./packages/SWE-bench
     echo "----------------Finished setup_swe_bench.sh>main----------------------"
 }
 
