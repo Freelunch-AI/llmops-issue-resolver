@@ -10,6 +10,7 @@ if [[ "${TRACE-0}" == "1" ]]; then
 fi
 
 main() {
+    echo "------------------Started setup_swe_bench.sh>main----------------------"
     # -- Setup SWE-bench --
     if [ ! -d "SWE-bench" ]; then
         git clone https://github.com/swe-bench/SWE-bench.git
@@ -19,8 +20,11 @@ main() {
     
     sudo chmod -R 777 .
     uv venv
+    deactivate
     source .venv/bin/activate
-    uv pip install "./SWE-bench" # -e flag requires elevated privileges
+    # -e flag requires elevated privileges
+    uv pip install ./SWE-bench
+    echo "----------------Finished setup_swe_bench.sh>main----------------------"
 }
 
 main "$@"    

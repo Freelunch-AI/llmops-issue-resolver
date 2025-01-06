@@ -1,0 +1,103 @@
+2025-01-05 23:20:23,863 - INFO - Environment image sweb.env.x86_64.c795f4b88616b8462021ed:latest found for sympy__sympy-19954
+Building instance image sweb.eval.x86_64.sympy__sympy-19954:latest for sympy__sympy-19954
+2025-01-05 23:21:11,327 - INFO - Creating container for sympy__sympy-19954...
+2025-01-05 23:21:11,372 - INFO - Container for sympy__sympy-19954 created: 8c6857cadb2e1b023041db66420b521e2465cbf35538ecaae109206f9ae6904f
+2025-01-05 23:21:11,757 - INFO - Container for sympy__sympy-19954 started: 8c6857cadb2e1b023041db66420b521e2465cbf35538ecaae109206f9ae6904f
+2025-01-05 23:21:11,757 - INFO - Intermediate patch for sympy__sympy-19954 written to logs/run_evaluation/summary/placeholder__placeholder__placeholder__placeholder__placeholder/sympy__sympy-19954/patch.diff, now applying to container...
+2025-01-05 23:21:12,099 - INFO - Failed to apply patch to container, trying again...
+2025-01-05 23:21:12,166 - INFO - >>>>> Patch Apply Failed:
+can't find file to patch at input line 4
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/SWE-bench b/experimentation/SWE-bench
+|--- a/experimentation/SWE-bench
+|+++ b/experimentation/SWE-bench
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 11
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/code/scripts/generate_inferences.py b/experimentation/code/scripts/generate_inferences.py
+|index 0b9a2bb..e9b3a4e 100755
+|--- a/experimentation/code/scripts/generate_inferences.py
+|+++ b/experimentation/code/scripts/generate_inferences.py
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 117
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/datasets/datasets.yml b/experimentation/datasets/datasets.yml
+|index 8bf08d0..d2f5984 100755
+|--- a/experimentation/datasets/datasets.yml
+|+++ b/experimentation/datasets/datasets.yml
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 126
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/src/llmops_issue_resolver/cli.py b/src/llmops_issue_resolver/cli.py
+|index 51072c6..37f821e 100644
+|--- a/src/llmops_issue_resolver/cli.py
+|+++ b/src/llmops_issue_resolver/cli.py
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+
+2025-01-05 23:21:12,166 - INFO - Traceback (most recent call last):
+  File "/home/bruno/coding/freelunch-ai/llmops-issue-resolver/experimentation/.venv/lib/python3.9/site-packages/swebench/harness/run_evaluation.py", line 146, in run_instance
+    raise EvaluationError(
+EvaluationError: Evaluation error for sympy__sympy-19954: >>>>> Patch Apply Failed:
+can't find file to patch at input line 4
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/SWE-bench b/experimentation/SWE-bench
+|--- a/experimentation/SWE-bench
+|+++ b/experimentation/SWE-bench
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 11
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/code/scripts/generate_inferences.py b/experimentation/code/scripts/generate_inferences.py
+|index 0b9a2bb..e9b3a4e 100755
+|--- a/experimentation/code/scripts/generate_inferences.py
+|+++ b/experimentation/code/scripts/generate_inferences.py
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 117
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/datasets/datasets.yml b/experimentation/datasets/datasets.yml
+|index 8bf08d0..d2f5984 100755
+|--- a/experimentation/datasets/datasets.yml
+|+++ b/experimentation/datasets/datasets.yml
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 126
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/src/llmops_issue_resolver/cli.py b/src/llmops_issue_resolver/cli.py
+|index 51072c6..37f821e 100644
+|--- a/src/llmops_issue_resolver/cli.py
+|+++ b/src/llmops_issue_resolver/cli.py
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+
+Check (logs/run_evaluation/summary/placeholder__placeholder__placeholder__placeholder__placeholder/sympy__sympy-19954/run_instance.log) for more information.
+
+2025-01-05 23:21:12,166 - INFO - Attempting to stop container sweb.eval.sympy__sympy-19954.summary...

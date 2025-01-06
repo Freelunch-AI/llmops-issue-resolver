@@ -9,7 +9,6 @@ from contextlib import contextmanager
 from typing import List
 
 import pandas as pd
-import yaml
 from datasets import load_dataset
 from pydantic import ValidationError
 
@@ -51,12 +50,36 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
     from experimentation.code.imports.utils.schema_models import (
         BoolModel,
         IntModel,
+        PandasSeriesModel,
         StringModel,
     )
     from experimentation.code.imports.utils.seeds import DEFAULT_SEED
 
-def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
-    number_of_instances: int, random_sampling: bool) -> List[str]:
+def get_dataset_path(dataset_name: str) -> str:
+        """
+        Constructs the local path for the dataset based on its name.
+
+        Args:
+            dataset_name (str): The name of the dataset.
+
+        Returns:
+            str: The local path to the dataset file.
+        """
+
+        try:
+            StringModel(items=dataset_name)
+        except ValidationError as e:
+            print(f"Validation error: {e}")
+            raise
+
+        dataset_name_underline = dataset_name.replace("/", "_")
+        dataset_path = os.path.join("datasets", f"{dataset_name_underline}", 
+                                    f"{dataset_name_underline}.parquet")
+        return dataset_path
+
+def get_instances_ids(dataset_name: str, \
+    number_of_instances: int, random_sampling: bool, dataset: pd.DataFrame) \
+        -> pd.Series:
     """
         Gets instance ids from the dataset and puts them in a list.
         
@@ -78,7 +101,6 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
     """
 
     try:
-        StringModel(items=dataset_pointer_path)
         StringModel(items=dataset_name)
         IntModel(items=number_of_instances)
         BoolModel(items=random_sampling)
@@ -86,32 +108,40 @@ def get_instances_ids(dataset_pointer_path: str, dataset_name: str, \
         print(f"Validation error: {e}")
         raise
 
-    # Get the dataset path by parsing the yaml dataset ointer file
-    with open(dataset_pointer_path, "r") as f:
-        datasets = yaml.safe_load(f)
-
-    dataset_hf_name= datasets[dataset_name]["hf_name"]
-    print(f"dataset_hf_name: {dataset_hf_name}")
-
-    # Load the dataset from the the hugging face dataset path
-    dataset = load_dataset(dataset_hf_name)
-
-    # Store the dataset locally as parquet
-    dataset_local_path = f"datasets/{dataset_name}/{dataset_name}.parquet"
-    os.makedirs(os.path.dirname(dataset_local_path), exist_ok=True)
-    dataset["test"].to_pandas().to_parquet(dataset_local_path)
-
     # Get the instance IDs
     if random_sampling:
-        instances_ids = dataset["test"].shuffle(DEFAULT_SEED).select( \
-                        range(number_of_instances))['instance_id']
+        instances_ids = \
+        dataset.sample(n=number_of_instances, random_state=DEFAULT_SEED) \
+        ['instance_id']
     else:
-        instances_ids = dataset["test"].select(range(number_of_instances)) \
-                                                ['instance_id']
+        instances_ids = dataset.head(number_of_instances)['instance_id']
 
     return instances_ids
 
-def setup_instance(dataset_name:str, instance_id: str):
+def get_repo_name(instance: pd.Series) -> str:
+            """
+            Retrieves the repository name for a given dataset and instance ID.
+
+            Args:
+                dataset_name (str): The name of the dataset.
+                instance_id (str): The unique identifier for the instance.
+
+            Returns:
+                str: The repository name.
+            """
+
+            try:
+                PandasSeriesModel(series=instance)
+            except ValidationError as e:
+                print(f"Validation error: {e}")
+                raise
+
+            repo_path = instance["repo"]
+            repo_name = repo_path.split("/")[1]
+
+            return repo_name
+
+def setup_instance(dataset_name:str, instance: pd.Series) -> None:
     """
         Sets up the stage for an AI solution to run inference for a specific instance.
 
@@ -143,41 +173,19 @@ def setup_instance(dataset_name:str, instance_id: str):
     """
 
     try:
-        StringModel(items=instance_id)
+        PandasSeriesModel(series=instance)
         StringModel(items=dataset_name)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise
 
-    # Load dataset information from datasets.yml
-    with open("datasets/datasets.yml", "r") as f:
-        datasets = yaml.safe_load(f)
-
-    dataset_info = datasets.get(dataset_name)
-    if not dataset_info:
-        raise ValueError(f"Dataset {dataset_name} not found in datasets.yml")
-
-    # Load the dataset from the local parquet file
-    dataset_path = os.path.join("datasets", f"{dataset_name}", 
-                                f"{dataset_name}.parquet")
-    if not os.path.exists(dataset_path):
-        raise ValueError(f"Dataset file not found at {dataset_path}")
-
-    dataset = pd.read_parquet(dataset_path)
-
-    # Find the instance by instance_id 
-    instance = dataset[dataset["instance_id"] == instance_id].iloc[0]
-
-    if instance.empty:
-        raise ValueError(f"Instance {instance_id} not found in dataset")
-
     # Pull the repo at the specific commit
     base_commit = instance["base_commit"]
-    # empty the repo directory
-    shutil.rmtree("repo")
     # clone the repo
-    os.system(f"git clone https://github.com/{instance['repo']}.git repo")
-    os.chdir("repo")
+    repo_path = instance['repo']
+    os.system(f"git clone https://github.com/{repo_path}.git")
+    repo_name = repo_path.split("/")[1]
+    os.chdir(f"{repo_name}")
     os.system(f"git checkout {base_commit}")
 
     # Build helper files
@@ -194,8 +202,8 @@ def setup_instance(dataset_name:str, instance_id: str):
 
     return
 
-def append_to_inferences(inferences_path: str, instance_id: str, experiment_name: str) \
-    -> None:
+def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Series, \
+                         experiment_name: str) -> None:
     """
         Gets local git patch, builds inference instance json and appends it 
         inferences to inferences.jsonl.
@@ -218,11 +226,16 @@ def append_to_inferences(inferences_path: str, instance_id: str, experiment_name
     try:
         StringModel(items=inferences_path)
         StringModel(items=instance_id)
+        StringModel(items=experiment_name)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise
 
-    patch = os.popen("git diff").read()
+    # <TODO: fix> the patch is always returning empty
+    repo_name = get_repo_name(instance=instance)
+    os.chdir(repo_name)
+    patch = os.popen("git diff --patch").read()
+    os.chdir("..")
 
     inference_instance = {
         "instance_id": instance_id,
@@ -262,6 +275,10 @@ def main() -> None:
     """
     print("-----------------Started generate_inferences.py>main---------------")
 
+    #empty inferences.jsonl file
+    with open("results/subresults/inferences.jsonl", "w") as f:
+        f.write("")
+
     parser = argparse.ArgumentParser(description="Generate inferences")
     parser.add_argument("--dataset-name", type=str, required=True, 
                         help="Name of the dataset")
@@ -284,27 +301,42 @@ def main() -> None:
         print(f"Validation error: {e}")
         raise
 
+    dataset = load_dataset(dataset_name)["test"].to_pandas()
+    dataset_path = get_dataset_path(dataset_name)
+    os.makedirs(os.path.dirname(dataset_path), exist_ok=True)
+    dataset.to_parquet(dataset_path)
+
     instances_ids = get_instances_ids(
-        dataset_pointer_path=os.path.join("datasets", "datasets.yml"), 
         dataset_name=dataset_name, number_of_instances=number_of_instances, 
-        random_sampling=True
+        random_sampling=True,
+        dataset=dataset
     )
+
+    dataset = pd.read_parquet(get_dataset_path(dataset_name))
     
     skipped_instances = 0
     for instance_id in instances_ids:
-        setup_instance(dataset_name=dataset_name, instance_id=instance_id)
-        # change current working directory to the repo directory
-        os.chdir("repo")
+        # Find the instance by instance_id 
+        instance = dataset[dataset["instance_id"] == instance_id].iloc[0]
+
+        setup_instance(dataset_name=dataset_name, instance=instance)
+
+        repo_name = get_repo_name(instance=instance)
+
+        os.chdir(repo_name)
         experiment_name, skipped_instance = run_ai()
-        # change current working directory to the parent directory
         os.chdir("..")
+
         if not skipped_instance:
             append_to_inferences(inferences_path=os.path.join("results", 
                                 os.path.join("subresults", "inferences.jsonl")), \
                                 instance_id=instance_id, \
+                                instance = instance,
                                 experiment_name=experiment_name)
         else:
             skipped_instances += 1
+
+        shutil.rmtree(repo_name)    
     print(skipped_instances)
     print("-----------------Finished generate_inferences.py>main---------------")
     return

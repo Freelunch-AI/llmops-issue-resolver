@@ -1,6 +1,7 @@
-from typing import List
+from typing import Any, List
 
-from pydantic import BaseModel
+import pandas as pd
+from pydantic import BaseModel, validator
 
 
 class StringModel(BaseModel):
@@ -23,3 +24,12 @@ class RelevantSubResults(BaseModel):
 class Metrics(BaseModel):
     percentage_resolved: float
     kowinski_score: float
+
+class PandasSeriesModel(BaseModel):
+    series: Any
+
+    @validator('series')
+    def check_series(cls, value):
+        if not isinstance(value, pd.Series):
+            raise ValueError('The value must be a pandas Series')
+        return value

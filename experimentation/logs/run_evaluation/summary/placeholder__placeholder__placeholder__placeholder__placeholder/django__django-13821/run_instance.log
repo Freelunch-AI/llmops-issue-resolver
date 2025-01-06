@@ -1,0 +1,103 @@
+2025-01-05 23:20:23,861 - INFO - Environment image sweb.env.x86_64.e83e37f52c09532c62acfb:latest found for django__django-13821
+Building instance image sweb.eval.x86_64.django__django-13821:latest for django__django-13821
+2025-01-05 23:21:09,876 - INFO - Creating container for django__django-13821...
+2025-01-05 23:21:09,959 - INFO - Container for django__django-13821 created: fbad91365cf1f4152b7e6c322052f5781bd0fbd45da61db6d70bb3d7a8556cdc
+2025-01-05 23:21:10,402 - INFO - Container for django__django-13821 started: fbad91365cf1f4152b7e6c322052f5781bd0fbd45da61db6d70bb3d7a8556cdc
+2025-01-05 23:21:10,402 - INFO - Intermediate patch for django__django-13821 written to logs/run_evaluation/summary/placeholder__placeholder__placeholder__placeholder__placeholder/django__django-13821/patch.diff, now applying to container...
+2025-01-05 23:21:10,708 - INFO - Failed to apply patch to container, trying again...
+2025-01-05 23:21:10,792 - INFO - >>>>> Patch Apply Failed:
+can't find file to patch at input line 4
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/SWE-bench b/experimentation/SWE-bench
+|--- a/experimentation/SWE-bench
+|+++ b/experimentation/SWE-bench
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 11
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/code/scripts/generate_inferences.py b/experimentation/code/scripts/generate_inferences.py
+|index 0b9a2bb..e9b3a4e 100755
+|--- a/experimentation/code/scripts/generate_inferences.py
+|+++ b/experimentation/code/scripts/generate_inferences.py
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 117
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/datasets/datasets.yml b/experimentation/datasets/datasets.yml
+|index 8bf08d0..d2f5984 100755
+|--- a/experimentation/datasets/datasets.yml
+|+++ b/experimentation/datasets/datasets.yml
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 126
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/src/llmops_issue_resolver/cli.py b/src/llmops_issue_resolver/cli.py
+|index 51072c6..37f821e 100644
+|--- a/src/llmops_issue_resolver/cli.py
+|+++ b/src/llmops_issue_resolver/cli.py
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+
+2025-01-05 23:21:10,792 - INFO - Traceback (most recent call last):
+  File "/home/bruno/coding/freelunch-ai/llmops-issue-resolver/experimentation/.venv/lib/python3.9/site-packages/swebench/harness/run_evaluation.py", line 146, in run_instance
+    raise EvaluationError(
+EvaluationError: Evaluation error for django__django-13821: >>>>> Patch Apply Failed:
+can't find file to patch at input line 4
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/SWE-bench b/experimentation/SWE-bench
+|--- a/experimentation/SWE-bench
+|+++ b/experimentation/SWE-bench
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 11
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/code/scripts/generate_inferences.py b/experimentation/code/scripts/generate_inferences.py
+|index 0b9a2bb..e9b3a4e 100755
+|--- a/experimentation/code/scripts/generate_inferences.py
+|+++ b/experimentation/code/scripts/generate_inferences.py
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 117
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/experimentation/datasets/datasets.yml b/experimentation/datasets/datasets.yml
+|index 8bf08d0..d2f5984 100755
+|--- a/experimentation/datasets/datasets.yml
+|+++ b/experimentation/datasets/datasets.yml
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 126
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/src/llmops_issue_resolver/cli.py b/src/llmops_issue_resolver/cli.py
+|index 51072c6..37f821e 100644
+|--- a/src/llmops_issue_resolver/cli.py
+|+++ b/src/llmops_issue_resolver/cli.py
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+
+Check (logs/run_evaluation/summary/placeholder__placeholder__placeholder__placeholder__placeholder/django__django-13821/run_instance.log) for more information.
+
+2025-01-05 23:21:10,793 - INFO - Attempting to stop container sweb.eval.django__django-13821.summary...

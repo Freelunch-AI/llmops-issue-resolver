@@ -1,0 +1,6 @@
+2025-01-05 23:20:23,859 - INFO - Environment image sweb.env.x86_64.c795f4b88616b8462021ed:latest found for sympy__sympy-19783
+Building instance image sweb.eval.x86_64.sympy__sympy-19783:latest for sympy__sympy-19783
+2025-01-05 23:21:14,826 - INFO - Creating container for sympy__sympy-19783...
+2025-01-05 23:21:14,872 - INFO - Container for sympy__sympy-19783 created: 831e64f55e145f546a2f7659c09acd6b74719a779cf46576bc723b947faa0a5a
+2025-01-05 23:21:15,298 - INFO - Container for sympy__sympy-19783 started: 831e64f55e145f546a2f7659c09acd6b74719a779cf46576bc723b947faa0a5a
+2025-01-05 23:21:15,298 - INFO - Intermediate patch for sympy__sympy-19783 written to logs/run_evaluation/summary/placeholder__placeholder__placeholder__placeholder__placeholder/sympy__sympy-19783/patch.diff, now applying to container...

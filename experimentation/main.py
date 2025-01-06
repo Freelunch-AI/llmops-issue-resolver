@@ -33,7 +33,8 @@ def main():
     print("---------------Sourcing setup_docker.sh---------------")
     setup_docker_script = os.path.join(script_dir, 'code', 'scripts', \
                                 'setup_docker.sh')
-    subprocess.run(['sudo', '-E', 'bash', '-c', f'source {setup_docker_script}'], check=True)
+    subprocess.run(['sudo', '-E', 'bash', '-c', \
+                    f'source {setup_docker_script}'], check=True)
 
     # Source setup_swe_bench.sh
     print("---------------Sourcing setup_swe_bench.sh---------------")
@@ -58,8 +59,8 @@ def main():
     print("--------------Sourcing generate_results.sh----------------")
     generate_results_script = os.path.join(script_dir, 'code', 'scripts', \
                                            'generate_results.sh')
-    subprocess.run(['bash', '-c', f'source {generate_results_script}'], 
-                   check=True)
+    subprocess.run(['bash', '-c', f'source {generate_results_script}', 
+                    '--dataset_name', args.dataset_name], check=True)
 
     # Run generate_metrics.py
     print("------------Running generate_metrics.py----------------")
