@@ -141,7 +141,7 @@ def get_repo_name(instance: pd.Series) -> str:
 
             return repo_name
 
-def setup_instance(dataset_name:str, instance: pd.Series) -> None:
+def setup_instance(dataset_name:str, instance: pd.Series) -> str:
     """
         Sets up the stage for an AI solution to run inference for a specific instance.
 
@@ -183,10 +183,15 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> None:
     base_commit = instance["base_commit"]
     # clone the repo
     repo_path = instance['repo']
-    os.system(f"git clone https://github.com/{repo_path}.git")
     repo_name = repo_path.split("/")[1]
+
+    os.makedirs("tmp", exist_ok=True)
+    os.chdir("tmp")
+
+    os.system(f"git clone https://github.com/{repo_path}.git")
+    
     os.chdir(f"{repo_name}")
-    os.system(f"git checkout {base_commit}")
+    os.system(f"git checkout {base_commit} && git reset --hard {base_commit}")
 
     # Build helper files
     with open("issue.md", "w") as f:
@@ -198,9 +203,11 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> None:
     with open("fail_to_pass.txt", "w") as f:
         f.write(instance["FAIL_TO_PASS"])
 
-    os.chdir("..")
+    setup_commit = os.popen("git rev-parse HEAD").read().strip()
 
-    return
+    os.chdir("../../")
+
+    return setup_commit
 
 def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Series, \
                          experiment_name: str) -> None:
@@ -233,9 +240,9 @@ def append_to_inferences(inferences_path: str, instance_id: str, instance: pd.Se
 
     # <TODO: fix> the patch is always returning empty
     repo_name = get_repo_name(instance=instance)
-    os.chdir(repo_name)
+    os.chdir(os.path.join("tmp", repo_name))
     patch = os.popen("git diff --patch").read()
-    os.chdir("..")
+    os.chdir("../../")
 
     inference_instance = {
         "instance_id": instance_id,
@@ -319,13 +326,14 @@ def main() -> None:
         # Find the instance by instance_id 
         instance = dataset[dataset["instance_id"] == instance_id].iloc[0]
 
-        setup_instance(dataset_name=dataset_name, instance=instance)
-
+        setup_commit = setup_instance(dataset_name=dataset_name, instance=instance)
+        
         repo_name = get_repo_name(instance=instance)
 
-        os.chdir(repo_name)
+        os.chdir(os.path.join("tmp", repo_name))
+        os.system(f"git reset --hard {setup_commit}")
         experiment_name, skipped_instance = run_ai()
-        os.chdir("..")
+        os.chdir("../../")
 
         if not skipped_instance:
             append_to_inferences(inferences_path=os.path.join("results", 
@@ -336,7 +344,7 @@ def main() -> None:
         else:
             skipped_instances += 1
 
-        shutil.rmtree(repo_name)    
+        shutil.rmtree(os.path.join("tmp", repo_name))    
     print(skipped_instances)
     print("-----------------Finished generate_inferences.py>main---------------")
     return
