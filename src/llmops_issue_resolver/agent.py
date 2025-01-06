@@ -30,11 +30,17 @@ class AgentState(TypedDict):
 
 @tool
 def get_directory_structure(path: str = ".") -> str:
-    """
-    Call to get a JSON representing the hierarchical structure of the
-    directories and files starting from the given 'path' default = ".".
+    """Call to get a JSON representing the hierarchical structure of the directories and files.
+    
+    Parameters:
+        - path: The path to start the directory structure retrieval from.
     """
     def build_structure(current_path: str) -> dict:
+        """Build the directory structure recursively.
+        
+        Parameters:
+            - current_path: The current path to build the structure from.
+        """
         node_name = os.path.basename(current_path) or current_path
         if os.path.isdir(current_path):
             structure = {
@@ -61,13 +67,14 @@ def get_directory_structure(path: str = ".") -> str:
         return structure
 
     directory_structure = build_structure(path)
-    return json.dumps(directory_structure)
+    return f"The directory structure of {path} has been retrieved: {directory_structure}"
 
 @tool
-def get_content_of_relevant_files(paths: List[str]) -> dict:
-    """
-    Call to get the full path, name of the file/folder and content (if it`s a file) 
-    of all paths in the input list.
+def get_content_of_relevant_files(paths: List[str]) -> str:
+    """Call to get the full path, name of the file/folder and content of all paths in the input list.
+    
+    Parameters:
+        - paths: A list of paths to retrieve content from.
     """
     response = {}
     for path in paths:
@@ -83,57 +90,94 @@ def get_content_of_relevant_files(paths: List[str]) -> dict:
             'name': name,
             'content': content
         }
-    return response
+    return f"The content of the following files has been retrieved: {response}"
 
 @tool
-def create_folder(path: str, folder_name: str):
-    """Call to create a new folder."""
+def create_folder(path: str, folder_name: str) -> str:
+    """Call to create a new folder.
+    
+    Parameters:
+        - path: The path where the folder will be created.
+        - folder_name: The name of the folder to create.
+    """
     os.mkdir(f"{path}/{folder_name}")
-    return {"message": f"Folder {path}/{folder_name} created."}
+    return f"Folder {path}/{folder_name} created."
 
 @tool
-def create_file(path: str, file_name: str):
-    """Call to create a new file."""
+def create_file(path: str, file_name: str) -> str:
+    """Call to create a new file.
+    
+    Parameters:
+        - path: The path where the file will be created.
+        - file_name: The name of the file to create.
+    """
     with open(f"{path}/{file_name}", "w", encoding="utf-8") as file:
         pass
-    return {"message": f"File {path}/{file_name} created."}
+    return f"File {path}/{file_name} created."
 
 @tool
-def rename_folder(path: str, folder_name: str, new_folder_name: str):
-    """Call to rename a specific folder."""
+def rename_folder(path: str, folder_name: str, new_folder_name: str) -> str:
+    """Call to rename a specific folder.
+    
+    Parameters:
+        - path: The path of the folder to rename.
+        - folder_name: The current name of the folder.
+        - new_folder_name: The new name for the folder.
+    """
     os.rename(f"{path}/{folder_name}", f"{path}/{new_folder_name}")
-    return {"message": f"Folder {path}/{folder_name} renamed to {path}/{new_folder_name}."}
+    return f"Folder {path}/{folder_name} renamed to {path}/{new_folder_name}."
 
 @tool
-def rename_file(path: str, file_name: str, new_file_name: str):
-    """Call to rename a specific file."""
+def rename_file(path: str, file_name: str, new_file_name: str) -> str:
+    """Call to rename a specific file.
+    
+    Parameters:
+        - path: The path of the file to rename.
+        - file_name: The current name of the file.
+        - new_file_name: The new name for the file.
+    """
     os.rename(f"{path}/{file_name}", f"{path}/{new_file_name}")
-    return {"message": f"File {path}/{file_name} renamed to {path}/{new_file_name}."}
+    return f"File {path}/{file_name} renamed to {path}/{new_file_name}."
 
 @tool
-def update_file(path: str, file_name: str, new_content: str):
-    """Call to update a specific file."""
+def update_file(path: str, new_content: str) -> str:
+    """Call to update a specific file.
+    
+    Parameters:
+        - path: The path of the file to update.
+        - new_content: The new content to write to the file.
+    """
     try:
         formatted_content = new_content.replace("\\\"", "\"").replace("\\n", "\n")
         updated_content = black.format_str(formatted_content, mode=black.Mode())
     except Exception as e:
         raise ValueError(f"Erro ao formatar o código com Black: {e}")
 
-    with open(f"{path}/{file_name}", "w", encoding="utf-8") as file:
+    with open(path, "w", encoding="utf-8") as file:
         file.write(updated_content)
-    return {"message": f"File {path}/{file_name} updated."}
+    return f"File {path} updated."
 
 @tool
-def delete_folder(path: str, folder_name: str):
-    """Call to delete a specific folder."""
+def delete_folder(path: str, folder_name: str) -> str:
+    """Call to delete a specific folder.
+    
+    Parameters:
+        - path: The path of the folder to delete.
+        - folder_name: The name of the folder to delete.
+    """
     shutil.rmtree(f"{path}/{folder_name}")
-    return {"message": f"Folder {path}/{folder_name} deleted."}
+    return f"Folder {path}/{folder_name} deleted."
 
 @tool
-def delete_file(path: str, file_name: str):
-    """Call to delete a specific file."""
+def delete_file(path: str, file_name: str) -> str:
+    """Call to delete a specific file.
+    
+    Parameters:
+        - path: The path of the file to delete.
+        - file_name: The name of the file to delete.
+    """
     os.remove(f"{path}/{file_name}")
-    return {"message": f"File {path}/{file_name} deleted."}
+    return f"File {path}/{file_name} deleted."
 
 tools = [
     get_directory_structure,
@@ -169,13 +213,23 @@ Follow these steps:
 """
 
 def should_continue(state: MessagesState) -> Literal["tools", END]: # type: ignore
+    """Determine whether the agent should continue based on the state.
+    
+    Parameters:
+        - state: The current state of the agent.
+    """
     messages = state['messages']
     last_message = messages[-1]
     if last_message.tool_calls:
         return "tools"
     return END
 
-def call_model(state: MessagesState):
+def call_model(state: MessagesState) -> dict:
+    """Call the model with the current state.
+    
+    Parameters:
+        - state: The current state of the agent.
+    """
     messages = state['messages']
     messages = [
         {"role": "system", "content": system_prompt}
