@@ -23,7 +23,7 @@ main() {
     echo "---------1---------"
     source .venv/bin/activate
     echo "---------2---------"
-    # remove all git files from ./packages/SWE-bench (not good to have a repo isnide your repo)
+    # remove all git files from ./packages/SWE-bench (its not good to have a repo isnide your repo)
     find packages/SWE-bench -name ".git" -exec rm -rf {} +
     uv pip install ./packages/SWE-bench # -e flag requires elevated privileges
     echo "----------------Finished setup_swe_bench.sh>main----------------------"
