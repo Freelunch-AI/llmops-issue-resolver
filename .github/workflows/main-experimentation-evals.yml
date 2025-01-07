@@ -106,21 +106,20 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: merging-branch-metrics
-          path: /tmp
+          path: tmp
 
       - name: Download requesting branch metrics
         uses: actions/download-artifact@v3
         with:
           name: requesting-branch-metrics
-          path: /tmp
+          path: tmp
 
       - name: Compare eval results
         id: compare-eval-results
         run: |
-          cd /tmp
           merging_score=$(grep 'kowinski_score' tmp/merging-branch-metrics.yml | awk '{print $2}')
           requesting_score=$(grep 'kowinski_score' tmp/requesting-branch-metrics.yml | awk '{print $2}')
-          echo "merging score = $merging_score \nrequesting score = $requesting_score"
+          echo "merging score = $merging_score \n requesting score = $requesting_score"
           if (( $(echo "$requesting_score < $merging_score" | bc -l) )); then
             echo "PR_ALLOWED=0" >> $GITHUB_ENV
           else
