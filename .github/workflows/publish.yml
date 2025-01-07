@@ -9,12 +9,12 @@ on:
   
 jobs:
   publish:
+    name: Publish distribution
+    runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/llmops-issue-resolver
 
-    name: Publish distribution
-    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on "version=*.*.*" tag pushes
     
     steps:
