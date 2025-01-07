@@ -11,10 +11,10 @@ on:
 jobs:
   block-pr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.head.ref != 'main-experimentation*' }}
+    if: ${{ !startsWith(github.event.pull_request.head.ref, 'main-experimentation') }}
 
     steps:
       - name: Block PR
         run: |
-          echo "This PR is not allowed to be merged into the release branch. It must come from the a branch of the form main-experimentation<userName>."
+          echo "This PR is not allowed to be merged into the main-experimentation branch. It must come from the a branch of the form main-experimentation<userName>."
           exit 1
