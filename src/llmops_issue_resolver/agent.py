@@ -63,43 +63,52 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 @tool
-def get_directory_structure(path: str = "."):
+def get_directory_structure(path: str = ".") -> str:
+    """Call to get a JSON representing the hierarchical structure of the directories and files.
+    
+    Parameters:
+        - path: The path to start the directory structure retrieval from.
     """
-    Call to get a JSON representing the hierarchical structure of the
-    directories and files starting from the given 'path' default = ".".
-    """
-    node_name = os.path.basename(path)
-    if not node_name:
-        node_name = path
+    def build_structure(current_path: str) -> dict:
+        """Build the directory structure recursively.
+        
+        Parameters:
+            - current_path: The current path to build the structure from.
+        """
+        node_name = os.path.basename(current_path) or current_path
+        if os.path.isdir(current_path):
+            structure = {
+                "name": node_name,
+                "nodeType": "directory",
+                "children": []
+            }
+            for item in sorted(os.listdir(current_path)):
+                if item in (".venv", "venv", ".git", "CURRENT-PROBLEMS.md"):
+                    continue
+                full_path = os.path.join(current_path, item)
+                if os.path.isdir(full_path):
+                    structure["children"].append(build_structure(full_path)) # type: ignore
+                else:
+                    structure["children"].append({ # type: ignore
+                        "name": item,
+                        "nodeType": "file"
+                    })
+        else:
+            structure = {
+                "name": node_name,
+                "nodeType": "file"
+            }
+        return structure
 
-    structure = {
-        "name": node_name,
-        "nodeType": "directory",
-        "children": []
-    }
-
-    if os.path.isdir(path):
-        for item in sorted(os.listdir(path)):
-            full_path = os.path.join(path, item)
-            if os.path.isdir(full_path):
-                structure["children"].append(get_directory_structure(full_path)) # type: ignore
-            else:
-                structure["children"].append({ # type: ignore
-                    "name": item,
-                    "nodeType": "file"
-                })
-    else:
-        structure = {
-            "name": node_name,
-            "nodeType": "file"
-        }
-    return json.dumps(structure)
+    directory_structure = build_structure(path)
+    return f"The directory structure of {path} has been retrieved: {directory_structure}"
 
 @tool
-def get_content_of_relevant_files(paths: List[str]) -> dict:
-    """
-    Call to get the full path, name of the file/folder and content (if it`s a file) 
-    of all paths in the input list.
+def get_content_of_relevant_files(paths: List[str]) -> str:
+    """Call to get the full path, name of the file/folder and content of all paths in the input list.
+    
+    Parameters:
+        - paths: A list of paths to retrieve content from.
     """
     response = {}
     for path in paths:
@@ -115,57 +124,94 @@ def get_content_of_relevant_files(paths: List[str]) -> dict:
             'name': name,
             'content': content
         }
-    return response
+    return f"The content of the following files has been retrieved: {response}"
 
 @tool
-def create_folder(path: str, folder_name: str):
-    """Call to create a new folder."""
+def create_folder(path: str, folder_name: str) -> str:
+    """Call to create a new folder.
+    
+    Parameters:
+        - path: The path where the folder will be created.
+        - folder_name: The name of the folder to create.
+    """
     os.mkdir(f"{path}/{folder_name}")
-    return {"message": f"Folder {path}/{folder_name} created."}
+    return f"Folder {path}/{folder_name} created."
 
 @tool
-def create_file(path: str, file_name: str):
-    """Call to create a new file."""
+def create_file(path: str, file_name: str) -> str:
+    """Call to create a new file.
+    
+    Parameters:
+        - path: The path where the file will be created.
+        - file_name: The name of the file to create.
+    """
     with open(f"{path}/{file_name}", "w", encoding="utf-8") as file:
         pass
-    return {"message": f"File {path}/{file_name} created."}
+    return f"File {path}/{file_name} created."
 
 @tool
-def rename_folder(path: str, folder_name: str, new_folder_name: str):
-    """Call to rename a specific folder."""
+def rename_folder(path: str, folder_name: str, new_folder_name: str) -> str:
+    """Call to rename a specific folder.
+    
+    Parameters:
+        - path: The path of the folder to rename.
+        - folder_name: The current name of the folder.
+        - new_folder_name: The new name for the folder.
+    """
     os.rename(f"{path}/{folder_name}", f"{path}/{new_folder_name}")
-    return {"message": f"Folder {path}/{folder_name} renamed to {path}/{new_folder_name}."}
+    return f"Folder {path}/{folder_name} renamed to {path}/{new_folder_name}."
 
 @tool
-def rename_file(path: str, file_name: str, new_file_name: str):
-    """Call to rename a specific file."""
+def rename_file(path: str, file_name: str, new_file_name: str) -> str:
+    """Call to rename a specific file.
+    
+    Parameters:
+        - path: The path of the file to rename.
+        - file_name: The current name of the file.
+        - new_file_name: The new name for the file.
+    """
     os.rename(f"{path}/{file_name}", f"{path}/{new_file_name}")
-    return {"message": f"File {path}/{file_name} renamed to {path}/{new_file_name}."}
+    return f"File {path}/{file_name} renamed to {path}/{new_file_name}."
 
 @tool
-def update_file(path: str, file_name: str, new_content: str):
-    """Call to update a specific file."""
+def update_file(path: str, new_content: str) -> str:
+    """Call to update a specific file.
+    
+    Parameters:
+        - path: The path of the file to update.
+        - new_content: The new content to write to the file.
+    """
     try:
         formatted_content = new_content.replace("\\\"", "\"").replace("\\n", "\n")
         updated_content = black.format_str(formatted_content, mode=black.Mode())
     except Exception as e:
         raise ValueError(f"Erro ao formatar o código com Black: {e}")
 
-    with open(f"{path}/{file_name}", "w", encoding="utf-8") as file:
+    with open(path, "w", encoding="utf-8") as file:
         file.write(updated_content)
-    return {"message": f"File {path}/{file_name} updated."}
+    return f"File {path} updated."
 
 @tool
-def delete_folder(path: str, folder_name: str):
-    """Call to delete a specific folder."""
+def delete_folder(path: str, folder_name: str) -> str:
+    """Call to delete a specific folder.
+    
+    Parameters:
+        - path: The path of the folder to delete.
+        - folder_name: The name of the folder to delete.
+    """
     shutil.rmtree(f"{path}/{folder_name}")
-    return {"message": f"Folder {path}/{folder_name} deleted."}
+    return f"Folder {path}/{folder_name} deleted."
 
 @tool
-def delete_file(path: str, file_name: str):
-    """Call to delete a specific file."""
+def delete_file(path: str, file_name: str) -> str:
+    """Call to delete a specific file.
+    
+    Parameters:
+        - path: The path of the file to delete.
+        - file_name: The name of the file to delete.
+    """
     os.remove(f"{path}/{file_name}")
-    return {"message": f"File {path}/{file_name} deleted."}
+    return f"File {path}/{file_name} deleted."
 
 tools = [
     get_directory_structure,
@@ -187,25 +233,37 @@ model = ChatGoogleGenerativeAI(
 ).bind_tools(tools)
 
 system_prompt = """
-You are an AI agent that resolves issues on codebases.
-Use the available tools to get directory structure, file contents and manipulate files and folder in the directory.
+You are a Automated Software Engineer that need to update the codebase.
+You are running in the root directory of the codebase.
+Use the available tools to know the directory structure of the codebase, read and manipulate files and folders.
 Follow these steps:
-    1. Get the directory structure and understand it.
-    2. Find the path to issue.md file and get it's content.
-    3. Based on issue details, analyze the folders and file names to generate a list of relevant file paths that you will want to analyze the content.
-    4. Get the content of the files based on the list of paths generated.
-    5. Find the problem(s) and generated the diffs.
-    7. Apply changes in the environment.
+    1. Call tool get_directory_structure to access and understand the codebase;
+    2. Find the path to issue.md file and get it's content using get_content_of_relevant_files tool;
+    3. Based on issue details, use the tool get_directory_structure to get and analyze all the folders and file names;
+    4. Generate a list of relevant file paths that you will want to analyze the content;
+    5. Call get_content_of_relevant_files to get the content of the selected files;
+    6. Understand the codebase and plan which files you'll need to update or create to fix the issue;
+    7. Apply the diffs using the tools to create, rename, update and delete files and folders.
 """
 
 def should_continue(state: MessagesState) -> Literal["tools", END]: # type: ignore
+    """Determine whether the agent should continue based on the state.
+    
+    Parameters:
+        - state: The current state of the agent.
+    """
     messages = state['messages']
     last_message = messages[-1]
     if last_message.tool_calls:
         return "tools"
     return END
 
-def call_model(state: MessagesState):
+def call_model(state: MessagesState) -> dict:
+    """Call the model with the current state.
+    
+    Parameters:
+        - state: The current state of the agent.
+    """
     messages = state['messages']
     messages = [
         {"role": "system", "content": system_prompt}
