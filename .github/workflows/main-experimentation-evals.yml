@@ -43,6 +43,7 @@ jobs:
         working-directory: repo/experimentation
         run: |
           pwd
+          ls -la repo/experimentation/packages/SWE-bench
           uv sync
     
       - name: Run eval of the AI solution on the merging branch
