@@ -1,0 +1,41 @@
+2025-01-05 23:20:23,869 - INFO - Building image sweb.eval.x86_64.django__django-11211:latest
+Using dockerfile:
+FROM --platform=linux/x86_64 sweb.env.x86_64.2baaea72acc974f6c02079:latest
+
+COPY ./setup_repo.sh /root/
+RUN sed -i -e 's/\r$//' /root/setup_repo.sh
+RUN /bin/bash /root/setup_repo.sh
+
+WORKDIR /testbed/
+
+Adding (1) setup scripts to image build repo
+2025-01-05 23:20:23,869 - INFO - [SETUP SCRIPT] setup_repo.sh:
+#!/bin/bash
+set -euxo pipefail
+git clone -o origin https://github.com/django/django /testbed
+chmod -R 777 /testbed
+cd /testbed
+git reset --hard ba726067604ce5a8ca3919edf653496722b433ab
+git remote remove origin
+source /opt/miniconda3/bin/activate
+conda activate testbed
+echo "Current environment: $CONDA_DEFAULT_ENV"
+python -m pip install -e .
+
+2025-01-05 23:20:23,873 - INFO - Building docker image sweb.eval.x86_64.django__django-11211:latest in logs/build_images/instances/sweb.eval.x86_64.django__django-11211__latest with platform linux/x86_64
+2025-01-05 23:20:23,897 - INFO - Step 1/5 : FROM --platform=linux/x86_64 sweb.env.x86_64.2baaea72acc974f6c02079:latest
+2025-01-05 23:20:23,897 - INFO - 
+2025-01-05 23:20:23,897 - INFO - ---> 457597812cec
+2025-01-05 23:20:23,897 - INFO - Step 2/5 : COPY ./setup_repo.sh /root/
+2025-01-05 23:20:23,897 - INFO - 
+2025-01-05 23:20:24,022 - INFO - ---> aacd29f60533
+2025-01-05 23:20:24,022 - INFO - Step 3/5 : RUN sed -i -e 's/\r$//' /root/setup_repo.sh
+2025-01-05 23:20:24,022 - INFO - 
+2025-01-05 23:20:24,075 - INFO - ---> Running in d173d6712a6c
+2025-01-05 23:20:26,165 - INFO - ---> Removed intermediate container d173d6712a6c
+2025-01-05 23:20:26,165 - INFO - ---> 52a057447f08
+2025-01-05 23:20:26,165 - INFO - Step 4/5 : RUN /bin/bash /root/setup_repo.sh
+2025-01-05 23:20:26,165 - INFO - 
+2025-01-05 23:20:26,193 - INFO - ---> Running in f7494357622b
+2025-01-05 23:20:27,136 - INFO - + git clone -o origin https://github.com/django/django /testbed
+2025-01-05 23:20:27,137 - INFO - Cloning into '/testbed'...

@@ -1,0 +1,134 @@
+name: Main experimentation evals
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - main-experimentation
+      - main-experimentation*
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+
+  run-merging-branch-evals:
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: "repo"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4    
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Go to experimentation directory
+        run: cd repo/experimentation
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv sync
+    
+      - name: Run eval of the AI solution on the merging branch
+        run: |
+          git checkout ${{ github.event.pull_request.base.ref }}
+          uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
+
+      - name: Store main-experimentation eval results as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: merging-branch-metrics
+          path: results/metrics.yml
+
+  run-requesting-branch-evals:
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: "repo"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4    
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Go to experimentation directory
+        run: cd repo/experimentation
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv sync
+
+      - name: Run eval of the AI solution on the requesting branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref }}
+          uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
+          yq eval '.kowinski_score = -2' -i results/metrics.yml
+
+      - name: Store requesting branch eval results as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: requesting-branch-metrics
+          path: results/metrics.yml
+
+  compare-eval-results-and-maybe-block-the-PR:
+    runs-on: ubuntu-latest
+    needs: [run-merging-branch-evals, run-requesting-branch-evals]
+    
+    steps:
+
+      - name: Download merging metrics
+        uses: actions/download-artifact@v3
+        with:
+          name: main-experimentation-metrics
+          path: /tmp
+
+      - name: Download requesting branch metrics
+        uses: actions/download-artifact@v3
+        with:
+          name: requesting-branch-metrics
+          path: /tmp
+
+      - name: Compare eval results
+        id: compare-eval-results
+        run: |
+          cd /tmp
+          merging_score=$(grep 'kowinski_score' tmp/merging-branch-metrics.yml | awk '{print $2}')
+          requesting_score=$(grep 'kowinski_score' tmp/requesting-branch-metrics.yml | awk '{print $2}')
+          echo "merging score = $merging_score \nrequesting score = $requesting_score"
+          if (( $(echo "$requesting_score < $merging_score" | bc -l) )); then
+            echo "PR_ALLOWED=0" >> $GITHUB_ENV
+          else
+            echo "PR_ALLOWED=1" >> $GITHUB_ENV
+          fi
+
+
+      - name: Block PR if requesting branch evals are worse than main-experimentation branch evals
+        run: |
+          if ${{ steps.compare-eval-results.outputs.PR_ALLOWED == '0' }}; then
+            echo "Blocking PR due to worse eval results"
+            exit 1
+          else
+            echo "Eval results are acceptable"
+          fi
+    
+
+
+

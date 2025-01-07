@@ -4,8 +4,6 @@ from contextlib import contextmanager
 
 import typer
 
-from llmops_issue_resolver.agent import graph
-
 
 @contextmanager
 def temporary_sys_path(path):
@@ -38,8 +36,8 @@ def temporary_sys_path(path):
 #     tree
 # All .py modules need to have this line, but with the more general form of the import 
 
-# with temporary_sys_path(os.path.dirname(__file__)):
-#    <package_based_imports>
+with temporary_sys_path(os.path.abspath(os.join(os.path.dirname(__file__), "../"))):
+    from llmops_issue_resolver.agent import graph
 
 app = typer.Typer()
 

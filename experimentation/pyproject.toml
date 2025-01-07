@@ -1,0 +1,24 @@
+[project]
+name = "experimentation"
+version = "0.1.0"
+description = "Experimentation of AI solutions for solving Github Issues."
+requires-python = ">=3.9,<3.10"
+authors = [
+    { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
+]
+dependencies = [
+    "pydantic",
+    "langgraph",
+    "pyyaml",
+    "pandas",
+    "datasets"
+]
+
+[[tool.uv.index]]
+url = "https://test.pypi.org/simple/"
+default = true
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple/"
+
+
