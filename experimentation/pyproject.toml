@@ -11,7 +11,8 @@ dependencies = [
     "langgraph",
     "pyyaml",
     "pandas",
-    "datasets"
+    "datasets",
+    "aisuite"
 ]
 
 [[tool.uv.index]]

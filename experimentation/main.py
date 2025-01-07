@@ -44,8 +44,8 @@ def temporary_sys_path(path):
 # All .py modules need to have this line, but with the more general form of the import 
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))):
-    from experimentation.code.scripts.generate_inferences import generate_inferences
-    from experimentation.code.scripts.generate_metrics import generate_metrics
+    from experimentation.code.imports.generate_inferences import generate_inferences
+    from experimentation.code.imports.generate_metrics import generate_metrics
     
 
 def main():
@@ -85,7 +85,7 @@ def main():
 
     # Run generate_inferences.py
     print("--------------Running generate_inferences.py--------------")
-    num_skipped_instances = generate_inferences(dataset_name=dataset_name, 
+    num_skipped_instances, summary = generate_inferences(dataset_name=dataset_name, 
                                             number_of_instances=number_of_instances, 
                                             random_sampling=random_sampling)
 
@@ -98,7 +98,7 @@ def main():
 
     # Run generate_metrics.py
     print("------------Running generate_metrics.py----------------")
-    generate_metrics(num_skipped_instances=num_skipped_instances)
+    generate_metrics(num_skipped_instances=num_skipped_instances, summary=summary)
 
 if __name__ == "__main__":
     main()

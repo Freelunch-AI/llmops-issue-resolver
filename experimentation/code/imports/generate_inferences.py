@@ -249,7 +249,7 @@ def generate_inferences(dataset_name: str, number_of_instances: int, random_samp
         repo_name = get_repo_name(instance=instance)
 
         os.chdir(os.path.join("tmp", repo_name))
-        experiment_name, skipped_instance = run_ai()
+        experiment_name, skipped_instance, summary = run_ai()
         os.system(f"git add . && git commit -m 'AI solution run'")
         os.chdir("../../")
 
@@ -265,4 +265,4 @@ def generate_inferences(dataset_name: str, number_of_instances: int, random_samp
     shutil.rmtree("tmp")       
     print(skipped_instances)
     print("-----------------Finished generate_inferences.py>main---------------")
-    return skipped_instances
+    return skipped_instances, summary
