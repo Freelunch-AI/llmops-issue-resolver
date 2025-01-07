@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# Generates results for SWE-bench-Verified, 
-# given already generated results/subresults/inferences.jsonl file
+# Generates results given already generated results/subresults/inferences.jsonl file
 
 set -o errexit
 set -o nounset
@@ -17,17 +16,12 @@ main() {
 
     uv run python -m swebench.harness.run_evaluation \
     --dataset_name "${DATASET_NAME}" \
-    --predictions_path results/subresults/inference.jsonl \
+    --predictions_path results/subresults/inferences.jsonl \
     --max_workers 5 \
     --run_id summary
 
-    # move summary file name from ./summary.summary_verified.json to results/subresults/summary.json
-    mv summary.summary_verified.json results/subresults/summary.json
-
-    # move report file from logs/run_evaluation/validate-summary/summary/sympy__sympy-20590/report.json
-    # to results/subresults/report.json
-    mv logs/run_evaluation/validate-summary/summary/sympy__sympy-20590/report.json results/subresults/report.json
-    echo "----------------Finished generate_results.sh>main----------------------"
+    # move fie ending with .summary.json from . to results/subresults as summary.json
+    mv *.summary.json results/subresults/summary.json
 }
 
 main "$@"

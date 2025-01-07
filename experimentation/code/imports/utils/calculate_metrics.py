@@ -34,9 +34,10 @@ def temporary_sys_path(path):
 #     - Because it makes it cleanar for doing imports within modules that are very deep 
 #     and want to import from modules that are near surface of the package directory 
 #     tree
-# All .py modules need to have this line, but with the more general form of the import 
+# All .py modules need to have this line, but with the more general form of the import
 
-with temporary_sys_path(os.abs(os.join("../../../../", os.path.dirname(__file__)))):
+with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                                     '..', '..', '..', '..'))):
     from experimentation.code.imports.utils.schema_models import IntModel
 
 def calculate_percentage_resolved(resolved_instances: int, submitted_instances: int) \
@@ -56,9 +57,11 @@ def calculate_percentage_resolved(resolved_instances: int, submitted_instances: 
         IntModel(items=submitted_instances)
     except ValidationError as e:
         print(f"Validation error: {e}")
-        raise
+        raise e
+    
+    percentage_resolved = resolved_instances / submitted_instances
 
-    return
+    return percentage_resolved
 
 def calculate_kowinski_score(resolved_instances: int, submitted_instances: int, \
                              skipped_instances: int) -> float:
@@ -88,6 +91,9 @@ def calculate_kowinski_score(resolved_instances: int, submitted_instances: int, 
         IntModel(items=skipped_instances)
     except ValidationError as e:
         print(f"Validation error: {e}")
-        raise
+        raise e
+    
+    kowinski_score = (resolved_instances - submitted_instances) / \
+        (resolved_instances + submitted_instances + skipped_instances)
 
-    return
+    return kowinski_score
