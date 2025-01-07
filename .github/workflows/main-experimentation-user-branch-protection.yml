@@ -6,17 +6,17 @@ on:
       - opened
       - reopened
     branches:
-      - main-experimentation
+      - main-experimentation-*
 
 jobs:
   block-pr:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Exit if PR is not from a main-experimentation* branch
+      - name: Exit if PR is not from a experiment/* branch
         run: |
-          if [[ ! "${{ github.event.pull_request.head.ref }}" == main-experimentation* ]]; then
-            echo "This PR is not from a main-experimentation* branch."
+          if [[ ! "${{ github.event.pull_request.head.ref }}" == experiment/* ]]; then
+            echo "This PR is not from a experiment/* branch."
             exit 1
 
       - name: Checkout code
@@ -33,5 +33,5 @@ jobs:
       - name: Block PR if there are changes outside experimentation directory
         if: ${{ steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}} == "1" 
         run: |
-          echo "This PR is not allowed to be merged into the main-experimentation branch. It must only contain changes under the experimentation directory."
+          echo "This PR is not allowed to be merged into the main-experimentation-<userName> branch. It must only contain changes under the experimentation directory."
           exit 1
