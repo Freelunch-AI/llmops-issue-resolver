@@ -105,7 +105,7 @@ jobs:
       - name: Download merging metrics
         uses: actions/download-artifact@v3
         with:
-          name: merging-experimentation-metrics
+          name: merging-branch-metrics
           path: /tmp
 
       - name: Download requesting branch metrics
