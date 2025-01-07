@@ -18,6 +18,7 @@ jobs:
           if [[ ! "${{ github.event.pull_request.head.ref }}" == main-experimentation* ]]; then
             echo "This PR is not from a main-experimentation* branch."
             exit 1
+          fi
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,6 +30,7 @@ jobs:
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=1" >> $GITHUB_ENV
           else
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=0" >> $GITHUB_ENV
+          fi
 
       - name: Block PR if there are changes outside experimentation directory
         if: ${{ steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}} == "1" 
