@@ -80,6 +80,7 @@ jobs:
         run: |
           git checkout ${{ github.event.pull_request.head.ref }}
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
+          yq eval '.kowinski_score = -2' -i results/metrics.yml
 
       - name: Store requesting branch eval results as artifact
         uses: actions/upload-artifact@v3
@@ -111,11 +112,13 @@ jobs:
           cd /tmp
           merging_score=$(grep 'kowinski_score' tmp/merging-branch-metrics.yml | awk '{print $2}')
           requesting_score=$(grep 'kowinski_score' tmp/requesting-branch-metrics.yml | awk '{print $2}')
+          echo "merging score = $merging_score \nrequesting score = $requesting_score"
           if (( $(echo "$requesting_score < $merging_score" | bc -l) )); then
             echo "PR_ALLOWED=0" >> $GITHUB_ENV
           else
             echo "PR_ALLOWED=1" >> $GITHUB_ENV
           fi
+
 
       - name: Block PR if requesting branch evals are worse than main-experimentation branch evals
         run: |
