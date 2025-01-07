@@ -6,7 +6,6 @@ on:
       - opened
       - reopened
     branches:
-      - main-experimentation
       - main-experimentation*
 
 permissions:
@@ -50,7 +49,7 @@ jobs:
         run: |
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
 
-      - name: Store main-experimentation eval results as artifact
+      - name: Store merging-experimentation eval results as artifact
         uses: actions/upload-artifact@v3
         with:
           name: merging-branch-metrics
@@ -91,7 +90,7 @@ jobs:
         run: |
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
 
-      - name: Store main-experimentation eval results as artifact
+      - name: Store requesting-experimentation eval results as artifact
         uses: actions/upload-artifact@v3
         with:
           name: requesting-branch-metrics
@@ -106,7 +105,7 @@ jobs:
       - name: Download merging metrics
         uses: actions/download-artifact@v3
         with:
-          name: main-experimentation-metrics
+          name: merging-experimentation-metrics
           path: /tmp
 
       - name: Download requesting branch metrics
@@ -129,7 +128,7 @@ jobs:
           fi
 
 
-      - name: Block PR if requesting branch evals are worse than main-experimentation branch evals
+      - name: Block PR if requesting branch evals are worse than merging-experimentation branch evals
         run: |
           if ${{ steps.compare-eval-results.outputs.PR_ALLOWED == '0' }}; then
             echo "Blocking PR due to worse eval results"
