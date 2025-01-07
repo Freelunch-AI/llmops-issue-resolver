@@ -38,6 +38,7 @@ jobs:
         run: |
           uv venv
           source .venv/bin/activate
+          pwd
           uv sync
     
       - name: Run eval of the AI solution on the merging branch
