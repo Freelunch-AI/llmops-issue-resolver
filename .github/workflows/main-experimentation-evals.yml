@@ -6,7 +6,6 @@ on:
       - opened
       - reopened
     branches:
-      - main-experimentation
       - main-experimentation*
 
 permissions:
@@ -50,7 +49,7 @@ jobs:
         run: |
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
 
-      - name: Store main-experimentation eval results as artifact
+      - name: Store merging-experimentation eval results as artifact
         uses: actions/upload-artifact@v3
         with:
           name: merging-branch-metrics
@@ -91,7 +90,7 @@ jobs:
         run: |
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
 
-      - name: Store main-experimentation eval results as artifact
+      - name: Store requesting-experimentation eval results as artifact
         uses: actions/upload-artifact@v3
         with:
           name: requesting-branch-metrics
@@ -106,22 +105,27 @@ jobs:
       - name: Download merging metrics
         uses: actions/download-artifact@v3
         with:
-          name: main-experimentation-metrics
-          path: /tmp
+          name: merging-branch-metrics
+          path: tmp/merging-metrics
 
       - name: Download requesting branch metrics
         uses: actions/download-artifact@v3
         with:
           name: requesting-branch-metrics
-          path: /tmp
+          path: tmp/requesting-metrics
+
+      - name: List contents of tmp directory
+        run: ls -la tmp
+
+      - name: Install cli tools
+        run: sudo apt-get update && sudo apt-get install -y bc
 
       - name: Compare eval results
         id: compare-eval-results
         run: |
-          cd /tmp
-          merging_score=$(grep 'kowinski_score' tmp/merging-branch-metrics.yml | awk '{print $2}')
-          requesting_score=$(grep 'kowinski_score' tmp/requesting-branch-metrics.yml | awk '{print $2}')
-          echo "merging score = $merging_score \nrequesting score = $requesting_score"
+          merging_score=$(grep 'kowinski_score' tmp/merging-metrics/metrics.yml | awk '{print $2}')
+          requesting_score=$(grep 'kowinski_score' tmp/requesting-metrics/metrics.yml | awk '{print $2}')
+          echo -e "merging score = $merging_score\nrequesting score = $requesting_score"
           if (( $(echo "$requesting_score < $merging_score" | bc -l) )); then
             echo "PR_ALLOWED=0" >> $GITHUB_ENV
           else
@@ -129,9 +133,9 @@ jobs:
           fi
 
 
-      - name: Block PR if requesting branch evals are worse than main-experimentation branch evals
+      - name: Block PR if requesting branch evals are worse than merging-experimentation branch evals
         run: |
-          if ${{ steps.compare-eval-results.outputs.PR_ALLOWED == '0' }}; then
+          if ["${{ steps.compare-eval-results.outputs.PR_ALLOWED}}" == "0"]; then
             echo "Blocking PR due to worse eval results"
             exit 1
           else
