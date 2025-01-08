@@ -28,7 +28,7 @@ jobs:
         run: |
           if git diff --name-only "${{ github.event.pull_request.base.sha }}" \
           "${{ github.event.pull_request.head.sha }}" \
-          | grep -qv '^experimentation/'; then
+          | grep -q '^experimentation/'; then
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=1" >> $GITHUB_ENV
           else
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=0" >> $GITHUB_ENV
