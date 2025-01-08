@@ -88,6 +88,7 @@ jobs:
       - name: Run eval of the AI solution on the requesting branch
         working-directory: repo/experimentation
         run: |
+          export GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           uv run main.py --dataset-name ${{ vars.DATASET_NAME }} --number-of-instances ${{ vars.NUMBER_OF_INSTANCES}} --random-sampling ${{ vars.RANDOM_SAMPLING }}
 
       - name: Store requesting-experimentation eval results as artifact
