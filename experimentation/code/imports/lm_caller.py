@@ -56,8 +56,10 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
 @lm_caller_extensor(cost_threshold=3)
 class LmCaller:
     
-    def call_lm (self, output_format: Any, model_name: str, 
-                messages: List[MessageModel], temperature: float = 0.75, 
+    def call_lm (self, model_name: str, 
+                messages: List[MessageModel], output_format: 
+                Optional[Any] = StringModel, 
+                temperature: float = 0.75, 
                 mode: Optional[str] = None) -> LmChatResponse:
         
         try:

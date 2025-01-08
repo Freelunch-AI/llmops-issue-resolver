@@ -42,8 +42,8 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):    
     from experimentation.code.imports.lm_caller import LmCaller
     from experimentation.code.imports.schemas.schema_models import (
-        ExampleOutputModel,
         MessageModel,
+        StringModel,
     )
 
 
@@ -64,7 +64,7 @@ def run_ai() -> Tuple[str, bool, str]:
         MessageModel(role="user", content="Explain the concept of recursion to me.")
     ]
 
-    completion, response = lm_caller.call_lm(output_format=ExampleOutputModel, 
+    completion, response = lm_caller.call_lm(output_format=StringModel, 
                                                 model_name="gemini/gemini-pro",
                                                 messages=messages)
 

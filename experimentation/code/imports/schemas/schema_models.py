@@ -70,7 +70,7 @@ class LmChatResponse(BaseModel):
     choices: List[LmChatResponse_Choice]
     usage: LmChatResponse_Usage
 
-class ExampleOutputModel(BaseModel):
+class CompletionReasoningModel(BaseModel):
     reasoning_traces: str
     final_answer: str
 
