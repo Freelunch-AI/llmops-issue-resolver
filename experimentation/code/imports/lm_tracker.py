@@ -3,6 +3,7 @@ import sys
 import time
 from contextlib import contextmanager
 from functools import wraps
+from typing import Optional
 
 from pydantic import ValidationError
 
@@ -40,8 +41,12 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
+    from experimentation.code.imports.schemas.schema_models import (
+        FloatModel,
+        LmChatResponse,
+        LmSummary,
+    )
     from experimentation.code.imports.utils.exceptions import CostThresholdExceededError
-    from experimentation.code.imports.utils.schema_models import FloatModel
 
 # Usage example:
 # tracker = TrackLLMCalls()
@@ -51,10 +56,25 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
 # result = some_llm_function(...)
 # print(tracker.get_history_and_state())
 
-class LmTracker:
 
-    cost_mapping_1M_tokens = {
-        "openai": {
+def lm_caller_extensor(cost_threshold: float = 3) -> type:
+
+    try:
+        FloatModel(items=cost_threshold)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise
+
+    def decorator(cls):
+
+        original_call_lm = cls.call_lm
+
+        cost_mapping_1M_tokens = {
+           "gemini/gemini-pro": {
+                "input_tokens": 0.075,
+                "cached_input_tokens": None,
+                "output_tokens": 0.3
+           },
             "gpt-4o-mini": {
                 "batch": {
                     "input_tokens": 0.075,
@@ -63,64 +83,82 @@ class LmTracker:
                 }
             }
         }
-    }
 
-    def __init__(self, cost_threshold: float = 3):
+        def new_init(self) -> None:
+            self.history = []
+            self.state = {
+                'number_of_calls_made': 0,
+                'total_cost': 0.0,
+                'total_time': 0.0,
+                'average_cost_per_call': 0.0,
+                'average_time_per_call': 0.0
+            }
 
-        try:
-            FloatModel(items=cost_threshold)
-        except ValidationError as e:
-            print(f"Validation error: {e}")
-            raise
+            self.cost_threshold = cost_threshold
 
-        self.history = []
-        self.state = {
-            'number_of_calls_made': 0,
-            'total_cost': 0.0,
-            'total_time': 0.0,
-            'average_cost_per_call': 0.0,
-            'average_time_per_call': 0.0
-        }
-        self.cost_threshold = cost_threshold
+        @classmethod
+        def calculate_cost(cls, result: LmChatResponse, model_name: str, 
+                           mode: Optional[str]) -> float:
+            if not hasattr(result[1].usage, 'prompt_token_details') or \
+            not hasattr(result[1].usage.prompt_token_details, 'cached_tokens'):
+                if mode == None:
+                    cost = (
+                        cls.cost_mapping_1M_tokens[model_name]
+                        ['input_tokens'] * result[1].usage.prompt_tokens + 
+                        cls.cost_mapping_1M_tokens[model_name]
+                        ['output_tokens'] * result[1].usage.completion_tokens
+                    ) / 1e6
+                else:
+                    cost = (
+                        cls.cost_mapping_1M_tokens[model_name][mode]
+                        ['input_tokens'] * result[1].usage.prompt_tokens + 
+                        cls.cost_mapping_1M_tokens[model_name][mode]
+                        ['output_tokens'] * result[1].usage.completion_tokens
+                    ) / 1e6
+            else:
+                if mode == None:
+                    cost = (
+                        cls.cost_mapping_1M_tokens[model_name]
+                        ['input_tokens'] * (result[1].usage.prompt_tokens - 
+                                        result[1].usage.prompt_token_details.
+                                        cached_tokens) +
+                        cls.cost_mapping_1M_tokens[model_name]
+                        ['output_tokens'] * result[1].usage.completion_tokens +
+                        cls.cost_mapping_1M_tokens[model_name]
+                        ['cached_input_tokens'] * result[1].usage.
+                        prompt_token_details.cached_tokens
+                    ) / 1e6
+                else:
+                    cost = (
+                        cls.cost_mapping_1M_tokens[model_name][mode]
+                        ['input_tokens'] * (result[1].usage.prompt_tokens - 
+                                        result[1].usage.prompt_token_details.
+                                        cached_tokens) +
+                        cls.cost_mapping_1M_tokens[model_name][mode]
+                        ['output_tokens'] * result[1].usage.completion_tokens +
+                        cls.cost_mapping_1M_tokens[model_name][mode]
+                        ['cached_input_tokens'] * result[1].usage.
+                        prompt_token_details.cached_tokens
+                    ) / 1e6
 
-    def call_llm(self, cls, func):
+            return cost
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
+        def new_call_lm(self, *args: list, **kwargs: dict) -> LmChatResponse:
             start_time = time.time()
-            result = func(*args, **kwargs)
+            result = original_call_lm(self, *args, **kwargs)
             end_time = time.time()
 
-            provider = args[1]
-            model_name = args[2]
-            mode = args[3]
+            model_name = kwargs.get('model_name')
+            mode = kwargs.get('mode')
 
-            if result["usage"]["prompt_token_details"]["cached_tokens"] is None:
-                cost = (
-                    cls.cost_mapping_1M_tokens[provider][model_name][mode]
-                    ["input_tokens"] * result["usage"]["prompt_tokens"] + 
-                    cls.cost_mapping_1M_tokens[provider][model_name][mode]
-                    ["output_tokens"] * result["usage"]["completion_tokens"]
-                ) / 1e6
-            else:
-                cost = (
-                    cls.cost_mapping_1M_tokens[provider][model_name][mode]
-                    ["input_tokens"] * (result["usage"]["prompt_tokens"] - 
-                                        result["usage"]["prompt_token_details"]
-                                        ["cached_tokens"]) +
-                    cls.cost_mapping_1M_tokens[provider][model_name][mode]
-                    ["output_tokens"] * result["usage"]["completion_tokens"] +
-                    cls.cost_mapping_1M_tokens[provider][model_name][mode]
-                    ["cached_input_tokens"] * result["usage"]["prompt_token_details"]
-                    ["cached_tokens"]
-                ) / 1e6
+            cost = self.__class__.calculate_cost(result=result, 
+            model_name=model_name, mode=mode)
             
             duration = end_time - start_time
 
             self.history.append({
-                'args': args,
-                'kwargs': kwargs,
-                'result': result,
+                'mode': mode,
+                'result': result[1].dict(),
                 'cost': cost,
                 'duration': duration
             })
@@ -139,11 +177,20 @@ class LmTracker:
                     exceeded the threshold of {self.cost_threshold}")
 
             return result
+            
+        def get_summary(self):
+            return LmSummary.parse_obj({
+                'history': self.history,
+                'state': self.state
+            })
+            
+        cls.__init__ = new_init
 
-        return wrapper
+        cls.cost_mapping_1M_tokens = cost_mapping_1M_tokens
+        cls.calculate_cost = calculate_cost
+        cls.call_lm = new_call_lm
+        cls.get_summary = get_summary
 
-    def get_summary(self):
-        return {
-            'history': self.history,
-            'state': self.state
-        }
+        return cls
+    
+    return decorator

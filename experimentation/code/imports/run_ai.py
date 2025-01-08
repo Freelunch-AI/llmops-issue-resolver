@@ -40,13 +40,14 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..'))):    
-    from experimentation.code.imports.lm_tracker import LmTracker
-    from experimentation.code.imports.utils.schema_models import (
+    from experimentation.code.imports.lm_caller import LmCaller
+    from experimentation.code.imports.schemas.schema_models import (
+        ExampleOutputModel,
         MessageModel,
     )
 
 
-def run_ai() -> Tuple[str, bool]:
+def run_ai() -> Tuple[str, bool, str]:
     """
     Runs the AI solution at ./repo that first reads issue.md, 
     tips.txt and fail_to_pass.txt; then
@@ -56,18 +57,16 @@ def run_ai() -> Tuple[str, bool]:
         experiment_name (str): The name of the experiment.
     """
 
-    lm_tracker = LmTracker(cost_treshold=3)
+    lm_caller = LmCaller()
 
     messages = [
         MessageModel(role="system", content="You are a Software Engineer"),
         MessageModel(role="user", content="Explain the concept of recursion to me.")
     ]
 
-    # <Uncomment> Uncomment the following lines to make llm calls
-    # completion, response = lm_tracker.call_lm(output_format=ExampleOutputModel, 
-    #                                 provider="openai", 
-    #                                 model_name="gpt-4o-mini",
-    #                                 messages=messages)
+    completion, response = lm_caller.call_lm(output_format=ExampleOutputModel, 
+                                                model_name="gemini/gemini-pro",
+                                                messages=messages)
 
     # placeholder: ai solution goes here
     if os.path.exists("toy.txt"):
@@ -89,6 +88,6 @@ def run_ai() -> Tuple[str, bool]:
 
     experiment_name = "placeholder__placeholder__placeholder__placeholder__placeholder"
     
-    lm_summary = lm_tracker.get_summary()
+    lm_summary = lm_caller.get_summary()
 
     return (experiment_name, skipped_instance, lm_summary)

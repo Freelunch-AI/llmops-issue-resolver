@@ -1,10 +1,11 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import List
+from typing import Any, List, Optional
 
-import aisuite
-from pydantic import BaseModel, ValidationError
+import litellm
+from dotenv import load_dotenv
+from pydantic import ValidationError
 
 
 @contextmanager
@@ -40,123 +41,100 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
-    from experimentation.code.imports.lm_tracker import LmTracker
-    from experimentation.code.imports.utils.schema_models import (
+
+    from experimentation.code.imports.lm_tracker import lm_caller_extensor
+    from experimentation.code.imports.schemas.schema_models import (
         FloatModel,
         LmChatResponse,
         MessageModel,
         StringModel,
-        ValidateBaseModel,
-        ValidateMessageModel,
+        StringOptionalModel,
+        ValidateMessagesModel,
+        ValidatePydanticModel,
     )
 
-lm_tracker = LmTracker(cost_treshold=3)
+@lm_caller_extensor(cost_threshold=3)
+class LmCaller:
+    
+    def call_lm (self, output_format: Any, model_name: str, 
+                messages: List[MessageModel], temperature: float = 0.75, 
+                mode: Optional[str] = None) -> LmChatResponse:
+        
+        try:
+            ValidatePydanticModel(output_format)
+            StringModel(items=model_name)
+            FloatModel(items=temperature)
+            ValidateMessagesModel(messages)
+            if mode:
+                StringOptionalModel(items=mode)
+        except ValidationError as e:
+            print(f"Validation error: {e}")
+            raise
 
-@lm_tracker.call_llm()
-def call_lm(output_format: BaseModel, 
-             provider: str, model_name: str, messages: List[MessageModel], 
-             temperature: float = 0.75, mode: str = None, ) -> LmChatResponse:
-    # Placeholder for the actual call to the LLM provider
-    # Return a response object compatible with OpenAI
+        dict_messages = [message.dict() for message in messages]
 
-    try:
-        ValidateBaseModel(output_format)
-        StringModel(provider)
-        StringModel(model_name)
-        FloatModel(temperature)
-        ValidateMessageModel(messages)
-        if mode:
-            StringModel(mode)
-    except ValidationError as e:
-        print(f"Validation error: {e}")
-        raise
+        # need to set api keys as environment variables
+        # example:
+        # export OPENAI_API_KEY="your-openai-api-key"
+        # export ANTHROPIC_API_KEY="your-anthropic-api-key"
+        # set environment variables based on .env file
+        load_dotenv()
 
-    # Call aisuite to get the response
+        # need to add support for setting output_format (Pydantic object) 
+        # as an input here
+        litellm_standard_chat_response = litellm.completion(
+            model=model_name,
+            messages=dict_messages,
+            temperature=temperature #optional
+        )
 
-    lm_client = aisuite.Client()
-    provider_model = [f"{provider}:{model_name}"]
-    dict_messages = [message.dict() for message in messages]
+        # LiteLLM OpenAI-compatible 
+        # OpenAI native response object has some more fields) 
+        # chat response json
+        # {
+        #     'choices': [
+        #         {
+        #         'finish_reason': str,     # String: 'stop'
+        #         'index': int,             # Integer: 0
+        #         'message': {              # Dictionary [str, str]
+        #             'role': str,            # String: 'assistant'
+        #             'content': str          # String: "default message"
+        #         }
+        #         }
+        #     ],
+        #     'created': str,               # String: None
+        #     'model': str,                 # String: None
+        #     'usage': {                    # Dictionary [str, int]
+        #         'prompt_tokens': int,       # Integer
+        #         'completion_tokens': int,   # Integer
+        #         'total_tokens': int         # Integer
+        #     }
+        # }
 
-    open_ai_standard_response = lm_client.chat.completions.create(
-        model=provider_model,
-        messages=dict_messages,
-        temperature=temperature
-    )
-
-    # Example OpenAI-compatible chat response object
-    # response = LmChatResponse(
-    #     id="chatcmpl-123456",
-    #     object="chat.completion",
-    #     created=1728933352,
-    #     model="gpt-4o-2024-08-06",
-    #     choices=[
-    #         {
-    #             "index": 0,
-    #             "message": {
-    #                 "role": "assistant",
-    #                 "content": "Hi there! How can I assist you today?",
-    #                 "refusal": None,
-    #                 "output_format": "text"  # I added this line. 
-    #                 If no structured outputs: 
-    #                 # format="text", else 
-    #                 format="name_of_pydantic_model_passed_in_the_req"
-    #             },
-    #             "logprobs": None,
-    #             "finish_reason": "stop"
-    #         }
-    #     ],
-    #     usage={
-    #         "prompt_tokens": 19,
-    #         "completion_tokens": 10,
-    #         "total_tokens": 29,
-    #         "prompt_tokens_details": {
-    #             "cached_tokens": 0
-    #         },
-    #         "completion_tokens_details": {
-    #             "reasoning_tokens": 0,
-    #             "accepted_prediction_tokens": 0,
-    #             "rejected_prediction_tokens": 0
-    #         }
-    #     },
-    #     system_fingerprint="fp_6b68a8204b"
-    # )
-
-    my_response = LmChatResponse(
-        id=open_ai_standard_response.id,
-        object=open_ai_standard_response.object,
-        created=open_ai_standard_response.created,
-        model=open_ai_standard_response.model,
-        choices=[
-            {
-                "index": open_ai_standard_response.choices[0].index,
-                "message": {
-                    "role": open_ai_standard_response.choices[0].message.role,
-                    "content": open_ai_standard_response.choices[0].message.content,
-                    "refusal": open_ai_standard_response.choices[0].message.refusal,
-                    "output_format": output_format
-                },
-                "logprobs": open_ai_standard_response.choices[0].logprobs,
-                "finish_reason": open_ai_standard_response.choices[0].finish_reason
-            }
-        ],
-        usage={
-            "prompt_tokens": open_ai_standard_response.usage.prompt_tokens,
-            "completion_tokens": open_ai_standard_response.usage.completion_tokens,
-            "total_tokens": open_ai_standard_response.usage.total_tokens,
-            "prompt_tokens_details": {
-                "cached_tokens": open_ai_standard_response.usage.prompt_tokens_details.
-                cached_tokens
+        my_response = LmChatResponse(
+            created=litellm_standard_chat_response.created,
+            model=litellm_standard_chat_response.model,
+            choices=[
+                {
+                    "index": litellm_standard_chat_response.choices[0].index,
+                    "message": {
+                        "role": litellm_standard_chat_response.choices[0].message.role,
+                        "content": litellm_standard_chat_response.choices[0].
+                        message.content,
+                        "output_format": output_format
+                    },
+                    "finish_reason": litellm_standard_chat_response.choices[0].
+                    finish_reason
+                }
+            ],
+            usage={
+                "prompt_tokens": litellm_standard_chat_response.usage.prompt_tokens,
+                "completion_tokens": litellm_standard_chat_response.usage.
+                completion_tokens,
+                "total_tokens": litellm_standard_chat_response.usage.total_tokens,
             },
-            "completion_tokens_details": {
-                "reasoning_tokens": 
-                open_ai_standard_response.usage.completion_tokens_details.reasoning_tokens,
-                "accepted_prediction_tokens": 
-                open_ai_standard_response.usage.completion_tokens_details.accepted_prediction_tokens,
-                "rejected_prediction_tokens": 
-                open_ai_standard_response.usage.completion_tokens_details.rejected_prediction_tokens
-            }
-        },
-        system_fingerprint=open_ai_standard_response.system_fingerprint
-    )
+        )
 
-    return (my_response.choices[0].message.content, my_response)
+        print(my_response)
+
+        return (my_response.choices[0].message.content, my_response)
