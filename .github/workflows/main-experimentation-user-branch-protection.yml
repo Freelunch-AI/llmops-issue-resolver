@@ -33,7 +33,7 @@ jobs:
           fi
 
       - name: Block PR if there are changes outside experimentation directory
-        if: ${{steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}} == "1" 
         run: |
-          echo "This PR is not allowed to be merged into the main-experimentation-<userName> branch. It must only contain changes under the experimentation directory."
-          exit 1
+          if [["${{steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}}" == "1"]]; then
+            echo "This PR is not allowed to be merged into the main-experimentation-<userName> branch. It must only contain changes under the experimentation directory."
+            exit 1
