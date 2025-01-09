@@ -4,6 +4,7 @@ import json
 import os
 import sys
 from contextlib import contextmanager
+from typing import Dict
 
 import yaml
 from pydantic import ValidationError
@@ -43,17 +44,19 @@ def temporary_sys_path(path: str):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
-    from experimentation.code.imports.utils.calculate_metrics import (
-        calculate_kowinski_score,
-        calculate_percentage_resolved,
-    )
-    from experimentation.code.imports.utils.schema_models import (
+    from experimentation.code.imports.schemas.schema_models import (
         IntModel,
+        LmSummary,
         Metrics,
         RelevantSubResults,
         StringModel,
+        ValidateLmSummary,
         ValidateMetrics,
         ValidateRelevantSubResults,
+    )
+    from experimentation.code.imports.utils.calculate_metrics import (
+        calculate_kowinski_score,
+        calculate_percentage_resolved,
     )
 
 
@@ -157,7 +160,7 @@ def build_metrics(relevant_subresults: RelevantSubResults) -> Metrics:
     """
 
     try:
-        ValidateRelevantSubResults(relevant_subresults=relevant_subresults)
+        ValidateRelevantSubResults(relevant_subresults)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise e
@@ -180,7 +183,8 @@ def build_metrics(relevant_subresults: RelevantSubResults) -> Metrics:
 
     return metrics
 
-def write_metrics(metrics: Metrics, path: str ="results/metrics.yml") -> None:
+def write_metrics(metrics: Metrics, lm_summary: LmSummary, 
+                  path: str ="results/metrics.yml") -> None:
     """
     Writes the given metrics to a specified file in YAML format.
 
@@ -188,29 +192,53 @@ def write_metrics(metrics: Metrics, path: str ="results/metrics.yml") -> None:
         metrics (Metrics): data structure containing the calculated metrics.
         path (str, optional): The file path where the metrics will be saved. 
         Defaults to "results/metrics.yml".
+        summary (Summary): data structure containing summary data of llm calls.
 
     Returns:
         None
     """
 
     try:
-       ValidateMetrics(metrics=metrics)
+       ValidateMetrics(metrics)
        StringModel(items=path)
+       ValidateLmSummary(lm_summary)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise e
 
     with open(path, "w") as file:
         yaml.dump(metrics.model_dump(), file)
+    
+    with open(path, "a") as file:
+        yaml.dump(lm_summary.model_dump(), file)
+
+    with open(path, 'r+') as file:
+        data_str = file.read()
+        # replace !! for " and replace ', '' or "" for "
+        data_str = data_str.replace("!!", "\"").replace("''", "\""). \
+        replace('""', "\"").replace("'", "\"")
+
+        # Move the file pointer to the beginning of the file
+        file.seek(0)
+        file.write(data_str)
+        file.truncate()
 
     print(f"Metrics written to {path}")
 
-def generate_metrics(num_skipped_instances: int) -> None:
+def generate_metrics(num_skipped_instances: int, summary: LmSummary) -> None:
+    
+    try:
+       IntModel(items=num_skipped_instances)
+       ValidateLmSummary(summary)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise e
+
     print("-----------------Started generate_metric.py>main---------------")
     relevant_subresults = get_relevant_subresults(
         num_skipped_instances=num_skipped_instances)
-    metrics = build_metrics(relevant_subresults)
-    write_metrics(metrics)
+    built_metrics = build_metrics(relevant_subresults)
+    write_metrics(built_metrics, summary)
     print("-----------------Finished generate_metric.py>main---------------")
 
     return

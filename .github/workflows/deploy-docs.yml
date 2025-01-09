@@ -17,14 +17,33 @@ jobs:
       uses: astral-sh/setup-uv@v4    
 
     - name: Set up Python
-      run: uv python install
+      run: |
+        export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+          
+        uv python install
 
     - name: Install MkDocs and Material theme
       run: |
+        export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
         uv venv
         uv add mkdocs-material
 
     - name: Deploy docs
       uses: mhausenblas/mkdocs-deploy-gh-pages@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

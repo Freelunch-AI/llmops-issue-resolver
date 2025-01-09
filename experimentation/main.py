@@ -9,6 +9,7 @@ import argparse
 import os
 import subprocess
 import sys
+import time
 from contextlib import contextmanager
 
 
@@ -44,8 +45,34 @@ def temporary_sys_path(path):
 # All .py modules need to have this line, but with the more general form of the import 
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))):
-    from experimentation.code.scripts.generate_inferences import generate_inferences
-    from experimentation.code.scripts.generate_metrics import generate_metrics
+    from experimentation.code.imports.generate_inferences import generate_inferences
+    from experimentation.code.imports.generate_metrics import generate_metrics
+
+# to deal with apt lock problems
+def is_apt_get_running():
+    result = subprocess.run(['pgrep', 'apt-get'], stdout=subprocess.PIPE)
+    return result.returncode == 0
+
+# to deal with apt lock problems
+def run_apt_script(script_path: str):
+    max_retries = 5
+    retry_delay = 10  # seconds
+
+    for _ in range(max_retries):
+        if not is_apt_get_running():
+            try:
+                subprocess.run(['bash', '-c', f'source {script_path}'], 
+                                check=True)
+                print("Apt script executed successfully.")
+                return
+            except subprocess.CalledProcessError as e:
+                print(f"Error executing setup script: {e}")
+                return
+        else:
+            print(f"apt-get is running. Retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+
+    print("Max retries reached. Could not execute setup script due to apt-get lock.")
     
 
 def main():
@@ -74,18 +101,22 @@ def main():
     print("---------------Sourcing setup_docker.sh---------------")
     setup_docker_script = os.path.join(script_dir, 'code', 'scripts', 
                                 'setup_docker.sh')
-    subprocess.run(['sudo', '-E', 'bash', '-c', \
-                    f'source {setup_docker_script}'], check=True)
+    run_apt_script(setup_docker_script)
 
     # Source setup_swe_bench.sh
     print("---------------Sourcing setup_swe_bench.sh---------------")
-    setup_swe_script_script = os.path.join(script_dir, 'code', 'scripts', 
+    setup_swe_script = os.path.join(script_dir, 'code', 'scripts', 
                                 'setup_swe_bench.sh')
-    subprocess.run(['bash', '-c', f'source {setup_swe_script_script}'], check=True)
+    subprocess.run(['bash', '-c', f'source {setup_swe_script}'], check=True)
+
+    # install litellm pythin package (dont know why but something seems 
+    # to be uninstallling litellm before this)
+    print("---------------Installing litellm python package---------------")
+    subprocess.run(['uv', 'add', 'litellm'], check=True)
 
     # Run generate_inferences.py
     print("--------------Running generate_inferences.py--------------")
-    num_skipped_instances = generate_inferences(dataset_name=dataset_name, 
+    num_skipped_instances, summary = generate_inferences(dataset_name=dataset_name, 
                                             number_of_instances=number_of_instances, 
                                             random_sampling=random_sampling)
 
@@ -98,7 +129,7 @@ def main():
 
     # Run generate_metrics.py
     print("------------Running generate_metrics.py----------------")
-    generate_metrics(num_skipped_instances=num_skipped_instances)
+    generate_metrics(num_skipped_instances=num_skipped_instances, summary=summary)
 
 if __name__ == "__main__":
     main()

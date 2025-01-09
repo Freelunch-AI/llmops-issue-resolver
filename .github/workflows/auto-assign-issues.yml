@@ -14,6 +14,6 @@ jobs:
       - name: Auto-assign issue
         uses: pozil/auto-assign-issue@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          assignees: ${{ github.event.label.name == 'bug' && 'BrunoScaglione' || github.event.label.name == 'enhancement' && 'lbVictor' }}
+          repo-token: ${{secrets.GITHUB_TOKEN}}
+          assignees: ${{github.event.label.name == 'bug' && 'BrunoScaglione' || github.event.label.name == 'enhancement' && 'lbVictor'}}
           numOfAssignee: 1
