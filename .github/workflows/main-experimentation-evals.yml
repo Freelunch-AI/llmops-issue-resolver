@@ -136,7 +136,7 @@ jobs:
 
       - name: Block PR if requesting branch evals are worse than merging-experimentation branch evals
         run: |
-          if [["${{steps.compare-eval-results.outputs.PR_ALLOWED}}" == "0"]]; then
+          if [[ "${{steps.compare-eval-results.outputs.PR_ALLOWED}}" == "0" ]]; then
             echo "Blocking PR due to worse eval results"
             exit 1
           else
