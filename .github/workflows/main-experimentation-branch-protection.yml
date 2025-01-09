@@ -15,7 +15,16 @@ jobs:
 
       - name: Exit if PR is not from a main-experimentation* branch
         run: |
-          if [[ ! "${{ github.event.pull_request.head.ref }}" == main-experimentation* ]]; then
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+          
+          if [[ ! "${{github.event.pull_request.head.ref}}" == main-experimentation* ]]; then
             echo "This PR is not from a main-experimentation* branch."
             exit 1
           fi
@@ -26,14 +35,38 @@ jobs:
       - name: Check for changes in experimentation directory
         id: check-changes
         run: |
-          if [ $(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" | grep -qv '^experimentation/') ]; then
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          if git diff --name-only "${{github.event.pull_request.base.sha}}" \
+          "${{github.event.pull_request.head.sha}}" \
+          | grep -q '^experimentation/'; then
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=1" >> $GITHUB_ENV
           else
             echo "CHANGES_OUTSIDE_EXPERIMENTATION=0" >> $GITHUB_ENV
           fi
 
       - name: Block PR if there are changes outside experimentation directory
-        if: ${{ steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}} == "1" 
+        env: 
+          CHANGES_OUTSIDE_EXPERIMENTATION: ${{steps.check-changes.outputs.CHANGES_OUTSIDE_EXPERIMENTATION}}
         run: |
-          echo "This PR is not allowed to be merged into the main-experimentation branch. It must only contain changes under the experimentation directory."
-          exit 1
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          if [[ $CHANGES_OUTSIDE_EXPERIMENTATION == "1" ]]; then
+            echo "This PR is not allowed to be merged into the main-experimentation branch. \
+            It must only contain changes under the experimentation directory."
+            exit 1
+          fi

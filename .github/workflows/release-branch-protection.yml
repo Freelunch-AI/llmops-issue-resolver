@@ -11,7 +11,7 @@ on:
 jobs:
   block-pr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.head.ref != 'main' }}
+    if: ${{github.event.pull_request.head.ref != 'main'}}
 
     steps:
       - name: Block PR
@@ -20,7 +20,7 @@ jobs:
           exit 1
   bump-main-version:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.head.ref == 'main' }}
+    if: ${{github.event.pull_request.head.ref == 'main'}}
     permissions:
       contents: write
       pull-requests: write
@@ -32,6 +32,15 @@ jobs:
       - name: Get current version from release branch
         id: get-release-version
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           git fetch origin release:release
           git checkout release
           RELEASE_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
@@ -41,6 +50,15 @@ jobs:
       - name: Get version from main branch
         id: get-main-version
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           git fetch origin main:main
           git checkout main
           MAIN_VERSION=$(grep '^version =' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
@@ -49,6 +67,15 @@ jobs:
       - name: Compare versions
         id: compare-versions
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           if [ "$MAIN_VERSION" == "$RELEASE_VERSION" ] || [ "$(printf '%s\n' "$MAIN_VERSION" "$RELEASE_VERSION" | sort -V | head -n1)" = "$MAIN_VERSION" ]; then
             echo "Main branch version ($MAIN_VERSION) is not higher than release branch version ($RELEASE_VERSION). Pull request is not allowed"
             echo "PR_ALLOWED=0" >> $GITHUB_OUTPUT
@@ -59,8 +86,17 @@ jobs:
 
       - name: Bump main version to be one higher than release version
         id: bump-version
-        if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
+        if: ${{steps.compare-versions.outputs.PR_ALLOWED == '0'}}
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           export RELEASE_VERSION_PLUS_ONE=$(echo $RELEASE_VERSION | awk -F. -v OFS=. '{$NF++; print}')
           sed -i "s/version = \"$MAIN_VERSION\"/version = \"$RELEASE_VERSION_PLUS_ONE\"/" pyproject.toml
           echo "MAIN_VERSION=$MAIN_VERSION" >> $GITHUB_OUTPUT
@@ -69,27 +105,37 @@ jobs:
       - name: Stash changes, create patch branch, commit the changes to it, push & make a PR
         uses: peter-evans/create-pull-request@v7
         env:
-          REPOSITORY_NAME: ${{ github.repository }}
-          COMMIT_MESSAGE: Bumping main version to one above release branch version (because it was equal or lower), bumping from ${{ steps.bump-version.outputs.MAIN_VERSION }} to ${{ steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
-          PREVIOUS_PR_TITLE: ${{ github.event.pull_request.title }}
-          PREVIOUS_PR_BODY: ${{ github.event.pull_request.body }}
-          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY_NAME: ${{github.repository}}
+          COMMIT_MESSAGE: Bumping main version to one above release branch version (because it was equal or lower), bumping from ${{steps.bump-version.outputs.MAIN_VERSION}} to ${{steps.bump-version.outputs.RELEASE_VERSION_PLUS_ONE}}
+          PREVIOUS_PR_TITLE: ${{github.event.pull_request.title}}
+          PREVIOUS_PR_BODY: ${{github.event.pull_request.body}}
+          PULL_REQUEST_NUMBER: ${{github.event.pull_request.number}}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: ${{ env.COMMIT_MESSAGE }}
+          token: ${{secrets.GITHUB_TOKEN}}
+          commit-message: ${{env.COMMIT_MESSAGE}}
           author: github-actions <ceo@freelunch.com>
-          title: "[PR#${{ env.PULL_REQUEST_NUMBER  }} Version Bumped] ${{ env.PREVIOUS_PR_TITLE }}"
-          body: "Check PR#${{ env.PULL_REQUEST_NUMBER  }} in closed PRs to see the commits that were made and the passed checks"   
+          title: "[PR#${{env.PULL_REQUEST_NUMBER}} Version Bumped] ${{env.PREVIOUS_PR_TITLE}}"
+          body: "Check PR#${{env.PULL_REQUEST_NUMBER}} in closed PRs to see the commits that were made and the passed checks"   
           branch: patch/github-actions-bot/version-bumping
           sign-commits: true
       
       # github cli comes pre-installed in all Github-hosted runners
       - name: Close previous PR
-        if: ${{ steps.compare-versions.outputs.PR_ALLOWED == '0' }}
+        if: ${{steps.compare-versions.outputs.PR_ALLOWED=='0'}}
         env:
-          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" $PULL_REQUEST_NUMBER
+          PULL_REQUEST_NUMBER: ${{github.event.pull_request.number}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          gh pr close --comment "Auto-closing pull request -> a version bumped pull request was made on top of your changes" $PULL_REQUEST_NUMBER
     
 
 

@@ -47,7 +47,7 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
     from experimentation.code.imports.run_ai import run_ai
-    from experimentation.code.imports.utils.schema_models import (
+    from experimentation.code.imports.schemas.schema_models import (
         BoolModel,
         IntModel,
         PandasSeriesModel,
@@ -144,7 +144,6 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> None:
     repo_path = instance['repo']
     repo_name = repo_path.split("/")[1]
 
-    os.makedirs("tmp", exist_ok=True)
     os.chdir("tmp")
 
     os.system(f"git clone https://github.com/{repo_path}.git")
@@ -242,6 +241,10 @@ def generate_inferences(dataset_name: str, number_of_instances: int, random_samp
         else df.head(number_of_instances)
 
     skipped_instances = 0
+    # if tmp directory exists, delete contents of it, else create the tmp directory
+    if os.path.exists("tmp"):
+        shutil.rmtree("tmp")
+    os.makedirs("tmp")
     for _, instance in df_sampled.iterrows():
         # Find the instance by instance_id 
 
@@ -249,7 +252,7 @@ def generate_inferences(dataset_name: str, number_of_instances: int, random_samp
         repo_name = get_repo_name(instance=instance)
 
         os.chdir(os.path.join("tmp", repo_name))
-        experiment_name, skipped_instance = run_ai()
+        experiment_name, skipped_instance, summary = run_ai()
         os.system(f"git add . && git commit -m 'AI solution run'")
         os.chdir("../../")
 
@@ -265,4 +268,4 @@ def generate_inferences(dataset_name: str, number_of_instances: int, random_samp
     shutil.rmtree("tmp")       
     print(skipped_instances)
     print("-----------------Finished generate_inferences.py>main---------------")
-    return skipped_instances
+    return skipped_instances, summary

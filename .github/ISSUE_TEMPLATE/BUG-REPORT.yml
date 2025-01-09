@@ -11,6 +11,15 @@ body:
         Thanks for taking the time to fill out this bug report!
 
   - type: textarea
+    id: bug-location
+    attributes:
+      label: Bug Location
+      description: Describe where you encountered the bug.
+      placeholder: "Placeholder"
+    validations:
+      required: true
+
+  - type: textarea
     id: bug-description
     attributes:
       label: Bug Description

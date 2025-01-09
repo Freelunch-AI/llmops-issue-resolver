@@ -1,0 +1,2 @@
+class CostThresholdExceededError(Exception):
+    pass

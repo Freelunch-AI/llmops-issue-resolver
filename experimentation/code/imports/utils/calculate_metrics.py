@@ -38,7 +38,7 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..', '..'))):
-    from experimentation.code.imports.utils.schema_models import IntModel
+    from experimentation.code.imports.schemas.schema_models import IntModel
 
 def calculate_percentage_resolved(resolved_instances: int, submitted_instances: int) \
     -> float:

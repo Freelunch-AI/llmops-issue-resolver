@@ -437,7 +437,7 @@ wheels = [
 
 [[package]]
 name = "llmops-issue-resolver"
-version = "0.1.7"
+version = "0.1.11"
 source = { editable = "." }
 dependencies = [
     { name = "black" },
