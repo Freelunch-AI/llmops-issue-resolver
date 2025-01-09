@@ -20,32 +20,96 @@ jobs:
         uses: astral-sh/setup-uv@v4    
 
       - name: Set up Python
-        run: uv python install
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+          
+          uv python install
 
       - name: Install dependencies
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv venv
           source .venv/bin/activate
           uv sync
 
       - name: Install ci packages
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv add ruff pytest coverage mypy lxml
 
       - name: Lint with ruff & generate report
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv run ruff check --output-format=github . | tee ci-reports/lint-report.txt
 
       - name: Format with ruff & generate report 
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv run ruff format --output-format=github | tee ci-reports/format-report.txt
 
       - name: Type check with mypy & generate report
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv run mypy -p llmops_issue_resolver --no-namespace-packages --cobertura-xml-report ci-reports/type-report.xml
         
       - name: Run tests & code coverage & generate reports
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv run coverage run -m pytest --junitxml=ci-reports/test-report.xml
           uv run coverage xml -o ci-reports/coverage.xml
 

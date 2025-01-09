@@ -31,22 +31,59 @@ jobs:
       - name: Setup venv
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+          
           uv venv
           source .venv/bin/activate
 
       - name: Set up Python
         working-directory: repo/experimentation
-        run: uv python install
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          uv python install
 
       - name: Install dependencies
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           pwd
           uv sync
     
       - name: Run eval of the AI solution on the merging branch
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv run main.py --dataset-name ${{vars.DATASET_NAME}} --number-of-instances ${{vars.NUMBER_OF_INSTANCES}} --random-sampling ${{vars.RANDOM_SAMPLING}}
 
       - name: Store merging-experimentation eval results as artifact
@@ -72,22 +109,59 @@ jobs:
       - name: Setup venv
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           uv venv
           source .venv/bin/activate
 
       - name: Set up Python
         working-directory: repo/experimentation
-        run: uv python install
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          uv python install
 
       - name: Install dependencies
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           pwd
           uv sync
     
       - name: Run eval of the AI solution on the requesting branch
         working-directory: repo/experimentation
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           export GEMINI_API_KEY=${{secrets.GEMINI_API_KEY}}
           uv run main.py --dataset-name ${{vars.DATASET_NAME}} --number-of-instances ${{vars.NUMBER_OF_INSTANCES}} --random-sampling ${{vars.RANDOM_SAMPLING}}
 
@@ -116,14 +190,43 @@ jobs:
           path: tmp/requesting-metrics
 
       - name: List contents of tmp directory
-        run: ls -la tmp
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          ls -la tmp
 
       - name: Install cli tools
-        run: sudo apt-get update && sudo apt-get install -y bc
+        run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
+          sudo apt-get update && sudo apt-get install -y bc
 
       - name: Compare eval results
         id: compare-eval-results
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           merging_score=$(grep 'kowinski_score' tmp/merging-metrics/metrics.yml | awk '{print $2}')
           requesting_score=$(grep 'kowinski_score' tmp/requesting-metrics/metrics.yml | awk '{print $2}')
           echo -e "merging score = $merging_score\nrequesting score = $requesting_score"
@@ -136,6 +239,15 @@ jobs:
 
       - name: Block PR if requesting branch evals are worse than merging-experimentation branch evals
         run: |
+          export TRACE=1
+
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+          if [[ "${TRACE-0}" == "1" ]]; then 
+              set -o xtrace; 
+          fi
+
           if [[ "${{steps.compare-eval-results.outputs.PR_ALLOWED}}" == "0" ]]; then
             echo "Blocking PR due to worse eval results"
             exit 1
