@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Callable, List, Optional, Type, Union
 
 import pandas as pd
 from pydantic import BaseModel, ValidationError, validator
@@ -19,8 +19,27 @@ class BoolModel(BaseModel):
 class StringListModel(BaseModel):
     items: List[str]
 
-class StringOptionalModel(BaseModel):
-    items: Optional[str]
+class Arguments(BaseModel):
+    items: List[dict]
+
+class Tool(BaseModel):
+    name: str
+    description: str
+    function_signature: str
+    
+class Tools(BaseModel):
+    tools: List[Tool]
+
+class ToolUse(BaseModel):
+    name: str
+    arguments: Arguments
+    
+class ToolsUse(BaseModel):
+    tools: List[ToolUse]
+
+class CompletionFormatDescription(BaseModel):
+    completion_format: Type[BaseModel]
+    description: str
 
 class RelevantSubResults(BaseModel):
     num_submitted_instances: int
@@ -40,19 +59,11 @@ class PandasSeriesModel(BaseModel):
             raise ValidationError('The value must be a pandas Series')
         return value
 
-class PandasDataFrameModel(BaseModel):
-    dataframe: Any
-
-    @validator('dataframe')
-    def check_dataframe(cls, value):
-        if not isinstance(value, pd.DataFrame):
-            raise ValidationError('The value must be a pandas DataFrame')
-        return value
-
 class LmChatResponse_Message(BaseModel):
     role: str
     content: str
-    output_format: type
+    completion_format: Type[BaseModel]
+    tool_calls: Tools
 
 class LmChatResponse_Choice(BaseModel):
     index: int
@@ -70,17 +81,17 @@ class LmChatResponse(BaseModel):
     choices: List[LmChatResponse_Choice]
     usage: LmChatResponse_Usage
 
-class CompletionReasoningModel(BaseModel):
+class CompletionReasoning(BaseModel):
     reasoning_traces: str
     final_answer: str
 
-class MessageModel(BaseModel):
+class Message(BaseModel):
     role: str
-    content: str
+    content: Union[Callable, str]
 
 class CallStats(BaseModel):
    mode: Optional[str]
-   result: LmChatResponse
+   response: LmChatResponse
    cost: float
    duration: float
 
@@ -109,7 +120,7 @@ def ValidateLmSummary(item):
     if not isinstance(item, LmSummary):
         raise TypeError(f"{item} is not a valid LmSummary object")
 
-def ValidateChatResponse(item):
+def ValidateLmChatResponse(item):
     if not isinstance(item, LmChatResponse):
         raise TypeError(f"{item} is not a valid LmChatResponse object")
 

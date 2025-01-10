@@ -1,1 +1,0 @@
-{"instance_id": "scikit-learn__scikit-learn-13439", "model_patch": "diff --git a/toy.txt b/toy.txt\nnew file mode 100644\nindex 000000000..e9dea4b2c\n--- /dev/null\n+++ b/toy.txt\n@@ -0,0 +1 @@\n+This is a placeholder file.\n\\ No newline at end of file\n", "model_name_or_path": "placeholder__placeholder__placeholder__placeholder__placeholder"}

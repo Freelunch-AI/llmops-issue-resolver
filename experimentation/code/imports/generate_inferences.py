@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import pandas as pd
 from datasets import load_dataset
 from pydantic import ValidationError
+from rich import print
 
 
 @contextmanager
@@ -136,7 +137,7 @@ def setup_instance(dataset_name:str, instance: pd.Series) -> None:
         StringModel(items=dataset_name)
     except ValidationError as e:
         print(f"Validation error: {e}")
-        raise
+        raise TypeError
 
     # Pull the repo at the specific commit
     base_commit = instance["base_commit"]
@@ -194,7 +195,7 @@ def append_to_inferences(inferences_path: str, instance: pd.Series, \
         StringModel(items=experiment_name)  
     except ValidationError as e:
         print(f"Validation error: {e}")
-        raise
+        raise TypeError
 
     repo_name = get_repo_name(instance=instance)
     os.chdir(os.path.join("tmp", repo_name))

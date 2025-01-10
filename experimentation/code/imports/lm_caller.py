@@ -1,11 +1,12 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import Any, List, Optional
+from typing import List, Type
 
 import litellm
 from dotenv import load_dotenv
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
+from rich import print
 
 
 @contextmanager
@@ -46,9 +47,11 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
     from experimentation.code.imports.schemas.schema_models import (
         FloatModel,
         LmChatResponse,
-        MessageModel,
+        LmChatResponse_Choice,
+        LmChatResponse_Message,
+        LmChatResponse_Usage,
+        Message,
         StringModel,
-        StringOptionalModel,
         ValidateMessagesModel,
         ValidatePydanticModel,
     )
@@ -56,22 +59,21 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
 @lm_caller_extensor(cost_threshold=3)
 class LmCaller:
     
-    def call_lm (self, model_name: str, 
-                messages: List[MessageModel], output_format: 
-                Optional[Any] = StringModel, 
+    def call_lm (self, model_name: str,
+                messages: List[Message], completion_format: 
+                Type[BaseModel] = StringModel, 
                 temperature: float = 0.75, 
-                mode: Optional[str] = None) -> LmChatResponse:
+                mode: str = "single") -> LmChatResponse:
         
         try:
-            ValidatePydanticModel(output_format)
+            ValidatePydanticModel(completion_format)
             StringModel(items=model_name)
             FloatModel(items=temperature)
             ValidateMessagesModel(messages)
-            if mode:
-                StringOptionalModel(items=mode)
+            StringModel(items=mode)
         except ValidationError as e:
             print(f"Validation error: {e}")
-            raise
+            raise TypeError
 
         dict_messages = [message.dict() for message in messages]
 
@@ -82,13 +84,19 @@ class LmCaller:
         # set environment variables based on .env file
         load_dotenv()
 
-        # need to add support for setting output_format (Pydantic object) 
+        # need to add support for setting completion_format (Pydantic object) 
         # as an input here
-        litellm_standard_chat_response = litellm.completion(
-            model=model_name,
-            messages=dict_messages,
-            temperature=temperature #optional
-        )
+
+        try:
+            litellm_standard_chat_response = litellm.completion(
+                model=model_name,
+                messages=dict_messages,
+                response_format=completion_format,
+                temperature=temperature #optional
+            )
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
         # LiteLLM OpenAI-compatible 
         # OpenAI native response object has some more fields) 
@@ -100,7 +108,7 @@ class LmCaller:
         #         'index': int,             # Integer: 0
         #         'message': {              # Dictionary [str, str]
         #             'role': str,            # String: 'assistant'
-        #             'content': str          # String: "default message"
+        #             'content': obj         # String: "default message"
         #         }
         #         }
         #     ],
@@ -113,30 +121,28 @@ class LmCaller:
         #     }
         # }
 
-        my_response = LmChatResponse(
+        response = LmChatResponse(
             created=litellm_standard_chat_response.created,
             model=litellm_standard_chat_response.model,
-            choices=[
-                {
-                    "index": litellm_standard_chat_response.choices[0].index,
-                    "message": {
-                        "role": litellm_standard_chat_response.choices[0].message.role,
-                        "content": litellm_standard_chat_response.choices[0].
-                        message.content,
-                        "output_format": output_format
-                    },
-                    "finish_reason": litellm_standard_chat_response.choices[0].
-                    finish_reason
-                }
-            ],
-            usage={
-                "prompt_tokens": litellm_standard_chat_response.usage.prompt_tokens,
-                "completion_tokens": litellm_standard_chat_response.usage.
+            choices=[LmChatResponse_Choice(
+               index = litellm_standard_chat_response.choices[0].index,
+                message = LmChatResponse_Message(
+                    role = litellm_standard_chat_response.choices[0].message.role,
+                    content = litellm_standard_chat_response.choices[0].
+                    message.content,
+                    completion_format = completion_format,
+                ),
+                finish_reason = litellm_standard_chat_response.choices[0].
+                finish_reason
+        )   ],
+            usage=LmChatResponse_Usage(
+                prompt_tokens = litellm_standard_chat_response.usage.prompt_tokens,
+                completion_tokens = litellm_standard_chat_response.usage.
                 completion_tokens,
-                "total_tokens": litellm_standard_chat_response.usage.total_tokens,
-            },
+                total_tokens = litellm_standard_chat_response.usage.total_tokens,
+            ),
         )
 
-        print(my_response)
+        print(response)
 
-        return (my_response.choices[0].message.content, my_response)
+        return (response.choices[0].message.content, response)
