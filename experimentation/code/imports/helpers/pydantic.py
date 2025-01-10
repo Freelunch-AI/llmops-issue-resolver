@@ -1,7 +1,9 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import List
+
+from pydantic import create_model
+from rich import print
 
 
 @contextmanager
@@ -37,20 +39,20 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..', '..'))):    
-    from experimentation.code.imports.tool_builder import build_tool
+    import experimentation.code.imports.schemas.schema_models as schema_models
 
-@build_tool(description="This function returns the directory tree of the given path up \
-            until depth=n")
-def get_directory_tree(path: str, depth: int, level: int = 0) -> List[str]:
-    tree = []
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            tree.append(os.path.join(root, file))
-        for directory in dirs:
-            if level < depth:
-                tree.append(os.path.join(root, directory))
-                tree.extend(get_directory_tree(
-                    path=os.path.join(root, directory), depth=depth, level=level + 1))
-    return tree
+# dynamically create the following pydantic model in 
+    # "experimentation.code.imports.schemas.schema_models":
+    # class CompletionFormatDescriptionDynamic(BaseModel):
+    #     completion_format: {completion_format}
+    #     description: str
 
-        
+def create_completion_format_description_dynamic_model(completion_format: type) -> None:
+    CompletionFormatDescriptionDynamic = create_model(
+        'CompletionFormatDescriptionDynamic',
+        completion_format=(completion_format, ...),
+        description=(str, ...)
+    )
+    CompletionFormatDescriptionDynamic.update_forward_refs()
+    schema_models.CompletionFormatDescriptionDynamic = CompletionFormatDescriptionDynamic
+    return 

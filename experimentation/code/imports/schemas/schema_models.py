@@ -30,16 +30,22 @@ class Tool(BaseModel):
 class Tools(BaseModel):
     tools: List[Tool]
 
+class ToolsOptional(BaseModel):
+    tools: Optional[Tools]
+
 class ToolUse(BaseModel):
     name: str
     arguments: Arguments
     
 class ToolsUse(BaseModel):
     tools: List[ToolUse]
-
+    
 class CompletionFormatDescription(BaseModel):
-    completion_format: Type[BaseModel]
+    completion_format: Union[BaseModel, str]
     description: str
+
+# Placeholder for the dynamically created model
+CompletionFormatDescriptionDynamic: BaseModel = None
 
 class RelevantSubResults(BaseModel):
     num_submitted_instances: int
@@ -63,7 +69,6 @@ class LmChatResponse_Message(BaseModel):
     role: str
     content: str
     completion_format: Type[BaseModel]
-    tool_calls: Tools
 
 class LmChatResponse_Choice(BaseModel):
     index: int
@@ -132,10 +137,14 @@ def ValidateLmChatResponse(item):
     if not isinstance(item, LmChatResponse):
         raise TypeError(f"{item} is not a valid LmChatResponse object")
 
-def ValidatePydanticModel(item):
-    if not issubclass(item, BaseModel):
+def ValidatePydanticModelOrStr(item):
+    if not issubclass(item, BaseModel) and item is not str:
         raise TypeError(f"{item} is not a valid Pydantic model")
 
 def ValidateMessagesModel(items):
-    if not all(isinstance(item, MessageModel) for item in items):
+    if not all(isinstance(item, Message) for item in items):
         raise TypeError(f"{items} is not a valid list of MessageModel objects")
+
+def ValidateCompletionFormatDescription(item):
+    if not isinstance(item, CompletionFormatDescription) and item is not str:
+        raise TypeError(f"{item} is not a valid CompletionFormatDescription object")

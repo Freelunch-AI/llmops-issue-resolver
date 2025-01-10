@@ -1,11 +1,12 @@
+import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import List, Type
+from typing import List, Optional, Type, Union
 
 import litellm
 from dotenv import load_dotenv
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from rich import print
 
 
@@ -43,8 +44,16 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
 
+    from experimentation.code.imports.helpers.pydantic import (
+        create_completion_format_description_dynamic_model,
+    )
     from experimentation.code.imports.lm_tracker import lm_caller_extensor
+    from experimentation.code.imports.prompt_templates.sde import (
+        prompt_template_default,
+    )
     from experimentation.code.imports.schemas.schema_models import (
+        CompletionFormatDescription,
+        CompletionFormatDescriptionDynamic,
         FloatModel,
         LmChatResponse,
         LmChatResponse_Choice,
@@ -54,30 +63,33 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
         LmChatResponse_Usage_PromptTokensDetails,
         Message,
         StringModel,
+        Tools,
+        ValidateCompletionFormatDescription,
         ValidateMessagesModel,
-        ValidatePydanticModel,
+        ValidatePydanticModelOrStr,
     )
 
 @lm_caller_extensor(cost_threshold=3)
 class LmCaller:
     
     def call_lm (self, model_name: str,
-                messages: List[Message], completion_format: 
-                Type[BaseModel] = StringModel, 
+                instruction: str, tips: str, constraints: str,
+                completion_format_description: CompletionFormatDescription = str,
+                tools: Optional[Tools] = None,
                 temperature: float = 0.75, 
                 mode: str = "single") -> LmChatResponse:
         
         try:
-            ValidatePydanticModel(completion_format)
+            ValidateCompletionFormatDescription(completion_format_description)
             StringModel(items=model_name)
+            StringModel(items=instruction)
+            StringModel(items=tips)
+            StringModel(items=constraints)
             FloatModel(items=temperature)
-            ValidateMessagesModel(messages)
             StringModel(items=mode)
         except ValidationError as e:
             print(f"Validation error: {e}")
             raise TypeError
-
-        dict_messages = [message.dict() for message in messages]
 
         # need to set api keys as environment variables
         # example:
@@ -86,14 +98,35 @@ class LmCaller:
         # set environment variables based on .env file
         load_dotenv()
 
-        # need to add support for setting completion_format (Pydantic object) 
-        # as an input here
+        create_completion_format_description_dynamic_model(
+        completion_format = completion_format_description.completion_format)
+
+        messages = prompt_template_default(
+            instruction=instruction,
+            tips=tips,
+            constraints=constraints,
+            tools=tools
+        )
+
+        dict_messages = [message.dict() for message in messages]
+
+        completion_format_dict = CompletionFormatDescriptionDynamic. \
+        completion_format.schema()
+
+        completion_format_json = json.dumps(completion_format_dict, 
+                                                    indent=4)
+    
+        print("#########completion_format_json", completion_format_json)
 
         try:
             litellm_standard_chat_response = litellm.completion(
                 model=model_name,
                 messages=dict_messages,
-                response_format=completion_format,
+                response_format={ 
+                                    "type": "json_schema", 
+                                    "json_schema": completion_format_json, 
+                                    "strict": True 
+                                },
                 temperature=temperature #optional
             )
         except Exception as e:
@@ -101,7 +134,7 @@ class LmCaller:
             return None
 
         # LiteLLM OpenAI-compatible 
-        # OpenAI native response object has some more fields) 
+        # (OpenAI native response object has some more fields) 
         # chat response json
         # {
         #     'choices': [
@@ -120,12 +153,12 @@ class LmCaller:
         #         'prompt_tokens': int,       # Integer
         #         'completion_tokens': int,   # Integer
         #         'total_tokens': int         # Integer
-                # "prompt_tokens_details": {
-                #     "cached_tokens": 1920
-                # },
-                # "completion_tokens_details": {
-                #     "reasoning_tokens": 0
-                # }
+        #         "prompt_tokens_details": {
+        #             "cached_tokens": 1920
+        #         },
+        #         "completion_tokens_details": {
+        #             "reasoning_tokens": 0
+        #         }
         #     }
         # }
 

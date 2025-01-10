@@ -4,10 +4,9 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import Tuple, Type
+from typing import Tuple
 
-from pydantic import BaseModel
-from rich import print
+# from rich import print
 
 
 @contextmanager
@@ -43,6 +42,7 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..'))):    
+    import experimentation.code.imports.tools.fs # noqa
     from experimentation.code.imports.lm_caller import LmCaller
     from experimentation.code.imports.prompt_templates.sde import (
         MARKDOWN_DESCRIPTION,
@@ -51,50 +51,28 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
     )
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormatDescription,
-        StringModel,
+        CompletionReasoning,
         ToolsUse,
     )
     from experimentation.code.imports.tool_builder import tool_builder
 
-def completion_format_description_builder(completion_format: Type[BaseModel], description: str) -> CompletionFormatDescription:
-    """
-    Builds a CompletionFormatDescription object from the given completion_format and description.
-    Args:
-        completion_format (Type[BaseModel]): The completion format to be used.
-        description (str): The description to be used.
-    Returns:
-        CompletionFormatDescription: The built CompletionFormatDescription object.
-    """
-    return 
-
-
 def run_ai() -> Tuple[str, bool, str]:
-    """
-    Runs the AI solution at ./repo that first reads issue.md, 
-    tips.txt and fail_to_pass.txt; then
-    modifies the repo, locally, to fix the issue.
-
-    Returns:
-        experiment_name (str): The name of the experiment.
-    """
 
     lm_caller = LmCaller()
 
     # reason ----------------------------------------------------
-   
-    completion_format = StringModel
 
-    messages = prompt_template_default(
-        instruction="Respond user questions",
-        tips="Some tips",
-        constraints="Some constraints",
-        completion_format_description=CompletionFormatDescription(
-            completion_format=completion_format, description=MARKDOWN_DESCRIPTION),
+    result = lm_caller.call_lm(
+        model_name = "gpt-4o-mini",
+        instruction = "Instruction the model must follow", 
+        tips = "Some tips to help the model",
+        constraints = "Some contraints the model must obey",
+        completion_format_description = CompletionFormatDescription(
+            completion_format = CompletionReasoning,
+            description = "Description of the completion format"
+        )
     )
 
-    result = lm_caller.call_lm(completion_format=completion_format, 
-                                                model_name="gpt-4o-mini",
-                                                messages=messages)
     if result is None:
         raise ValueError("LLM service returned an error")
     elif result[0] is None:
@@ -106,22 +84,20 @@ def run_ai() -> Tuple[str, bool, str]:
 
     # act
 
-    tools = tool_builder.get_tools(['tool1', 'tool2'])
+    tools = tool_builder.get_tools(['get_directory_tree'])
+    print('$$$$ tools:', tools)
 
-    completion_format = ToolsUse
-
-    messages = prompt_template_default(
-        tools=tools,
-        instruction="Respond user questions",
-        tips="Some tips",
-        constraints="Some constraints",
-        completion_format_description=CompletionFormatDescription(
-            completion_format=completion_format, description=TOOLS_USE_DESCRIPTION),
+    result = lm_caller.call_lm(
+        model_name = "gpt-4o-mini",
+        instruction = "Instruction the model must follow", 
+        tips = "Some tips to help the model",
+        constraints = "Some contraints the model must obey",
+        tools = tools,
+        completion_format_description = CompletionFormatDescription(
+            completion_format = ToolsUse,
+            description = "Description of the completion format"
+        )
     )
-    
-    result = lm_caller.call_lm(completion_format=completion_format , 
-                                                model_name="gpt-4o-mini",
-                                                messages=messages)
     
     if result is None:
         raise ValueError("LLM service returned an error")

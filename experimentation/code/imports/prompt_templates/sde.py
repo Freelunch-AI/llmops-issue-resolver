@@ -1,9 +1,11 @@
+import json
 import os
 import sys
 from contextlib import contextmanager
 from typing import Optional
 
 from pydantic import ValidationError
+from rich import print
 
 
 @contextmanager
@@ -40,30 +42,35 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..', '..'))):    
     from experimentation.code.imports.schemas.schema_models import (
-        CompletionFormatDescription,
+        CompletionFormatDescriptionDynamic,
         Message,
         StringModel,
         Tools,
-        ValidateCompletionFormatDescription,
+        ToolsOptional,
     )
 
 TOOLS_USE_DESCRIPTION = "Here is how you will write your tools use output: ..."
 MARKDOWN_DESCRIPTION = "You will write your output as a mardown file ..."
 
 def prompt_template_default(instruction: str, tips: str, 
-                           constraints: str, completion_format_description: 
-                           CompletionFormatDescription = StringModel,
-                           tools: Optional[Tools] = None) -> str:
+                           constraints: str, tools: Optional[Tools] = None) -> str:
 
     try:
-        Tools(tools=tools)
+        ToolsOptional(tools=tools)
         StringModel(items=instruction)
         StringModel(items=tips)
         StringModel(items=constraints)
-        ValidateCompletionFormatDescription(completion_format_description)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise TypeError
+    
+    # create JSONSCHEMA from the completion_format_description pydantic class
+    completion_format_description_dict = CompletionFormatDescriptionDynamic.schema()
+    completion_format_description_json = json.dumps(completion_format_description_dict, 
+                                                    indent=4)
+    
+    print("#########completion_format_description_json", 
+          completion_format_description_json)
 
     if tools is None:
         return [
@@ -73,7 +80,8 @@ def prompt_template_default(instruction: str, tips: str,
                 Usefull Tips to consider when following the instruction: {tips}\n \
                 Constraints you must follow: {constraints}\n \
                 Description of the format that your response should obey: \
-                {completion_format_description.json()}"
+                {completion_format_description_json} where \
+                the values of the json object are the types of the keys"
             ),
 
             Message(
@@ -90,7 +98,8 @@ def prompt_template_default(instruction: str, tips: str,
                     Usefull Tips to consider when following the instruction: {tips}\n \
                     Constraints you must follow: {constraints}\n \
                     Description of the format that your response should obey: \
-                    {completion_format_description.json()}"
+                    {completion_format_description_json} where \
+                    the values of the json object are the types of the keys"
             ),
 
             Message(

@@ -4,7 +4,6 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Dict
 
 import yaml
 from pydantic import ValidationError
