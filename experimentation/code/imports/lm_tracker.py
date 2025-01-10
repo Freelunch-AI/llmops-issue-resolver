@@ -69,15 +69,8 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
     def decorator(cls):
 
         original_call_lm = cls.call_lm
-
+        
         cost_mapping_1M_tokens = {
-           "gemini/gemini-1.5-pro": {
-                "single": {
-                    "input_tokens": 2.5,
-                    "cached_input_tokens": 0.625,
-                    "output_tokens": 10
-                }
-           },
             "gpt-4o-mini": {
                 "batch": {
                     "input_tokens": 1.25,

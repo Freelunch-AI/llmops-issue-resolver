@@ -50,6 +50,8 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
         LmChatResponse_Choice,
         LmChatResponse_Message,
         LmChatResponse_Usage,
+        LmChatResponse_Usage_CompletionTokensDetails,
+        LmChatResponse_Usage_PromptTokensDetails,
         Message,
         StringModel,
         ValidateMessagesModel,
@@ -118,6 +120,12 @@ class LmCaller:
         #         'prompt_tokens': int,       # Integer
         #         'completion_tokens': int,   # Integer
         #         'total_tokens': int         # Integer
+                # "prompt_tokens_details": {
+                #     "cached_tokens": 1920
+                # },
+                # "completion_tokens_details": {
+                #     "reasoning_tokens": 0
+                # }
         #     }
         # }
 
@@ -140,6 +148,12 @@ class LmCaller:
                 completion_tokens = litellm_standard_chat_response.usage.
                 completion_tokens,
                 total_tokens = litellm_standard_chat_response.usage.total_tokens,
+                prompt_tokens_details = LmChatResponse_Usage_PromptTokensDetails(
+                    cached_tokens=litellm_standard_chat_response.usage.prompt_tokens_details.cached_tokens
+                ),
+                completion_tokens_details = LmChatResponse_Usage_CompletionTokensDetails(
+                    reasoning_tokens=litellm_standard_chat_response.usage.completion_tokens_details.reasoning_tokens
+                )
             ),
         )
 

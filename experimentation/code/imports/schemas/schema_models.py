@@ -70,10 +70,18 @@ class LmChatResponse_Choice(BaseModel):
     message: LmChatResponse_Message
     finish_reason: str
 
+class LmChatResponse_Usage_PromptTokensDetails(BaseModel):
+    cached_tokens: int
+
+class LmChatResponse_Usage_CompletionTokensDetails(BaseModel):
+    reasoning_tokens: int
+
 class LmChatResponse_Usage(BaseModel):
     prompt_tokens: int
     completion_tokens: int
     total_tokens: int
+    prompt_tokens_details: LmChatResponse_Usage_PromptTokensDetails
+    completion_tokens_details: LmChatResponse_Usage_CompletionTokensDetails
 
 class LmChatResponse(BaseModel):
     created: int
