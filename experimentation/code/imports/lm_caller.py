@@ -2,10 +2,11 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import List, Optional, Type, Union
+from typing import Optional
 
-import litellm
 from dotenv import load_dotenv
+from litellm import completion
+from openai import OpenAI
 from pydantic import ValidationError
 from rich import print
 
@@ -45,28 +46,22 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                      '..', '..', '..'))):
 
     from experimentation.code.imports.helpers.pydantic import (
-        create_completion_format_description_dynamic_model,
+        create_tools_use_pydantic_model,
     )
     from experimentation.code.imports.lm_tracker import lm_caller_extensor
     from experimentation.code.imports.prompt_templates.sde import (
         prompt_template_default,
     )
     from experimentation.code.imports.schemas.schema_models import (
-        CompletionFormatDescription,
-        CompletionFormatDescriptionDynamic,
+        CompletionFormat,
         FloatModel,
         LmChatResponse,
         LmChatResponse_Choice,
         LmChatResponse_Message,
         LmChatResponse_Usage,
         LmChatResponse_Usage_CompletionTokensDetails,
-        LmChatResponse_Usage_PromptTokensDetails,
-        Message,
         StringModel,
         Tools,
-        ValidateCompletionFormatDescription,
-        ValidateMessagesModel,
-        ValidatePydanticModelOrStr,
     )
 
 @lm_caller_extensor(cost_threshold=3)
@@ -74,13 +69,14 @@ class LmCaller:
     
     def call_lm (self, model_name: str,
                 instruction: str, tips: str, constraints: str,
-                completion_format_description: CompletionFormatDescription = str,
+                completion_format_description: str,
+                completion_format: CompletionFormat = StringModel,
                 tools: Optional[Tools] = None,
-                temperature: float = 0.75, 
+                temperature: float = 0, 
                 mode: str = "single") -> LmChatResponse:
         
         try:
-            ValidateCompletionFormatDescription(completion_format_description)
+            CompletionFormat(completion_format=completion_format)
             StringModel(items=model_name)
             StringModel(items=instruction)
             StringModel(items=tips)
@@ -98,98 +94,88 @@ class LmCaller:
         # set environment variables based on .env file
         load_dotenv()
 
-        create_completion_format_description_dynamic_model(
-        completion_format = completion_format_description.completion_format)
-
         messages = prompt_template_default(
             instruction=instruction,
             tips=tips,
             constraints=constraints,
-            tools=tools
+            tools=tools,
+            completion_format=completion_format,
+            completion_format_description=completion_format_description
         )
 
         dict_messages = [message.dict() for message in messages]
 
-        completion_format_dict = CompletionFormatDescriptionDynamic. \
-        completion_format.schema()
+        client = OpenAI()
 
-        completion_format_json = json.dumps(completion_format_dict, 
-                                                    indent=4)
-    
-        print("#########completion_format_json", completion_format_json)
+        if tools:
+            ToolsUse = create_tools_use_pydantic_model(tools)
+            completion_format = ToolsUse
 
-        try:
-            litellm_standard_chat_response = litellm.completion(
-                model=model_name,
-                messages=dict_messages,
-                response_format={ 
-                                    "type": "json_schema", 
-                                    "json_schema": completion_format_json, 
-                                    "strict": True 
-                                },
-                temperature=temperature #optional
+        response = client.beta.chat.completions.parse(
+            model=model_name,
+            messages=dict_messages,
+            response_format=completion_format,
             )
-        except Exception as e:
-            print(f"Error: {e}")
-            return None
 
-        # LiteLLM OpenAI-compatible 
-        # (OpenAI native response object has some more fields) 
-        # chat response json
+        # Response object:
         # {
-        #     'choices': [
-        #         {
-        #         'finish_reason': str,     # String: 'stop'
-        #         'index': int,             # Integer: 0
-        #         'message': {              # Dictionary [str, str]
-        #             'role': str,            # String: 'assistant'
-        #             'content': obj         # String: "default message"
-        #         }
-        #         }
+        #     "id": "chatcmpl-9nYAG9LPNonX8DAyrkwYfemr3C8HC",
+        #     "object": "chat.completion",
+        #     "created": 1721596428,
+        #     "model": "gpt-4o-2024-08-06",
+        #     "choices": [
+            #     {
+                #     "index": 0,
+                #     "message": {
+                #             "role": "assistant",
+                #             "content": "Hi, how can i help you?"
+                #     },
+                #     "logprobs": null,
+                #     "finish_reason": "stop"
+#                 }
         #     ],
-        #     'created': str,               # String: None
-        #     'model': str,                 # String: None
-        #     'usage': {                    # Dictionary [str, int]
-        #         'prompt_tokens': int,       # Integer
-        #         'completion_tokens': int,   # Integer
-        #         'total_tokens': int         # Integer
-        #         "prompt_tokens_details": {
-        #             "cached_tokens": 1920
-        #         },
+        #     "usage": {
+        #         "prompt_tokens": 81,
+        #         "completion_tokens": 11,
+        #         "total_tokens": 92,
         #         "completion_tokens_details": {
-        #             "reasoning_tokens": 0
+            #         "reasoning_tokens": 0,
+            #         "accepted_prediction_tokens": 0,
+            #         "rejected_prediction_tokens": 0
         #         }
-        #     }
+        #     },
+        #     "system_fingerprint": "fp_3407719c7f"
         # }
 
-        response = LmChatResponse(
-            created=litellm_standard_chat_response.created,
-            model=litellm_standard_chat_response.model,
+        print("response = ", response)
+
+        my_response = LmChatResponse(
+            created=response.created,
+            model=response.model,
+            object=response.object,
             choices=[LmChatResponse_Choice(
-               index = litellm_standard_chat_response.choices[0].index,
+                index = response.choices[0].index,
                 message = LmChatResponse_Message(
-                    role = litellm_standard_chat_response.choices[0].message.role,
-                    content = litellm_standard_chat_response.choices[0].
-                    message.content,
+                    role = response.choices[0].message.role,
+                    parsed = response.choices[0].message.parsed,
                     completion_format = completion_format,
                 ),
-                finish_reason = litellm_standard_chat_response.choices[0].
+                finish_reason = response.choices[0].
                 finish_reason
         )   ],
             usage=LmChatResponse_Usage(
-                prompt_tokens = litellm_standard_chat_response.usage.prompt_tokens,
-                completion_tokens = litellm_standard_chat_response.usage.
+                prompt_tokens = response.usage.prompt_tokens,
+                completion_tokens = response.usage.
                 completion_tokens,
-                total_tokens = litellm_standard_chat_response.usage.total_tokens,
-                prompt_tokens_details = LmChatResponse_Usage_PromptTokensDetails(
-                    cached_tokens=litellm_standard_chat_response.usage.prompt_tokens_details.cached_tokens
-                ),
-                completion_tokens_details = LmChatResponse_Usage_CompletionTokensDetails(
-                    reasoning_tokens=litellm_standard_chat_response.usage.completion_tokens_details.reasoning_tokens
+                total_tokens = response.usage.total_tokens,
+                completion_tokens_details = 
+                LmChatResponse_Usage_CompletionTokensDetails(
+                    reasoning_tokens=response.usage.completion_tokens_details.reasoning_tokens,
+                    accepted_prediction_tokens=response.usage.completion_tokens_details.accepted_prediction_tokens,
+                    rejected_prediction_tokens=response.usage.completion_tokens_details.rejected_prediction_tokens,
                 )
-            ),
+            )
         )
 
-        print(response)
-
-        return (response.choices[0].message.content, response)
+        content = my_response.choices[0].message.parsed
+        return (content, my_response)

@@ -2,6 +2,7 @@ import os
 import sys
 import time
 from contextlib import contextmanager
+from typing import Optional
 
 from pydantic import ValidationError
 from rich import print
@@ -41,10 +42,12 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
     from experimentation.code.imports.schemas.schema_models import (
+        CompletionFormat,
         FloatModel,
         LmChatResponse,
         LmSummary,
         StringModel,
+        Tools,
         ValidateLmChatResponse,
     )
     from experimentation.code.imports.utils.exceptions import CostThresholdExceededError
@@ -72,6 +75,30 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
         
         cost_mapping_1M_tokens = {
             "gpt-4o-mini": {
+                "batch": {
+                    "input_tokens": 1.25,
+                    "cached_input_tokens": None,
+                    "output_tokens": 5.0
+                },
+                "single": {
+                    "input_tokens": 2.5,
+                    "cached_input_tokens": 1.25,
+                    "output_tokens": 10.0
+                }
+            },
+            "gpt-4o": { # prices are not real
+                "batch": {
+                    "input_tokens": 1.25,
+                    "cached_input_tokens": None,
+                    "output_tokens": 5.0
+                },
+                "single": {
+                    "input_tokens": 2.5,
+                    "cached_input_tokens": 1.25,
+                    "output_tokens": 10.0
+                }
+            },
+            "gpt-4": { # prices are not real
                 "batch": {
                     "input_tokens": 1.25,
                     "cached_input_tokens": None,
@@ -134,48 +161,65 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
 
             return cost
 
-        def new_call_lm(self, temperature: float = 0.75, 
-                mode: str = "single", *args: list, **kwargs: dict) -> LmChatResponse:
-            start_time = time.time()
-            completion, response = original_call_lm(self, mode=mode, 
-                                                    temperature=temperature, 
-                                                    *args, **kwargs)
-            end_time = time.time()
-
-            model_name = kwargs.get('model_name')
-
-            cost = self.__class__.calculate_cost(response=response, 
-            model_name=model_name, mode=mode)
+        def new_call_lm(self, temperature: float = 0.75, tools: Optional[Tools] = None, 
+                        completion_format: CompletionFormat = StringModel, 
+                        mode: str = "single", *args, **kwargs) \
+                        -> LmChatResponse:
             
-            duration = end_time - start_time
+            start_time = time.time()
 
-            self.history.append({
-                'mode': mode,
-                'response': response.dict(),
-                'cost': cost,
-                'duration': duration
-            })
+            result = original_call_lm(self, mode=mode, temperature=temperature, 
+                                    tools=tools, completion_format=completion_format,
+                                    *args, **kwargs)
+            if result is None:
+                return None
+            else:
+                completion_format_object, response = result
 
-            self.state['number_of_calls_made'] += 1
-            self.state['total_cost'] += cost
-            self.state['total_time'] += duration
-            self.state['average_cost_per_call'] = self.state['total_cost'] \
-            / self.state['number_of_calls_made']
-            self.state['average_time_per_call'] = self.state['total_time'] \
-            / self.state['number_of_calls_made']
+                end_time = time.time()
 
-            if self.state['total_cost'] > self.cost_threshold:
-                raise CostThresholdExceededError(
-                    f"Total cost {self.state['total_cost']} \
-                    exceeded the threshold of {self.cost_threshold}")
+                model_name = kwargs.get('model_name')
 
-            return completion, response
+                cost = self.__class__.calculate_cost(response=response, 
+                model_name=model_name, mode=mode)
+                
+                duration = end_time - start_time
+
+                print("response = ", response)
+                print("response.dict()", response.dict())
+
+                self.history.append({
+                    'mode': mode,
+                    'response': response.dict(),
+                    'cost': cost,
+                    'duration': duration
+                })
+
+                self.state['number_of_calls_made'] += 1
+                self.state['total_cost'] += cost
+                self.state['total_time'] += duration
+                self.state['average_cost_per_call'] = self.state['total_cost'] \
+                / self.state['number_of_calls_made']
+                self.state['average_time_per_call'] = self.state['total_time'] \
+                / self.state['number_of_calls_made']
+
+                if self.state['total_cost'] > self.cost_threshold:
+                    raise CostThresholdExceededError(
+                        f"Total cost {self.state['total_cost']} \
+                        exceeded the threshold of {self.cost_threshold}")
+
+                return completion_format_object, response 
             
         def get_summary(self):
-            return LmSummary.parse_obj({
-                'history': self.history,
-                'state': self.state
-            })
+            print("lm_summary=", {'history': self.history,'state': self.state})
+            try:
+                return LmSummary.parse_obj({
+                    'history': self.history,
+                    'state': self.state
+                })
+            except ValidationError as e:
+                print(f"Validation error: {e}")
+                raise
             
         cls.__init__ = new_init
 

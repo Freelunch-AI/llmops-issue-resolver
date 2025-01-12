@@ -5,6 +5,8 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Dict, List
 
+from pydantic import ValidationError
+
 
 @contextmanager
 def temporary_sys_path(path):
@@ -40,6 +42,9 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..'))):    
     from experimentation.code.imports.schemas.schema_models import (
+        BoolModel,
+        StringListModel,
+        StringModel,
         Tool,
         Tools,
     )
@@ -50,12 +55,30 @@ class ToolBuilder:
 
     def register_tool(self, name: str, description: str, function_signature: str, 
                       group: str):
+        
+        try:
+            StringModel(items=name)
+            StringModel(items=description)
+            StringModel(items=function_signature)
+            StringModel(items=group)
+        except ValidationError as e:
+            print(f"Validation error: {e}")
+            raise TypeError("Invalid input")
+
         tool = Tool(name=name, description=description, 
                     function_signature=function_signature)
         self._tools[group][name] = tool
         print(f"Tool registered: {tool}")
 
     def get_tools(self, names: List[str], tool_groups: bool = False) -> Tools:
+
+        try:
+            StringListModel(items=names)
+            BoolModel(items=tool_groups)
+        except ValidationError as e:
+            print(f"Validation error: {e}")
+            raise TypeError("Invalid input")
+        
         if not tool_groups:
             tools = [self._tools[group][name] for group in self._tools.keys() 
                                 for name in names if name in self._tools[group]]
@@ -70,20 +93,30 @@ class ToolBuilder:
 tool_builder = ToolBuilder()
 
 def build_tool(description: str):
+
+    try:
+        StringModel(items=description)
+    except ValidationError as e:
+        print(f"Validation error: {e}")
+        raise TypeError("Invalid input")
+
     def decorator(func):
         sig = inspect.signature(func)
         
-        params = ', '.join([
-            f"{name}: {getattr(param.annotation, '__name__', str(param.annotation))}" 
-            for name, param in sig.parameters.items()
-        ])
+        for arg_name, param in sig.parameters.items():
+
+            arg_type = getattr(param.annotation, '__name__', str(param.annotation))
+            args = ', '.join([
+                f"{arg_name}: {arg_type}" 
+            ])
+
         return_type = (
             getattr(sig.return_annotation, '__name__', str(sig.return_annotation)) 
             if sig.return_annotation != inspect.Signature.empty 
             else 'Any'
         )
 
-        function_signature = f"{func.__name__}({params}) -> {return_type}"
+        function_signature = f"{func.__name__}({args}) -> {return_type}"
         
         # group should be the name of the python file from where the function is defined
         group = os.path.basename(inspect.getfile(func)).split('.')[0]
@@ -92,6 +125,7 @@ def build_tool(description: str):
               {description}, Signature: {function_signature}")
         tool_builder.register_tool(name=func.__name__, description=description, 
                                    function_signature=function_signature, group=group)
+
 
         @wraps(func)
         def wrapper(*args, **kwargs):

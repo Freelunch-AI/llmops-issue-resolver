@@ -2,9 +2,9 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Optional
+from typing import Optional, Type, Union
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from rich import print
 
 
@@ -40,9 +40,10 @@ def temporary_sys_path(path):
 # All .py modules need to have this line, but with the more general form of the import 
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
-                                                     '..', '..', '..', '..'))):    
+                                                     '..', '..', '..', '..'))):
+    import experimentation.code.imports.schemas.schema_models as schema_models
     from experimentation.code.imports.schemas.schema_models import (
-        CompletionFormatDescriptionDynamic,
+        CompletionFormat,
         Message,
         StringModel,
         Tools,
@@ -52,25 +53,26 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
 TOOLS_USE_DESCRIPTION = "Here is how you will write your tools use output: ..."
 MARKDOWN_DESCRIPTION = "You will write your output as a mardown file ..."
 
-def prompt_template_default(instruction: str, tips: str, 
-                           constraints: str, tools: Optional[Tools] = None) -> str:
+def prompt_template_default(instruction: str, tips: str, completion_format: 
+                            Type[BaseModel], 
+                            constraints: str, completion_format_description: str, 
+                            tools: Optional[Tools] = None) -> str:
 
     try:
         ToolsOptional(tools=tools)
+        CompletionFormat(completion_format=completion_format)
         StringModel(items=instruction)
         StringModel(items=tips)
         StringModel(items=constraints)
+        StringModel(items=completion_format_description)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise TypeError
-    
+
     # create JSONSCHEMA from the completion_format_description pydantic class
-    completion_format_description_dict = CompletionFormatDescriptionDynamic.schema()
-    completion_format_description_json = json.dumps(completion_format_description_dict, 
-                                                    indent=4)
-    
-    print("#########completion_format_description_json", 
-          completion_format_description_json)
+    completion_format_dict = completion_format.schema()
+
+    completion_format_json = json.dumps(completion_format_dict, indent=4)
 
     if tools is None:
         return [
@@ -79,9 +81,11 @@ def prompt_template_default(instruction: str, tips: str,
                 content=f"You are a Software Developer Engineer. \
                 Usefull Tips to consider when following the instruction: {tips}\n \
                 Constraints you must follow: {constraints}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
                 Description of the format that your response should obey: \
-                {completion_format_description_json} where \
-                the values of the json object are the types of the keys"
+                {completion_format_description}"
             ),
 
             Message(
@@ -97,9 +101,11 @@ def prompt_template_default(instruction: str, tips: str,
                     should use one or more tools.\nTools you can use: {tools.json()}\n \
                     Usefull Tips to consider when following the instruction: {tips}\n \
                     Constraints you must follow: {constraints}\n \
+                    Your response should obey this format: \
+                    {completion_format_json} where \
+                    the values of the json object are the types of the keys\n \
                     Description of the format that your response should obey: \
-                    {completion_format_description_json} where \
-                    the values of the json object are the types of the keys"
+                    {completion_format_description}"
             ),
 
             Message(

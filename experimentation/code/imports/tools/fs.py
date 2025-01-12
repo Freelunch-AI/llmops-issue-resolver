@@ -39,8 +39,7 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..', '..'))):    
     from experimentation.code.imports.tool_builder import build_tool
 
-@build_tool(description="This function returns the directory tree of the given path up \
-            until depth=n")
+@build_tool(description="This function returns the directory tree of the given path up until depth=n") # noqa
 def get_directory_tree(path: str, depth: int, level: int = 0) -> List[str]:
     tree = []
     for root, dirs, files in os.walk(path):

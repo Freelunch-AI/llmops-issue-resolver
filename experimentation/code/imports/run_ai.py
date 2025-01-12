@@ -6,7 +6,7 @@ import sys
 from contextlib import contextmanager
 from typing import Tuple
 
-# from rich import print
+from rich import print
 
 
 @contextmanager
@@ -44,15 +44,8 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):    
     import experimentation.code.imports.tools.fs # noqa
     from experimentation.code.imports.lm_caller import LmCaller
-    from experimentation.code.imports.prompt_templates.sde import (
-        MARKDOWN_DESCRIPTION,
-        TOOLS_USE_DESCRIPTION,
-        prompt_template_default,
-    )
     from experimentation.code.imports.schemas.schema_models import (
-        CompletionFormatDescription,
         CompletionReasoning,
-        ToolsUse,
     )
     from experimentation.code.imports.tool_builder import tool_builder
 
@@ -67,10 +60,8 @@ def run_ai() -> Tuple[str, bool, str]:
         instruction = "Instruction the model must follow", 
         tips = "Some tips to help the model",
         constraints = "Some contraints the model must obey",
-        completion_format_description = CompletionFormatDescription(
-            completion_format = CompletionReasoning,
-            description = "Description of the completion format"
-        )
+        completion_format = CompletionReasoning,
+        completion_format_description = "Description of the completion format"
     )
 
     if result is None:
@@ -78,7 +69,7 @@ def run_ai() -> Tuple[str, bool, str]:
     elif result[0] is None:
         raise ValueError("LLM service refused to provide a completion")
     else:
-        completion_reason, response_reason = result
+        completion_format_object_reason, response_reason = result
 
     # -------------------------------------------
 
@@ -86,17 +77,14 @@ def run_ai() -> Tuple[str, bool, str]:
 
     tools = tool_builder.get_tools(['get_directory_tree'])
     print('$$$$ tools:', tools)
-
+    
     result = lm_caller.call_lm(
         model_name = "gpt-4o-mini",
         instruction = "Instruction the model must follow", 
         tips = "Some tips to help the model",
         constraints = "Some contraints the model must obey",
         tools = tools,
-        completion_format_description = CompletionFormatDescription(
-            completion_format = ToolsUse,
-            description = "Description of the completion format"
-        )
+        completion_format_description = "Description of the completion format"
     )
     
     if result is None:
@@ -104,7 +92,7 @@ def run_ai() -> Tuple[str, bool, str]:
     elif result[0] is None:
         raise ValueError("LLM service refused to provide a completion")
     else:
-        completion_act, response_act = result
+        completion_format_object_act, response_act = result
 
     # placeholder: ai solution goes here
     if os.path.exists("toy.txt"):
