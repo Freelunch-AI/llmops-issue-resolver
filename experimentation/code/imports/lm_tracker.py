@@ -174,7 +174,7 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
             if result is None:
                 return None
             else:
-                completion_format_object, response = result
+                completion, response = result
 
                 end_time = time.time()
 
@@ -208,12 +208,12 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                         f"Total cost {self.state['total_cost']} \
                         exceeded the threshold of {self.cost_threshold}")
 
-                return completion_format_object, response 
+                return completion, response 
             
         def get_summary(self):
             print("lm_summary=", {'history': self.history,'state': self.state})
             try:
-                return LmSummary.parse_obj({
+                return LmSummary(**{
                     'history': self.history,
                     'state': self.state
                 })

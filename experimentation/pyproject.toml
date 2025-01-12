@@ -2,7 +2,7 @@
 name = "experimentation"
 version = "0.1.0"
 description = "Experimentation of AI solutions for solving Github Issues."
-requires-python = ">=3.9,<3.10"
+requires-python = ">3.12"
 authors = [
     { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
 ]

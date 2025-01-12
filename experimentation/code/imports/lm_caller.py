@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Optional
+from typing import Dict, List, Optional
 
 from dotenv import load_dotenv
 from litellm import completion
@@ -45,6 +45,7 @@ def temporary_sys_path(path):
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
 
+    import experimentation.code.imports.schemas.schema_models as schema_models
     from experimentation.code.imports.helpers.pydantic import (
         create_tools_use_pydantic_model,
     )
@@ -54,6 +55,7 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
     )
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormat,
+        Examples,
         FloatModel,
         LmChatResponse,
         LmChatResponse_Choice,
@@ -61,26 +63,82 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
         LmChatResponse_Usage,
         LmChatResponse_Usage_CompletionTokensDetails,
         StringModel,
+        StringOptionalModel,
         Tools,
     )
+
+TOOL_USE_COMPLETION_DESCRIPTION_FORMAT = \
+    """
+        The tool use output you give must follow the
+        json format in the following form:
+
+        {
+            "<<function_name1>>": {
+                "function_call_explanation": <function_call_explanation>
+                "args":
+                    {
+                        "<<arg_name1>>": "<arg1_value>",
+                        "<<arg_name2>>": "<arg2_value>",
+                        ...
+                        "<<arg_nameN>>": "<argn_value>"
+                    },
+            },
+            <<function_name2>>: {
+                "function_call_explanation": <function_call_explanation>,
+                "args":
+                    {
+                        "<<arg_name1>>": "<arg1_value>",
+                        "<<arg_name2>>": "<arg2_value>",
+                        ...
+                        "<<arg_nameN>>": "<argn_value>",
+                    },
+            ...
+            <<function_nameN>>: {
+                "function_call_explanation": <function_call_explanation>,
+                "args":
+                    {
+                        "<<arg_name1>>": "<arg1_value>",
+                        "<<arg_name2>>": "<arg2_value>",
+                        ...
+                        "<<arg_nameN>>": "<argn_value>",
+                    }
+            },
+        }
+
+        Where:
+            -  < > denotes that whats inside of it is variable and you should 
+        replace it with the actual value. 
+            - << >> denotes that whats inside of it is variable and you should
+            extract the value from the tools description provided to use
+    """
+
+
+SWE_BACKSTORY = "You are a Software Engineer that helps to \
+resolve issues in a software development environment."
 
 @lm_caller_extensor(cost_threshold=3)
 class LmCaller:
     
     def call_lm (self, model_name: str,
-                instruction: str, tips: str, constraints: str,
-                completion_format_description: str,
+                instruction: str, tips: Optional[str] = None, 
+                constraints: Optional[str] = None,
+                completion_format_description: Optional[str] = None,
+                examples: Optional[List[Dict[str, str]]] = None,
                 completion_format: CompletionFormat = StringModel,
                 tools: Optional[Tools] = None,
                 temperature: float = 0, 
+                backstory: Optional[str] = SWE_BACKSTORY,
                 mode: str = "single") -> LmChatResponse:
         
         try:
             CompletionFormat(completion_format=completion_format)
+            Examples(examples=examples)
+            StringOptionalModel(items=completion_format_description)
             StringModel(items=model_name)
             StringModel(items=instruction)
-            StringModel(items=tips)
-            StringModel(items=constraints)
+            StringOptionalModel(items=tips)
+            StringOptionalModel(items=constraints)
+            StringModel(items=backstory)
             FloatModel(items=temperature)
             StringModel(items=mode)
         except ValidationError as e:
@@ -94,22 +152,26 @@ class LmCaller:
         # set environment variables based on .env file
         load_dotenv()
 
+        if tools:
+            create_tools_use_pydantic_model(tools)
+            ToolsUse = schema_models.ToolsUse
+            completion_format = ToolsUse
+            completion_format_description = TOOL_USE_COMPLETION_DESCRIPTION_FORMAT
+
         messages = prompt_template_default(
             instruction=instruction,
             tips=tips,
             constraints=constraints,
             tools=tools,
             completion_format=completion_format,
-            completion_format_description=completion_format_description
+            completion_format_description=completion_format_description,
+            examples=examples,
+            backstory=backstory,
         )
 
         dict_messages = [message.dict() for message in messages]
 
         client = OpenAI()
-
-        if tools:
-            ToolsUse = create_tools_use_pydantic_model(tools)
-            completion_format = ToolsUse
 
         response = client.beta.chat.completions.parse(
             model=model_name,
@@ -177,5 +239,5 @@ class LmCaller:
             )
         )
 
-        content = my_response.choices[0].message.parsed
-        return (content, my_response)
+        completion = my_response.choices[0].message.parsed
+        return (completion, my_response)

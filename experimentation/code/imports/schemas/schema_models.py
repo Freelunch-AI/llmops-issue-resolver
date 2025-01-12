@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 import pandas as pd
 from pydantic import BaseModel, Field, validator
@@ -19,6 +19,14 @@ class BoolModel(BaseModel):
 class StringListModel(BaseModel):
     items: List[str]
 
+class StringOptionalModel(BaseModel):
+    items: Optional[str]
+
+class Examples(BaseModel):
+    # note: the = sign here doest mean default assignment, its a bit weird syntax i know
+    examples: Optional[List[Dict[str, str]]] = \
+    Field(description="Description of the attribute") 
+
 class Tool(BaseModel):
     name: str = Field(description="Description of the attribute")
     description: str = Field(description="Description of the attribute")
@@ -31,7 +39,8 @@ class ToolsOptional(BaseModel):
     tools: Optional[Tools] = Field(description="Description of the attribute")
 
 class CompletionFormat(BaseModel):
-    completion_format: Type[BaseModel] = Field(description="Description of the attribute")
+    completion_format: Type[BaseModel] = \
+    Field(description="Description of the attribute")
 
 class RelevantSubResults(BaseModel):
     num_submitted_instances: int = Field(description="Description of the attribute")
@@ -54,7 +63,8 @@ class PandasSeriesModel(BaseModel):
 class LmChatResponse_Message(BaseModel):
     role: str = Field(description="Description of the attribute")
     parsed: Any = Field(description="Description of the attribute")
-    completion_format: Type[BaseModel] = Field(description="Description of the attribute")
+    completion_format: Type[BaseModel] = \
+        Field(description="Description of the attribute")
  
     @validator('parsed')
     def check_content(cls, value):
@@ -82,7 +92,8 @@ class LmChatResponse(BaseModel):
     created: int = Field(description="Description of the attribute")
     model: str = Field(description="Description of the attribute")
     object: str = Field(description="Description of the attribute")
-    choices: List[LmChatResponse_Choice] = Field(description="Description of the attribute")
+    choices: List[LmChatResponse_Choice] = \
+        Field(description="Description of the attribute")
     usage: LmChatResponse_Usage = Field(description="Description of the attribute")
 
 class CompletionReasoning(BaseModel):
@@ -93,9 +104,39 @@ class Message(BaseModel):
     role: str = Field(description="Description of the attribute")
     content: Union[Callable, str] = Field(description="Description of the attribute")
 
+class LmChatResponseReconstruct_Message(BaseModel):
+    role: str = Field(description="Description of the attribute")
+    parsed: Any = Dict[str, Any]
+    completion_format: Type[BaseModel] = \
+        Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Choice(BaseModel):
+    index: int = Field(description="Description of the attribute")
+    message: LmChatResponseReconstruct_Message = Field(description="Description of the attribute")
+    finish_reason: str = Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Usage_CompletionTokensDetails(BaseModel):
+    reasoning_tokens: int = Field(description="Description of the attribute")
+    accepted_prediction_tokens: int = Field(description="Description of the attribute")
+    rejected_prediction_tokens: int = Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Usage(BaseModel):
+    prompt_tokens: int = Field(description="Description of the attribute")
+    completion_tokens: int = Field(description="Description of the attribute")
+    total_tokens: int = Field(description="Description of the attribute")
+    completion_tokens_details: LmChatResponseReconstruct_Usage_CompletionTokensDetails
+
+class LmChatResponseReconstruct(BaseModel):
+    created: int = Field(description="Description of the attribute")
+    model: str = Field(description="Description of the attribute")
+    object: str = Field(description="Description of the attribute")
+    choices: List[LmChatResponseReconstruct_Choice] = \
+        Field(description="Description of the attribute")
+    usage: LmChatResponseReconstruct_Usage = Field(description="Description of the attribute")
+
 class CallStats(BaseModel):
    mode: Optional[str] = Field(description="Description of the attribute")
-   response: LmChatResponse = Field(description="Description of the attribute")
+   response: LmChatResponseReconstruct = Field(description="Description of the attribute")
    cost: float = Field(description="Description of the attribute")
    duration: float = Field(description="Description of the attribute")
 

@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Optional, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from pydantic import BaseModel, ValidationError
 from rich import print
@@ -39,32 +39,44 @@ def temporary_sys_path(path):
 #     tree
 # All .py modules need to have this line, but with the more general form of the import 
 
-with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
+with temporary_sys_path(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), 
                                                      '..', '..', '..', '..'))):
     import experimentation.code.imports.schemas.schema_models as schema_models
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormat,
+        Examples,
         Message,
         StringModel,
+        StringOptionalModel,
         Tools,
         ToolsOptional,
     )
 
-TOOLS_USE_DESCRIPTION = "Here is how you will write your tools use output: ..."
-MARKDOWN_DESCRIPTION = "You will write your output as a mardown file ..."
-
-def prompt_template_default(instruction: str, tips: str, completion_format: 
-                            Type[BaseModel], 
-                            constraints: str, completion_format_description: str, 
+def prompt_template_default(instruction: str, backstory: str,
+                            tips: Optional[str] = None, 
+                            completion_format: 
+                            Type[BaseModel] = StringModel, 
+                            constraints: Optional[str] = None, 
+                            completion_format_description: Optional[str] = None,
+                            examples: Optional[List[Dict[str, str]]] = None,
                             tools: Optional[Tools] = None) -> str:
+    
+    if tools and not completion_format_description:
+        raise ValueError("completion_format_description is required when tools are \
+                         provided")
 
     try:
         ToolsOptional(tools=tools)
         CompletionFormat(completion_format=completion_format)
+        Examples(examples=examples)
+        StringModel(items=backstory)
         StringModel(items=instruction)
-        StringModel(items=tips)
-        StringModel(items=constraints)
-        StringModel(items=completion_format_description)
+        StringOptionalModel(items=tips)
+        StringOptionalModel(items=constraints)
+        StringOptionalModel(items=completion_format_description)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise TypeError
@@ -74,18 +86,288 @@ def prompt_template_default(instruction: str, tips: str, completion_format:
 
     completion_format_json = json.dumps(completion_format_dict, indent=4)
 
-    if tools is None:
+    if tools and tips and constraints and examples and completion_format_description:
+        return [
+            Message(
+                    role="system", 
+                    content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                    Usefull Tips to consider when following the instruction: {tips}\n \
+                    Constraints you must follow: {constraints}\n \
+                    Your response should obey this format: \
+                    {completion_format_json} where \
+                    the values of the json object are the types of the keys\n \
+                    Description of the format that your response should obey: \
+                    {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+
+    # without examples
+    elif tools and tips and constraints:
         return [
             Message(
                 role="system", 
-                content=f"You are a Software Developer Engineer. \
-                Usefull Tips to consider when following the instruction: {tips}\n \
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Useful Tips to consider when following the instruction: {tips}\n \
                 Constraints you must follow: {constraints}\n \
                 Your response should obey this format: \
                 {completion_format_json} where \
                 the values of the json object are the types of the keys\n \
                 Description of the format that your response should obey: \
-                {completion_format_description}"
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without tools
+    elif tips and constraints and examples and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}. \
+                Useful Tips to consider when following the instruction: {tips}\n \
+                Constraints you must follow: {constraints}. Your response \
+                should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n"
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+
+    
+    # without constraints
+    elif tools and tips and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Useful Tips to consider when following the instruction: {tips}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without tips
+    elif tools and constraints and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Constraints you must follow: {constraints}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without compelteion_format_description
+    elif tips and constraints and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\n \
+                Useful Tips to consider when following the instruction: {tips}\n \
+                Constraints you must follow: {constraints}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without tips and tools
+    elif constraints and examples and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+
+    # without tools and examples
+    elif constraints and tips and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}\n \
+                Useful Tips to consider when following the instruction: {tips}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without tools and constraints:
+    elif tips and examples and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nUseful Tips to consider when following the \
+                instruction: {tips}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without tips and constraints
+    elif tools and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without examples and constraints
+    elif tools and tips:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Useful Tips to consider when following the instruction: {tips}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    elif constraints and tools:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Constraints you must follow: {constraints}"
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without tips and tools and completion_format_description
+    elif constraints and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}" \
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+    # without tools and examples and completion_format_description
+    elif constraints and tips:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}\n \
+                Useful Tips to consider when following the instruction: {tips}"
             ),
 
             Message(
@@ -93,19 +375,164 @@ def prompt_template_default(instruction: str, tips: str, completion_format:
             )
         ]
 
+    # without constraints and tips and examples
+    elif tools:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nTools you can use: {tools.json()}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without tips, examples and tools
+    elif constraints and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without constraints, tools and tips
+    elif examples and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}. Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys"
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+
+    # without constraints, tools and examples
+    elif tips and completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nUseful Tips to consider when following the \
+                instruction: {tips}\n \
+                Your response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
+    # without constraints and tools and completion_format_description
+    elif tips and examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nUseful Tips to consider when following the instruction: {tips}" #noqa
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+
+    elif completion_format_description:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nYour response should obey this format: \
+                {completion_format_json} where \
+                the values of the json object are the types of the keys\n \
+                Description of the format that your response should obey: \
+                {completion_format_description}."
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+
+    # without constraints, examples and completion_format_description
+    elif tips:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nUseful Tips to consider when following the instruction: {tips}" #noqa
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+
+    # without tips, contraints and completion_format_description
+    elif examples:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}"
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            ),
+
+            Message(
+                role="system", content=f"Examples of this instruction being followed: \
+                {str(examples)}"
+            )
+        ]
+    
+     # without tips, examples and completion_format_description
+    elif constraints:
+        return [
+            Message(
+                role="system", 
+                content=f"{backstory}.\nConstraints you must follow: {constraints}"
+            ),
+
+            Message(
+                role="user", content=f"Instruction: {instruction}"
+            )
+        ]
+    
     else:
         return [
             Message(
-                    role="system", 
-                    content=f"You are a Software Developer Engineer that \
-                    should use one or more tools.\nTools you can use: {tools.json()}\n \
-                    Usefull Tips to consider when following the instruction: {tips}\n \
-                    Constraints you must follow: {constraints}\n \
-                    Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}"
+                role="system", 
+                content=f"{backstory}."
             ),
 
             Message(

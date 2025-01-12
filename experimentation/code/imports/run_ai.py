@@ -61,7 +61,8 @@ def run_ai() -> Tuple[str, bool, str]:
         tips = "Some tips to help the model",
         constraints = "Some contraints the model must obey",
         completion_format = CompletionReasoning,
-        completion_format_description = "Description of the completion format"
+        completion_format_description = "Description of the completion format",
+        examples = [ {"instruction": "Count the r's in row", "response": "1"} ]
     )
 
     if result is None:
@@ -80,11 +81,12 @@ def run_ai() -> Tuple[str, bool, str]:
     
     result = lm_caller.call_lm(
         model_name = "gpt-4o-mini",
-        instruction = "Instruction the model must follow", 
+        instruction = "Count the r's in the strawberry",
         tips = "Some tips to help the model",
         constraints = "Some contraints the model must obey",
         tools = tools,
-        completion_format_description = "Description of the completion format"
+        completion_format_description = "Description of the completion format",
+        examples = [ {"instruction": "Count the r's in row", "response": "1"} ],
     )
     
     if result is None:

@@ -1,7 +1,7 @@
-import os
+import os  # noqa: I001
 import sys
 from contextlib import contextmanager
-from typing import List, Type
+from typing import List, Type, Set, Literal
 
 from pydantic import BaseModel, ValidationError, create_model
 from rich import print
@@ -40,9 +40,10 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..', '..'))):
+    import experimentation.code.imports.schemas.schema_models as schema_models
     from experimentation.code.imports.schemas.schema_models import Tools
 
-def create_tools_use_pydantic_model(tools: Tools) -> Type[BaseModel]:
+def create_tools_use_pydantic_model(tools: Tools) -> None:
 
     try:
         Tools(tools=tools.tools)
@@ -51,7 +52,7 @@ def create_tools_use_pydantic_model(tools: Tools) -> Type[BaseModel]:
         raise TypeError("tools list is not valid Tools object")
 
     args_dict = {}
-    fields_ToolsUse = {}
+    fields_tools_use_model = {}
     for i, tool in enumerate(tools.tools):
         # function singautre is a string with the format: "func_name(arg1: type1, arg2: type2) -> return_type"
 
@@ -66,10 +67,33 @@ def create_tools_use_pydantic_model(tools: Tools) -> Type[BaseModel]:
         # get function name from function signature
         func_name = func_signature.split('(')[0].strip()
 
-        tool_use_args_model = create_model(f"Arguments_of_{func_name}", **args_dict)
+        # convert from _ seperator and lowercase to CamelCase
+        func_name_camel_case = ''.join([word.capitalize() 
+                                        for word in func_name.split('_')])
+        
+        print("************args_dict", args_dict)
 
-        fields_ToolsUse[func_name] = (tool_use_args_model, ...)
+        tool_use_args_model = create_model("Args", **args_dict)
 
-    ToolsUse = create_model("ToolsUse", **fields_ToolsUse)
+        # Add to schema_models
+        schema_models.__dict__[tool_use_args_model.__name__] = tool_use_args_model
 
-    return ToolsUse
+        tool_use_model_fields = {
+            "function_call_explanation": (str, ...),
+            "args": (tool_use_args_model, ...)
+        }
+
+        tool_use_model = create_model(f"{func_name_camel_case }Use", 
+                                      **tool_use_model_fields)
+        
+        fields_tools_use_model[f"{func_name}"] = (tool_use_model, ...)
+
+        # Add to schema_models
+        schema_models.__dict__[tool_use_model.__name__] = tool_use_model
+
+    tools_use_model = create_model(f"ToolsUse", **fields_tools_use_model)
+
+    #  Add to schema_models
+    schema_models.__dict__[tools_use_model.__name__] = tools_use_model
+
+    return 
