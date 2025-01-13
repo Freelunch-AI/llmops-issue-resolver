@@ -1,7 +1,7 @@
-from typing import Any, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 import pandas as pd
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, Field, validator
 
 
 class StringModel(BaseModel):
@@ -22,14 +22,34 @@ class StringListModel(BaseModel):
 class StringOptionalModel(BaseModel):
     items: Optional[str]
 
+class Examples(BaseModel):
+    # note: the = sign here doest mean default assignment, its a bit weird syntax i know
+    examples: Optional[List[Dict[str, str]]] = \
+    Field(description="Description of the attribute") 
+
+class Tool(BaseModel):
+    name: str = Field(description="Description of the attribute")
+    description: str = Field(description="Description of the attribute")
+    function_signature: str = Field(description="Description of the attribute")
+    
+class Tools(BaseModel):
+    tools: List[Tool] = Field(description="Description of the attribute")
+
+class ToolsOptional(BaseModel):
+    tools: Optional[Tools] = Field(description="Description of the attribute")
+
+class CompletionFormat(BaseModel):
+    completion_format: Type[BaseModel] = \
+    Field(description="Description of the attribute")
+
 class RelevantSubResults(BaseModel):
-    num_submitted_instances: int
-    num_resolved_instances: int
-    num_skipped_instances: int
+    num_submitted_instances: int = Field(description="Description of the attribute")
+    num_resolved_instances: int = Field(description="Description of the attribute")
+    num_skipped_instances: int = Field(description="Description of the attribute")
 
 class Metrics(BaseModel):
-    percentage_resolved: float
-    kowinski_score: float
+    percentage_resolved: float = Field(description="Description of the attribute")
+    kowinski_score: float = Field(description="Description of the attribute")
 
 class PandasSeriesModel(BaseModel):
     series: Any
@@ -37,59 +57,95 @@ class PandasSeriesModel(BaseModel):
     @validator('series')
     def check_series(cls, value):
         if not isinstance(value, pd.Series):
-            raise ValidationError('The value must be a pandas Series')
-        return value
-
-class PandasDataFrameModel(BaseModel):
-    dataframe: Any
-
-    @validator('dataframe')
-    def check_dataframe(cls, value):
-        if not isinstance(value, pd.DataFrame):
-            raise ValidationError('The value must be a pandas DataFrame')
+            raise TypeError('The value must be a pandas Series')
         return value
 
 class LmChatResponse_Message(BaseModel):
-    role: str
-    content: str
-    output_format: type
+    role: str = Field(description="Description of the attribute")
+    parsed: Any = Field(description="Description of the attribute")
+    completion_format: Type[BaseModel] = \
+        Field(description="Description of the attribute")
+ 
+    @validator('parsed')
+    def check_content(cls, value):
+        if not isinstance(value, BaseModel):
+            raise TypeError('The value must be an instance of BaseModel')
+        return value
 
 class LmChatResponse_Choice(BaseModel):
-    index: int
-    message: LmChatResponse_Message
-    finish_reason: str
+    index: int = Field(description="Description of the attribute")
+    message: LmChatResponse_Message = Field(description="Description of the attribute")
+    finish_reason: str = Field(description="Description of the attribute")
+
+class LmChatResponse_Usage_CompletionTokensDetails(BaseModel):
+    reasoning_tokens: int = Field(description="Description of the attribute")
+    accepted_prediction_tokens: int = Field(description="Description of the attribute")
+    rejected_prediction_tokens: int = Field(description="Description of the attribute")
 
 class LmChatResponse_Usage(BaseModel):
-    prompt_tokens: int
-    completion_tokens: int
-    total_tokens: int
+    prompt_tokens: int = Field(description="Description of the attribute")
+    completion_tokens: int = Field(description="Description of the attribute")
+    total_tokens: int = Field(description="Description of the attribute")
+    completion_tokens_details: LmChatResponse_Usage_CompletionTokensDetails
 
 class LmChatResponse(BaseModel):
-    created: int
-    model: str
-    choices: List[LmChatResponse_Choice]
-    usage: LmChatResponse_Usage
+    created: int = Field(description="Description of the attribute")
+    model: str = Field(description="Description of the attribute")
+    object: str = Field(description="Description of the attribute")
+    choices: List[LmChatResponse_Choice] = \
+        Field(description="Description of the attribute")
+    usage: LmChatResponse_Usage = Field(description="Description of the attribute")
 
-class CompletionReasoningModel(BaseModel):
-    reasoning_traces: str
-    final_answer: str
+class CompletionReasoning(BaseModel):
+    reasoning_traces: str = Field(description="Description of the attribute")
+    final_answer: str = Field(description="Description of the attribute")
 
-class MessageModel(BaseModel):
-    role: str
-    content: str
+class Message(BaseModel):
+    role: str = Field(description="Description of the attribute")
+    content: Union[Callable, str] = Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Message(BaseModel):
+    role: str = Field(description="Description of the attribute")
+    parsed: Any = Dict[str, Any]
+    completion_format: Type[BaseModel] = \
+        Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Choice(BaseModel):
+    index: int = Field(description="Description of the attribute")
+    message: LmChatResponseReconstruct_Message = Field(description="Description of the attribute")
+    finish_reason: str = Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Usage_CompletionTokensDetails(BaseModel):
+    reasoning_tokens: int = Field(description="Description of the attribute")
+    accepted_prediction_tokens: int = Field(description="Description of the attribute")
+    rejected_prediction_tokens: int = Field(description="Description of the attribute")
+
+class LmChatResponseReconstruct_Usage(BaseModel):
+    prompt_tokens: int = Field(description="Description of the attribute")
+    completion_tokens: int = Field(description="Description of the attribute")
+    total_tokens: int = Field(description="Description of the attribute")
+    completion_tokens_details: LmChatResponseReconstruct_Usage_CompletionTokensDetails
+
+class LmChatResponseReconstruct(BaseModel):
+    created: int = Field(description="Description of the attribute")
+    model: str = Field(description="Description of the attribute")
+    object: str = Field(description="Description of the attribute")
+    choices: List[LmChatResponseReconstruct_Choice] = \
+        Field(description="Description of the attribute")
+    usage: LmChatResponseReconstruct_Usage = Field(description="Description of the attribute")
 
 class CallStats(BaseModel):
-   mode: Optional[str]
-   result: LmChatResponse
-   cost: float
-   duration: float
+   mode: Optional[str] = Field(description="Description of the attribute")
+   response: LmChatResponseReconstruct = Field(description="Description of the attribute")
+   cost: float = Field(description="Description of the attribute")
+   duration: float = Field(description="Description of the attribute")
 
 class State(BaseModel):
-    number_of_calls_made: int
-    total_cost: float
-    total_time: float
-    average_cost_per_call: float
-    average_time_per_call: float
+    number_of_calls_made: int = Field(description="Description of the attribute")
+    total_cost: float = Field(description="Description of the attribute")
+    total_time: float = Field(description="Description of the attribute")
+    average_cost_per_call: float = Field(description="Description of the attribute")
+    average_time_per_call: float = Field(description="Description of the attribute")
 
 class LmSummary(BaseModel):
     history: List[CallStats]
@@ -109,14 +165,6 @@ def ValidateLmSummary(item):
     if not isinstance(item, LmSummary):
         raise TypeError(f"{item} is not a valid LmSummary object")
 
-def ValidateChatResponse(item):
+def ValidateLmChatResponse(item):
     if not isinstance(item, LmChatResponse):
         raise TypeError(f"{item} is not a valid LmChatResponse object")
-
-def ValidatePydanticModel(item):
-    if not issubclass(item, BaseModel):
-        raise TypeError(f"{item} is not a valid Pydantic model")
-
-def ValidateMessagesModel(items):
-    if not all(isinstance(item, MessageModel) for item in items):
-        raise TypeError(f"{items} is not a valid list of MessageModel objects")

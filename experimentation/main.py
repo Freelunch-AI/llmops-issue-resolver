@@ -3,7 +3,7 @@
 # NUMBER_OF_INSTANCES --random-sampling RANDOM_SAMPLING
 # Example: 
 # source .venv/bin/activate
-# uv run main.py --dataset-name princeton-nlp/SWE-bench_Verified --number-of-instances 1 --random-sampling 0
+# uv run main.py --dataset-name princeton-nlp/SWE-bench_Verified --number-of-instances 1 --random-sampling 0 # noqa
 
 import argparse
 import os

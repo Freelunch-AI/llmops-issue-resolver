@@ -5,7 +5,7 @@ description = """
     Automatically resolves issues of LLMOps projects. 
     Receives as input a repo and an issue to resolve, outputs a repo with the issue resolved.
     """
-requires-python = ">=3.9,<3.10"
+requires-python = ">=3.12"
 readme = "README.md"
 authors = [
     { name = "Bruno Scaglione", email = "bruno.c.scaglione@gmail.com" }
@@ -82,7 +82,7 @@ exclude_also = [
 ignore_errors = true
 
 [tool.mypy]
-python_version = "3.9"
+python_version = ">=3.12"
 warn_return_any = true
 warn_unused_configs = true
 
