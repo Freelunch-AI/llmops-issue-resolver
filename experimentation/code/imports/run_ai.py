@@ -6,6 +6,8 @@ import sys
 from contextlib import contextmanager
 from typing import Tuple
 
+from rich import print
+
 
 @contextmanager
 def temporary_sys_path(path):
@@ -40,33 +42,59 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..'))):    
+    import experimentation.code.imports.tools.fs # noqa
     from experimentation.code.imports.lm_caller import LmCaller
     from experimentation.code.imports.schemas.schema_models import (
-        MessageModel,
-        StringModel,
+        CompletionReasoning,
     )
-
+    from experimentation.code.imports.tool_builder import tool_builder
 
 def run_ai() -> Tuple[str, bool, str]:
-    """
-    Runs the AI solution at ./repo that first reads issue.md, 
-    tips.txt and fail_to_pass.txt; then
-    modifies the repo, locally, to fix the issue.
-
-    Returns:
-        experiment_name (str): The name of the experiment.
-    """
 
     lm_caller = LmCaller()
 
-    messages = [
-        MessageModel(role="system", content="You are a Software Engineer"),
-        MessageModel(role="user", content="Explain the concept of recursion to me.")
-    ]
+    # reason ----------------------------------------------------
 
-    completion, response = lm_caller.call_lm(output_format=StringModel, 
-                                                model_name="gemini/gemini-pro",
-                                                messages=messages)
+    result = lm_caller.call_lm(
+        model_name = "gpt-4o-mini",
+        instruction = "Instruction the model must follow", 
+        tips = "Some tips to help the model",
+        constraints = "Some contraints the model must obey",
+        completion_format = CompletionReasoning,
+        completion_format_description = "Description of the completion format",
+        examples = [ {"instruction": "Count the r's in row", "response": "1"} ]
+    )
+
+    if result is None:
+        raise ValueError("LLM service returned an error")
+    elif result[0] is None:
+        raise ValueError("LLM service refused to provide a completion")
+    else:
+        completion_format_object_reason, response_reason = result
+
+    # -------------------------------------------
+
+    # act
+
+    tools = tool_builder.get_tools(['get_directory_tree'])
+    print('$$$$ tools:', tools)
+    
+    result = lm_caller.call_lm(
+        model_name = "gpt-4o-mini",
+        instruction = "Count the r's in the strawberry",
+        tips = "Some tips to help the model",
+        constraints = "Some contraints the model must obey",
+        tools = tools,
+        completion_format_description = "Description of the completion format",
+        examples = [ {"instruction": "Count the r's in row", "response": "1"} ],
+    )
+    
+    if result is None:
+        raise ValueError("LLM service returned an error")
+    elif result[0] is None:
+        raise ValueError("LLM service refused to provide a completion")
+    else:
+        completion_format_object_act, response_act = result
 
     # placeholder: ai solution goes here
     if os.path.exists("toy.txt"):

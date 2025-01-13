@@ -162,7 +162,7 @@ jobs:
               set -o xtrace; 
           fi
 
-          export GEMINI_API_KEY=${{secrets.GEMINI_API_KEY}}
+          export OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}}
           uv run main.py --dataset-name ${{vars.DATASET_NAME}} --number-of-instances ${{vars.NUMBER_OF_INSTANCES}} --random-sampling ${{vars.RANDOM_SAMPLING}}
 
       - name: Store requesting-experimentation eval results as artifact
