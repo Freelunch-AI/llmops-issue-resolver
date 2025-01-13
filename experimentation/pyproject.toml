@@ -9,7 +9,8 @@ authors = [
 dependencies = [
     "pydantic",
     "pyyaml",
-    "pandas[fastparquet]",
+    "fastparquet",
+    "pandas",
     "datasets",
     "python-dotenv",
     "vertexai",
