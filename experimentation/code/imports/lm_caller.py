@@ -46,6 +46,10 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                      '..', '..', '..'))):
 
     import experimentation.code.imports.schemas.schema_models as schema_models
+    from experimentation.code.imports.constants.constants import (
+        SWE_BACKSTORY,
+        TOOL_USE_COMPLETION_DESCRIPTION_FORMAT,
+    )
     from experimentation.code.imports.helpers.pydantic import (
         create_tools_use_pydantic_model,
     )
@@ -55,95 +59,33 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
     )
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormat,
-        Examples,
-        FloatModel,
         LmChatResponse,
         LmChatResponse_Choice,
         LmChatResponse_Message,
         LmChatResponse_Usage,
         LmChatResponse_Usage_CompletionTokensDetails,
         StringModel,
-        StringOptionalModel,
         Tools,
     )
 
-TOOL_USE_COMPLETION_DESCRIPTION_FORMAT = \
-    """
-        The tool use output you give must follow the
-        json format in the following form:
-
-        {
-            "<<function_name1>>": {
-                "function_call_explanation": <function_call_explanation>
-                "args":
-                    {
-                        "<<arg_name1>>": "<arg1_value>",
-                        "<<arg_name2>>": "<arg2_value>",
-                        ...
-                        "<<arg_nameN>>": "<argn_value>"
-                    },
-            },
-            <<function_name2>>: {
-                "function_call_explanation": <function_call_explanation>,
-                "args":
-                    {
-                        "<<arg_name1>>": "<arg1_value>",
-                        "<<arg_name2>>": "<arg2_value>",
-                        ...
-                        "<<arg_nameN>>": "<argn_value>",
-                    },
-            ...
-            <<function_nameN>>: {
-                "function_call_explanation": <function_call_explanation>,
-                "args":
-                    {
-                        "<<arg_name1>>": "<arg1_value>",
-                        "<<arg_name2>>": "<arg2_value>",
-                        ...
-                        "<<arg_nameN>>": "<argn_value>",
-                    }
-            },
-        }
-
-        Where:
-            -  < > denotes that whats inside of it is variable and you should 
-        replace it with the actual value. 
-            - << >> denotes that whats inside of it is variable and you should
-            extract the value from the tools description provided to use
-    """
-
-
-SWE_BACKSTORY = "You are a Software Engineer that helps to \
-resolve issues in a software development environment."
 
 @lm_caller_extensor(cost_threshold=3)
 class LmCaller:
     
     def call_lm (self, model_name: str,
-                instruction: str, tips: Optional[str] = None, 
-                constraints: Optional[str] = None,
-                completion_format_description: Optional[str] = None,
-                examples: Optional[List[Dict[str, str]]] = None,
-                completion_format: CompletionFormat = StringModel,
-                tools: Optional[Tools] = None,
-                temperature: float = 0, 
-                backstory: Optional[str] = SWE_BACKSTORY,
-                mode: str = "single") -> LmChatResponse:
-        
-        try:
-            CompletionFormat(completion_format=completion_format)
-            Examples(examples=examples)
-            StringOptionalModel(items=completion_format_description)
-            StringModel(items=model_name)
-            StringModel(items=instruction)
-            StringOptionalModel(items=tips)
-            StringOptionalModel(items=constraints)
-            StringModel(items=backstory)
-            FloatModel(items=temperature)
-            StringModel(items=mode)
-        except ValidationError as e:
-            print(f"Validation error: {e}")
-            raise TypeError
+        instruction: str, 
+        tips: Optional[str] = None,
+        image: Optional[str] = None,
+        image_format: Optional[Dict[str, str]] = None, 
+        constraints: Optional[str] = None,
+        completion_format_description: Optional[str] = None,
+        examples: Optional[List[Dict[str, str]]] = None,
+        image_examples: Optional[List[Dict[str, str]]] = None,
+        completion_format: CompletionFormat = StringModel,
+        tools: Optional[Tools] = None,
+        temperature: float = 0, 
+        backstory: Optional[str] = SWE_BACKSTORY,
+    ) -> LmChatResponse:
 
         # need to set api keys as environment variables
         # example:
@@ -160,12 +102,15 @@ class LmCaller:
 
         messages = prompt_template_default(
             instruction=instruction,
+            image=image,
+            image_format=image_format,
             tips=tips,
             constraints=constraints,
             tools=tools,
             completion_format=completion_format,
             completion_format_description=completion_format_description,
             examples=examples,
+            image_examples=image_examples,
             backstory=backstory,
         )
 
@@ -176,6 +121,7 @@ class LmCaller:
         response = client.beta.chat.completions.parse(
             model=model_name,
             messages=dict_messages,
+            temperature=temperature,
             response_format=completion_format,
             )
 
@@ -208,8 +154,6 @@ class LmCaller:
         #     },
         #     "system_fingerprint": "fp_3407719c7f"
         # }
-
-        print("response = ", response)
 
         my_response = LmChatResponse(
             created=response.created,

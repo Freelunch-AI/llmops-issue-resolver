@@ -22,9 +22,12 @@ class StringListModel(BaseModel):
 class StringOptionalModel(BaseModel):
     items: Optional[str]
 
+class DictOptionalModel(BaseModel):
+    items: Optional[Dict[str, str]]
+
 class Examples(BaseModel):
     # note: the = sign here doest mean default assignment, its a bit weird syntax i know
-    examples: Optional[List[Dict[str, str]]] = \
+    items: Optional[List[Dict[str, str]]] = \
     Field(description="Description of the attribute") 
 
 class Tool(BaseModel):
@@ -104,6 +107,14 @@ class Message(BaseModel):
     role: str = Field(description="Description of the attribute")
     content: Union[Callable, str] = Field(description="Description of the attribute")
 
+class MessageImage(BaseModel):
+    role: str = Field(description="Description of the attribute")
+    content: List[Dict[str, Any]] = Field(description="Description of the attribute")
+
+class Messages(BaseModel):
+    messages: List[Union[Message, MessageImage]] = \
+    Field(description="Description of the attribute")
+
 class LmChatResponseReconstruct_Message(BaseModel):
     role: str = Field(description="Description of the attribute")
     parsed: Any = Dict[str, Any]
@@ -112,7 +123,8 @@ class LmChatResponseReconstruct_Message(BaseModel):
 
 class LmChatResponseReconstruct_Choice(BaseModel):
     index: int = Field(description="Description of the attribute")
-    message: LmChatResponseReconstruct_Message = Field(description="Description of the attribute")
+    message: LmChatResponseReconstruct_Message = \
+    Field(description="Description of the attribute")
     finish_reason: str = Field(description="Description of the attribute")
 
 class LmChatResponseReconstruct_Usage_CompletionTokensDetails(BaseModel):
@@ -132,13 +144,31 @@ class LmChatResponseReconstruct(BaseModel):
     object: str = Field(description="Description of the attribute")
     choices: List[LmChatResponseReconstruct_Choice] = \
         Field(description="Description of the attribute")
-    usage: LmChatResponseReconstruct_Usage = Field(description="Description of the attribute")
+    usage: LmChatResponseReconstruct_Usage = \
+        Field(description="Description of the attribute")
 
 class CallStats(BaseModel):
-   mode: Optional[str] = Field(description="Description of the attribute")
-   response: LmChatResponseReconstruct = Field(description="Description of the attribute")
-   cost: float = Field(description="Description of the attribute")
-   duration: float = Field(description="Description of the attribute")
+    model_name: str = Field(description="Description of the attribute")
+    temperature: Optional[float] = Field(description="Description of the attribute")
+    tools: Optional[Tools] = Field(description="Description of the attribute")
+    completion_format_description: Optional[str] = \
+        Field(description="Description of the attribute")
+    completion_format: Type[BaseModel]  = \
+        Field(description="Description of the attribute")
+    instruction: str = Field(description="Description of the attribute")
+    backstory: str = Field(description="Description of the attribute")
+    tips: Optional[str] = Field(description="Description of the attribute")
+    image: Optional[str] = Field(description="Description of the attribute")
+    image_format: Optional[Dict[str, str]] = Field(description="Description of the attribute")
+    image_examples: Optional[List[Dict[str, str]]] = \
+        Field(description="Description of the attribute")
+    examples: Optional[List[Dict[str, str]]] = Field(description="Description of the attribute")
+    constraints: Optional[str] = Field(description="Description of the attribute")
+
+    response: LmChatResponseReconstruct = \
+    Field(description="Description of the attribute")
+    cost: float = Field(description="Description of the attribute")
+    duration: float = Field(description="Description of the attribute")
 
 class State(BaseModel):
     number_of_calls_made: int = Field(description="Description of the attribute")

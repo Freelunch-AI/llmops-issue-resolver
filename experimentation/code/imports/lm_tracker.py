@@ -2,7 +2,7 @@ import os
 import sys
 import time
 from contextlib import contextmanager
-from typing import Optional
+from typing import Dict, List, Optional
 
 from pydantic import ValidationError
 from rich import print
@@ -41,12 +41,16 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
+    from experimentation.code.imports.constants.constants import SWE_BACKSTORY
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormat,
+        DictOptionalModel,
+        Examples,
         FloatModel,
         LmChatResponse,
         LmSummary,
         StringModel,
+        StringOptionalModel,
         Tools,
         ValidateLmChatResponse,
     )
@@ -126,7 +130,7 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
 
         @classmethod
         def calculate_cost(cls, response: LmChatResponse, model_name: str, 
-                           mode: str) -> float:
+                           mode: str = "single") -> float:
             
             try:
                 ValidateLmChatResponse(response)
@@ -161,16 +165,58 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
 
             return cost
 
-        def new_call_lm(self, temperature: float = 0.75, tools: Optional[Tools] = None, 
-                        completion_format: CompletionFormat = StringModel, 
-                        mode: str = "single", *args, **kwargs) \
-                        -> LmChatResponse:
+        def new_call_lm(
+            self, 
+            model_name: str,
+            instruction: str, 
+            tips: Optional[str] = None,
+            image: Optional[str] = None,
+            image_format: Optional[Dict[str, str]] = None, 
+            constraints: Optional[str] = None,
+            completion_format_description: Optional[str] = None,
+            examples: Optional[List[Dict[str, str]]] = None,
+            image_examples: Optional[List[Dict[str, str]]] = None,
+            completion_format: CompletionFormat = StringModel,
+            tools: Optional[Tools] = None,
+            temperature: float = 0, 
+            backstory: Optional[str] = SWE_BACKSTORY,
+        ) -> LmChatResponse:
             
+            try:
+                CompletionFormat(completion_format=completion_format)
+                Examples(items=examples)
+                Examples(items=image_examples)
+                StringOptionalModel(items=completion_format_description)
+                StringModel(items=model_name)
+                StringModel(items=instruction)
+                StringOptionalModel(items=tips)
+                StringOptionalModel(items=constraints)
+                StringOptionalModel(items=image)
+                DictOptionalModel(items=image_format)
+                StringModel(items=backstory)
+                FloatModel(items=temperature)
+            except ValidationError as e:
+                print(f"Validation error: {e}")
+                raise TypeError
+
             start_time = time.time()
 
-            result = original_call_lm(self, mode=mode, temperature=temperature, 
-                                    tools=tools, completion_format=completion_format,
-                                    *args, **kwargs)
+            result = original_call_lm(self, 
+                model_name=model_name, 
+                instruction=instruction,
+                tips=tips,
+                image=image,
+                image_format=image_format,
+                constraints=constraints,
+                completion_format_description=completion_format_description,
+                examples=examples,
+                image_examples=image_examples,
+                completion_format=completion_format,
+                tools=tools,
+                temperature=temperature,
+                backstory=backstory,
+            )
+
             if result is None:
                 return None
             else:
@@ -178,10 +224,8 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
 
                 end_time = time.time()
 
-                model_name = kwargs.get('model_name')
-
                 cost = self.__class__.calculate_cost(response=response, 
-                model_name=model_name, mode=mode)
+                model_name=model_name)
                 
                 duration = end_time - start_time
 
@@ -189,7 +233,20 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                 print("response.dict()", response.dict())
 
                 self.history.append({
-                    'mode': mode,
+                    'model_name': model_name,
+                    'temperature': temperature,
+                    'tools': tools,
+                    'completion_format_description': completion_format_description,
+                    'completion_format': completion_format,
+                    'instruction': instruction,
+                    'backstory': backstory,
+                    'tips': tips,
+                    'image': image,
+                    'image_format': image_format,
+                    'image_examples': image_examples,
+                    'examples': examples,
+                    'constraints': constraints,
+
                     'response': response.dict(),
                     'cost': cost,
                     'duration': duration
