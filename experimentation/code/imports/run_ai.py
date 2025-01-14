@@ -1,6 +1,7 @@
 # Runs the AI solution that first reads issue.md, tips.txt and fail_to_pass.txt; then 
 # modifies the repo to fix the issue.
 
+import base64
 import os
 import sys
 from contextlib import contextmanager
@@ -8,6 +9,21 @@ from typing import Tuple
 
 from rich import print
 
+
+# Function to encode the image
+def encode_image(image_path: str) -> str:
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+def get_ready_image(base64Image: str) -> str:
+    return f"data:image/jpeg;base64,{base64Image}"
+
+
+my_image_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "images", 
+                             "cat_image.jpeg")
+my_base64_image = encode_image(my_image_path)
+EXAMPLE_LOCAL_IMAGE = get_ready_image(base64Image=my_base64_image)
+EXAMPLE_REMOTE_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
 
 @contextmanager
 def temporary_sys_path(path):
@@ -57,12 +73,23 @@ def run_ai() -> Tuple[str, bool, str]:
 
     result = lm_caller.call_lm(
         model_name = "gpt-4o-mini",
-        instruction = "Instruction the model must follow", 
+        instruction = "Instruction the model must follow",
+        image = EXAMPLE_LOCAL_IMAGE,
+        image_format = {
+            "payload": "jpeg_base64",
+            "examples": "url_http"
+        },
         tips = "Some tips to help the model",
         constraints = "Some contraints the model must obey",
         completion_format = CompletionReasoning,
         completion_format_description = "Description of the completion format",
-        examples = [ {"instruction": "Count the r's in row", "response": "1"} ]
+        image_examples = [ 
+                            {
+                                "instruction": "Tell me whats in the image", 
+                                "image": EXAMPLE_REMOTE_IMAGE, 
+                                "response": "A boardwalk in a park with a blue sky"
+                            },
+                        ]
     )
 
     if result is None:
@@ -77,7 +104,6 @@ def run_ai() -> Tuple[str, bool, str]:
     # act
 
     tools = tool_builder.get_tools(['get_directory_tree'])
-    print('$$$$ tools:', tools)
     
     result = lm_caller.call_lm(
         model_name = "gpt-4o-mini",
