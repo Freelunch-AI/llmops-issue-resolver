@@ -1,0 +1,29 @@
+name: Enhacement Request
+description: File an enhancement request.
+title: "[Enhancement]: "
+labels: ["enhancement"]
+assignees:
+  - BrunoScaglione
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this enhancement request!
+
+  - type: textarea
+    id: enchacement-description
+    attributes:
+      label: Enhancement Description
+      description: Describe what needs to be imrproved.
+      placeholder: "Placeholder"
+    validations:
+      required: true
+    
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct. 
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
