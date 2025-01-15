@@ -3,7 +3,7 @@ import os
 import sys
 from contextlib import contextmanager
 from functools import wraps
-from typing import Dict, List
+from typing import Any, Callable, Dict, List
 
 from pydantic import ValidationError
 
@@ -46,26 +46,28 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
         StringListModel,
         StringModel,
         Tool,
+        ToolDocs,
         Tools,
     )
 
 class ToolBuilder:
     def __init__(self):
-        self._tools: Dict[str, Tool] = {'fs': {}, 'terminal': {}, 'web': {}}
+        self._tools: Dict[str, Tool] = {'filesystem_tools': {}, 'terminal_tools': {}, 
+                                        'browser_tools': {}}
 
-    def register_tool(self, name: str, description: str, function_signature: str, 
+    def register_tool(self, name: str, docs: ToolDocs, function_signature: str, 
                       group: str):
         
         try:
             StringModel(items=name)
-            StringModel(items=description)
+            ToolDocs(**docs)
             StringModel(items=function_signature)
             StringModel(items=group)
         except ValidationError as e:
             print(f"Validation error: {e}")
             raise TypeError("Invalid input")
 
-        tool = Tool(name=name, description=description, 
+        tool = Tool(name=name, docs=docs, 
                     function_signature=function_signature)
         self._tools[group][name] = tool
         print(f"Tool registered: {tool}")
@@ -92,10 +94,10 @@ class ToolBuilder:
 
 tool_builder = ToolBuilder()
 
-def build_tool(description: str):
+def build_tool(docs: Dict[str, Any]) -> Callable:
 
     try:
-        StringModel(items=description)
+        ToolDocs(**docs)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise TypeError("Invalid input")
@@ -121,9 +123,10 @@ def build_tool(description: str):
         # group should be the name of the python file from where the function is defined
         group = os.path.basename(inspect.getfile(func)).split('.')[0]
         
-        print(f"Registering tool: {func.__name__}, Group: {group}, Description: \
-              {description}, Signature: {function_signature}")
-        tool_builder.register_tool(name=func.__name__, description=description, 
+        print(f"Registering tool: {func.__name__}, Group: {group}, \
+              Signature: {function_signature}")
+        
+        tool_builder.register_tool(name=func.__name__, docs=docs, 
                                    function_signature=function_signature, group=group)
 
 

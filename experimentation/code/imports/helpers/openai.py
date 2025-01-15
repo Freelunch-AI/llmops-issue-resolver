@@ -1,7 +1,6 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import List
 
 
 @contextmanager
@@ -33,23 +32,12 @@ def temporary_sys_path(path):
 #     - Because it makes it cleanar for doing imports within modules that are very deep 
 #     and want to import from modules that are near surface of the package directory 
 #     tree
-# All .py modules need to have this line, but with the more general form of the import 
+# All .py modules need to have this line, but with the more general form of the import
 
-with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
-                                                     '..', '..', '..', '..'))):    
-    from experimentation.code.imports.tool_builder import build_tool
+with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                                     '..', '..', '..', '..'))):
+    from experimentation.code.imports.utils.images import encode_image
 
-@build_tool(description="This function returns the directory tree of the given path up until depth=n") # noqa
-def get_directory_tree(path: str, depth: int, level: int = 0) -> List[str]:
-    tree = []
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            tree.append(os.path.join(root, file))
-        for directory in dirs:
-            if level < depth:
-                tree.append(os.path.join(root, directory))
-                tree.extend(get_directory_tree(
-                    path=os.path.join(root, directory), depth=depth, level=level + 1))
-    return tree
-
-        
+def get_ready_openai_image(image_path: str) -> str:
+    base64_image = encode_image(image_path=image_path)
+    return f"data:image/jpeg;base64,{base64_image}"

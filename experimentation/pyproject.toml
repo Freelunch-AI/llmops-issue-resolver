@@ -17,6 +17,9 @@ dependencies = [
     "litellm>=1.57.2",
     "rich>=13.9.4",
     "openai>=1.59.5",
+    "tiktoken>=0.8.0",
+    "requests>=2.32.3",
+    "pillow>=11.1.0",
 ]
 
 [[tool.uv.index]]

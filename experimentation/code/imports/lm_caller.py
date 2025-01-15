@@ -5,9 +5,7 @@ from contextlib import contextmanager
 from typing import Dict, List, Optional
 
 from dotenv import load_dotenv
-from litellm import completion
 from openai import OpenAI
-from pydantic import ValidationError
 from rich import print
 
 
@@ -46,10 +44,6 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                      '..', '..', '..'))):
 
     import experimentation.code.imports.schemas.schema_models as schema_models
-    from experimentation.code.imports.constants.constants import (
-        SWE_BACKSTORY,
-        TOOL_USE_COMPLETION_DESCRIPTION_FORMAT,
-    )
     from experimentation.code.imports.helpers.pydantic import (
         create_tools_use_pydantic_model,
     )
@@ -67,6 +61,17 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
         StringModel,
         Tools,
     )
+    from experimentation.code.imports.utils.exceptions import (
+        ContextSizeExcededError,
+        LmContentFilterError,
+        LmLengthError,
+        LmRefusalError,
+    )
+    from experimentation.code.imports.utils.tokens import calculate_number_of_tokens
+    from experimentation.data.constants import (
+        COST_MAPPING_1M_TOKENS,
+        SWE_BACKSTORY,
+    )
 
 
 @lm_caller_extensor(cost_threshold=3)
@@ -78,7 +83,6 @@ class LmCaller:
         image: Optional[str] = None,
         image_format: Optional[Dict[str, str]] = None, 
         constraints: Optional[str] = None,
-        completion_format_description: Optional[str] = None,
         examples: Optional[List[Dict[str, str]]] = None,
         image_examples: Optional[List[Dict[str, str]]] = None,
         completion_format: CompletionFormat = StringModel,
@@ -98,7 +102,6 @@ class LmCaller:
             create_tools_use_pydantic_model(tools)
             ToolsUse = schema_models.ToolsUse
             completion_format = ToolsUse
-            completion_format_description = TOOL_USE_COMPLETION_DESCRIPTION_FORMAT
 
         messages = prompt_template_default(
             instruction=instruction,
@@ -108,11 +111,21 @@ class LmCaller:
             constraints=constraints,
             tools=tools,
             completion_format=completion_format,
-            completion_format_description=completion_format_description,
             examples=examples,
             image_examples=image_examples,
             backstory=backstory,
         )
+
+        input_tokens = calculate_number_of_tokens(messages=messages, 
+                                                  tokenization_method=COST_MAPPING_1M_TOKENS[model_name]["tokenization_method"])
+
+        if input_tokens > COST_MAPPING_1M_TOKENS[model_name]["context_window"]:
+            raise ContextSizeExcededError(
+                f"""The input tokens are more than the maximum allowed tokens 
+                for {model_name}. The context window of {model_name} is 
+                {COST_MAPPING_1M_TOKENS[model_name]["context_window"]} tokens.
+                """
+            )
 
         dict_messages = [message.dict() for message in messages]
 
@@ -124,6 +137,15 @@ class LmCaller:
             temperature=temperature,
             response_format=completion_format,
             )
+        
+        if response.choices[0].message.refusal:
+            raise LmRefusalError("LLM service refused to provide a completion")
+        if response.choices[0].finish_reason == "lenght":
+            raise LmLengthError("Completion reached max output tokens limit \
+                                without finishing")
+        if response.choices[0].finish_reason == "content_filter": 
+            raise LmContentFilterError("Completion reached max output tokens limit \
+                                       and stopped")
 
         # Response object:
         # {
@@ -137,7 +159,8 @@ class LmCaller:
                 #     "message": {
                 #             "role": "assistant",
                 #             "content": "Hi, how can i help you?"
-                #     },
+                #              "refusal": null
+                #     },:
                 #     "logprobs": null,
                 #     "finish_reason": "stop"
 #                 }

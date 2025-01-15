@@ -1,7 +1,6 @@
 # Runs the AI solution that first reads issue.md, tips.txt and fail_to_pass.txt; then 
 # modifies the repo to fix the issue.
 
-import base64
 import os
 import sys
 from contextlib import contextmanager
@@ -9,21 +8,6 @@ from typing import Tuple
 
 from rich import print
 
-
-# Function to encode the image
-def encode_image(image_path: str) -> str:
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode("utf-8")
-
-def get_ready_image(base64Image: str) -> str:
-    return f"data:image/jpeg;base64,{base64Image}"
-
-
-my_image_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "images", 
-                             "cat_image.jpeg")
-my_base64_image = encode_image(my_image_path)
-EXAMPLE_LOCAL_IMAGE = get_ready_image(base64Image=my_base64_image)
-EXAMPLE_REMOTE_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
 
 @contextmanager
 def temporary_sys_path(path):
@@ -58,12 +42,29 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), \
                                                      '..', '..', '..'))):    
-    import experimentation.code.imports.tools.fs # noqa
+    import experimentation.code.imports.tools.filesystem_tools # noqa
     from experimentation.code.imports.lm_caller import LmCaller
     from experimentation.code.imports.schemas.schema_models import (
         CompletionReasoning,
     )
     from experimentation.code.imports.tool_builder import tool_builder
+    from experimentation.data.constants import TEXT_TO_CONTEXT_OVERLOAD
+    from experimentation.code.imports.helpers.openai import get_ready_openai_image
+    from experimentation.code.imports.utils.exceptions import (
+        CostThresholdExcededError,
+        ContextSizeExcededError,
+        LmContentFilterError,
+        LmLengthError,
+        LmRefusalError
+    )
+    
+
+
+my_local_image_path = os.path.join(os.path.dirname(__file__), "..", "..", 
+                                   "data", "images", "cat_image.jpeg")
+
+EXAMPLE_REMOTE_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+EXAMPLE_LOCAL_IMAGE = get_ready_openai_image(image_path=my_local_image_path)
 
 def run_ai() -> Tuple[str, bool, str]:
 
@@ -71,33 +72,42 @@ def run_ai() -> Tuple[str, bool, str]:
 
     # reason ----------------------------------------------------
 
-    result = lm_caller.call_lm(
-        model_name = "gpt-4o-mini",
-        instruction = "Instruction the model must follow",
-        image = EXAMPLE_LOCAL_IMAGE,
-        image_format = {
-            "payload": "jpeg_base64",
-            "examples": "url_http"
-        },
-        tips = "Some tips to help the model",
-        constraints = "Some contraints the model must obey",
-        completion_format = CompletionReasoning,
-        completion_format_description = "Description of the completion format",
-        image_examples = [ 
-                            {
-                                "instruction": "Tell me whats in the image", 
-                                "image": EXAMPLE_REMOTE_IMAGE, 
-                                "response": "A boardwalk in a park with a blue sky"
-                            },
-                        ]
-    )
-
-    if result is None:
-        raise ValueError("LLM service returned an error")
-    elif result[0] is None:
-        raise ValueError("LLM service refused to provide a completion")
-    else:
-        completion_format_object_reason, response_reason = result
+    try:
+        result = lm_caller.call_lm(
+            model_name = "gpt-4o-mini",
+            instruction = TEXT_TO_CONTEXT_OVERLOAD,
+            image = EXAMPLE_LOCAL_IMAGE,
+            image_format = {
+                "payload": "jpeg_base64",
+                "examples": "url_http"
+            },
+            tips = "Some tips to help the model",
+            constraints = "Some contraints the model must obey",
+            completion_format = CompletionReasoning,
+            image_examples = [ 
+                                {
+                                    "instruction": "Tell me whats in the image", 
+                                    "image": EXAMPLE_REMOTE_IMAGE, 
+                                    "response": "A boardwalk in a park with a blue sky"
+                                },
+                            ]
+        )
+    except Exception as e:
+        result = None
+        if isinstance(e, ContextSizeExcededError):
+            print('Caught ContextSizeExcededError')
+        elif isinstance(e, LmContentFilterError):
+            print('Caught LmContentFilterError')
+        elif isinstance(e, LmLengthError):
+            print('Caught LmLengthError')
+        elif isinstance(e, LmRefusalError):
+            print('Caught LmRefusalError')
+        elif isinstance(e, CostThresholdExcededError):
+           print('Caught CostThresholdExcededError')
+        else:
+            raise e
+    
+    
 
     # -------------------------------------------
 
@@ -105,22 +115,29 @@ def run_ai() -> Tuple[str, bool, str]:
 
     tools = tool_builder.get_tools(['get_directory_tree'])
     
-    result = lm_caller.call_lm(
-        model_name = "gpt-4o-mini",
-        instruction = "Count the r's in the strawberry",
-        tips = "Some tips to help the model",
-        constraints = "Some contraints the model must obey",
-        tools = tools,
-        completion_format_description = "Description of the completion format",
-        examples = [ {"instruction": "Count the r's in row", "response": "1"} ],
-    )
-    
-    if result is None:
-        raise ValueError("LLM service returned an error")
-    elif result[0] is None:
-        raise ValueError("LLM service refused to provide a completion")
-    else:
-        completion_format_object_act, response_act = result
+    try:
+        result = lm_caller.call_lm(
+            model_name = "gpt-4o-mini",
+            instruction = "Count the r's in the strawberry",
+            tips = "Some tips to help the model",
+            constraints = "Some contraints the model must obey",
+            tools = tools,
+            examples = [ {"instruction": "Count the r's in row", "response": "1"} ],
+        )
+    except Exception as e:
+        result = None
+        if isinstance(e, ContextSizeExcededError):
+            print('Caught ContextSizeExcededError')
+        elif isinstance(e, LmContentFilterError):
+            print('Caught LmContentFilterError')
+        elif isinstance(e, LmLengthError):
+            print('Caught LmLengthError')
+        elif isinstance(e, LmRefusalError):
+            print('Caught LmRefusalError')
+        elif isinstance(e, CostThresholdExcededError):
+           print('Caught CostThresholdExcededError')
+        else:
+            raise e
 
     # placeholder: ai solution goes here
     if os.path.exists("toy.txt"):
