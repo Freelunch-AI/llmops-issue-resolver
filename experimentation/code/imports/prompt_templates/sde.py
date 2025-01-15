@@ -83,7 +83,6 @@ def get_message_image_example(image_example: Dict[str, str]) -> MessageImage:
                                 "type": "image_url", 
                                 "image_url": { 
                                     "url": image_example['image']
-
                                 } 
                             },
                             {
@@ -101,14 +100,10 @@ def prompt_template_default(instruction: str,
                             tips: Optional[str] = None, 
                             completion_format: Type[BaseModel] = StringModel, 
                             constraints: Optional[str] = None, 
-                            completion_format_description: Optional[str] = None,
                             examples: Optional[List[Dict[str, str]]] = None,
                             image_examples: Optional[List[Dict[str, str]]] = None,
                             tools: Optional[Tools] = None) -> Messages:
     
-    if tools and not completion_format_description:
-        raise ValueError("completion_format_description is required when tools are \
-                         provided")
     if image_examples:
         if image_examples and not (image and image_format):
             raise ValueError("image is required when image_examples are provided")
@@ -146,18 +141,17 @@ def prompt_template_default(instruction: str,
         StringOptionalModel(items=tips)
         DictOptionalModel(items=image_format)
         StringOptionalModel(items=constraints)
-        StringOptionalModel(items=completion_format_description)
     except ValidationError as e:
         print(f"Validation error: {e}")
         raise TypeError
 
-    # create JSONSCHEMA from the completion_format_description pydantic class
+    # create JSONSCHEMA from the completion_format pydantic class
     completion_format_dict = completion_format.schema()
 
     completion_format_json = json.dumps(completion_format_dict, indent=4)
 
     if image:
-        if tools and tips and constraints and completion_format_description \
+        if tools and tips and constraints \
         and image_examples:
 
             messages = [
@@ -168,10 +162,7 @@ def prompt_template_default(instruction: str,
                         instruction: {tips}\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -202,17 +193,14 @@ def prompt_template_default(instruction: str,
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Constraints you must follow: {constraints} \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
             ]
 
         # <TODO> alter all of the other like this one
-        if tips and constraints and image_examples and completion_format_description:
+        if tips and constraints and image_examples and completion_format:
 
             messages = [
                 Message(
@@ -222,10 +210,7 @@ def prompt_template_default(instruction: str,
                         {tips}\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -256,10 +241,7 @@ def prompt_template_default(instruction: str,
                         Usefull Tips to consider when following the \
                         instruction: {tips} \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -343,17 +325,14 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without tips and tools
-        if constraints and image_examples and completion_format_description:
+        if constraints and image_examples and completion_format:
             messages = [
                 Message(
                         role="system", 
                         content=f"{backstory}.\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -377,7 +356,7 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without tools and image_examples
-        if constraints and tips and completion_format_description:
+        if constraints and tips and completion_format:
             messages = [
                 Message(
                         role="system", 
@@ -386,10 +365,7 @@ def prompt_template_default(instruction: str,
                         instruction: {tips}\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -398,7 +374,7 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without tools and constraints:
-        if tips and image_examples and completion_format_description:
+        if tips and image_examples and completion_format:
             messages = [
                 Message(
                         role="system", 
@@ -406,10 +382,7 @@ def prompt_template_default(instruction: str,
                         Usefull Tips to consider when following the \
                         instruction: {tips}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -439,10 +412,7 @@ def prompt_template_default(instruction: str,
                         role="system", 
                         content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -474,10 +444,7 @@ def prompt_template_default(instruction: str,
                         Usefull Tips to consider when following the \
                         instruction: {tips}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -492,10 +459,7 @@ def prompt_template_default(instruction: str,
                         content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -504,7 +468,7 @@ def prompt_template_default(instruction: str,
             return messages
 
 
-        # without tips and tools and completion_format_description
+        # without tips and tools and completion_format
         if constraints and image_examples:
             messages = [
                 Message(
@@ -533,7 +497,7 @@ def prompt_template_default(instruction: str,
 
             return messages
 
-        # without tools and image_examples and completion_format_description
+        # without tools and image_examples and completion_format
         if constraints and tips:
             messages = [
                 Message(
@@ -556,10 +520,7 @@ def prompt_template_default(instruction: str,
                         role="system", 
                         content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -568,17 +529,14 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without tips, image_examples and tools
-        if constraints and completion_format_description:
+        if constraints and completion_format:
             messages = [
                 Message(
                         role="system", 
                         content=f"{backstory}.\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -587,16 +545,13 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without constraints, tools and tips
-        if image_examples and completion_format_description:
+        if image_examples and completion_format:
             messages = [
                 Message(
                         role="system", 
                         content=f"{backstory}.\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -620,7 +575,7 @@ def prompt_template_default(instruction: str,
             return messages
 
         # without constraints, tools and image_examples
-        if tips and completion_format_description:
+        if tips and completion_format:
             messages = [
                 Message(
                         role="system", 
@@ -628,10 +583,7 @@ def prompt_template_default(instruction: str,
                         Usefull Tips to consider when following the \
                         instruction: {tips}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -639,7 +591,7 @@ def prompt_template_default(instruction: str,
 
             return messages
 
-        # without constraints and tools and completion_format_description
+        # without constraints and tools and completion_format
         if tips and image_examples:
             messages = [
                 Message(
@@ -668,16 +620,13 @@ def prompt_template_default(instruction: str,
 
             return messages
 
-        if completion_format_description:
+        if completion_format:
             messages = [
                 Message(
                         role="system", 
                         content=f"{backstory}.\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 get_message_image(image=image, instruction=instruction),
@@ -685,7 +634,7 @@ def prompt_template_default(instruction: str,
 
             return messages
 
-        # without constraints, image_examples and completion_format_description
+        # without constraints, image_examples and completion_format
         if tips:
             messages = [
                 Message(
@@ -699,7 +648,7 @@ def prompt_template_default(instruction: str,
 
             return messages
 
-        # without tips, contraints and completion_format_description
+        # without tips, contraints and completion_format
         if image_examples:
             messages = [
                 Message(
@@ -727,7 +676,7 @@ def prompt_template_default(instruction: str,
 
             return messages
             
-        # without tips, examples and completion_format_description
+        # without tips, examples and completion_format
         if constraints:
             messages = [
                 Message(
@@ -754,8 +703,7 @@ def prompt_template_default(instruction: str,
             return messages
 
     else:
-        if tools and tips and constraints and examples \
-        and completion_format_description:
+        if tools and tips and constraints and examples: 
             return [
                 Message(
                         role="system", 
@@ -764,10 +712,7 @@ def prompt_template_default(instruction: str,
                         the instruction: {tips}\n \
                         Constraints you must follow: {constraints}\n \
                         Your response should obey this format: \
-                        {completion_format_json} where \
-                        the values of the json object are the types of the keys\n \
-                        Description of the format that your response should obey: \
-                        {completion_format_description}."
+                        {completion_format_json}"
                 ),
 
                 Message(
@@ -790,10 +735,7 @@ def prompt_template_default(instruction: str,
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Constraints you must follow: {constraints}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -802,7 +744,7 @@ def prompt_template_default(instruction: str,
             ]
         
         # without tools
-        if tips and constraints and examples and completion_format_description:
+        if tips and constraints and examples:
             return [
                 Message(
                     role="system", 
@@ -810,8 +752,7 @@ def prompt_template_default(instruction: str,
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Constraints you must follow: {constraints}. Your response \
                     should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n"
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -834,10 +775,7 @@ def prompt_template_default(instruction: str,
                     content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -859,10 +797,7 @@ def prompt_template_default(instruction: str,
                     content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                     Constraints you must follow: {constraints}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -898,17 +833,14 @@ def prompt_template_default(instruction: str,
             ]
         
         # without tips and tools
-        if constraints and examples and completion_format_description:
+        if constraints and examples:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}.\nConstraints you \
                     must follow: {constraints}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -923,7 +855,7 @@ def prompt_template_default(instruction: str,
             ]
 
         # without tools and examples
-        if constraints and tips and completion_format_description:
+        if constraints and tips and completion_format:
             return [
                 Message(
                     role="system", 
@@ -931,10 +863,7 @@ def prompt_template_default(instruction: str,
                     follow: {constraints}\n \
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -943,17 +872,14 @@ def prompt_template_default(instruction: str,
             ]
         
         # without tools and constraints:
-        if tips and examples and completion_format_description:
+        if tips and examples and completion_format:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}.\nUseful Tips to consider when following the \
                     instruction: {tips}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -974,10 +900,7 @@ def prompt_template_default(instruction: str,
                     role="system", 
                     content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -999,10 +922,7 @@ def prompt_template_default(instruction: str,
                     content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                     Useful Tips to consider when following the instruction: {tips}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1023,7 +943,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
         
-        # without tips and tools and completion_format_description
+        # without tips and tools and completion_format
         if constraints and examples:
             return [
                 Message(
@@ -1043,7 +963,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
         
-        # without tools and examples and completion_format_description
+        # without tools and examples and completion_format
         if constraints and tips:
             return [
                 Message(
@@ -1065,10 +985,7 @@ def prompt_template_default(instruction: str,
                     role="system", 
                     content=f"{backstory}.\nTools you can use: {tools.json()}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1077,17 +994,14 @@ def prompt_template_default(instruction: str,
             ]
         
         # without tips, examples and tools
-        if constraints and completion_format_description:
+        if constraints and completion_format:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}.\nConstraints you must \
                     follow: {constraints}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1096,13 +1010,12 @@ def prompt_template_default(instruction: str,
             ]
         
         # without constraints, tools and tips
-        if examples and completion_format_description:
+        if examples and completion_format:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}. Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys"
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1117,17 +1030,14 @@ def prompt_template_default(instruction: str,
             ]
 
         # without constraints, tools and examples
-        if tips and completion_format_description:
+        if tips and completion_format:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}.\nUseful Tips to consider when following the \
                     instruction: {tips}\n \
                     Your response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1135,7 +1045,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
         
-        # without constraints and tools and completion_format_description
+        # without constraints and tools and completion_format
         if tips and examples:
             return [
                 Message(
@@ -1155,15 +1065,12 @@ def prompt_template_default(instruction: str,
                 )
             ]
 
-        if completion_format_description:
+        if completion_format:
             return [
                 Message(
                     role="system", 
                     content=f"{backstory}.\nYour response should obey this format: \
-                    {completion_format_json} where \
-                    the values of the json object are the types of the keys\n \
-                    Description of the format that your response should obey: \
-                    {completion_format_description}."
+                    {completion_format_json}"
                 ),
 
                 Message(
@@ -1171,7 +1078,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
 
-        # without constraints, examples and completion_format_description
+        # without constraints, examples and completion_format
         if tips:
             return [
                 Message(
@@ -1185,7 +1092,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
 
-        # without tips, contraints and completion_format_description
+        # without tips, contraints and completion_format
         if examples:
             return [
                 Message(
@@ -1204,7 +1111,7 @@ def prompt_template_default(instruction: str,
                 )
             ]
         
-        # without tips, examples and completion_format_description
+        # without tips, examples and completion_format
         if constraints:
             return [
                 Message(

@@ -30,9 +30,43 @@ class Examples(BaseModel):
     items: Optional[List[Dict[str, str]]] = \
     Field(description="Description of the attribute") 
 
+class ToolDocs_Summary_RequiredParameters_Parameter(BaseModel):
+    name: str = Field(description="Description of the attribute")
+    type: str = Field(description="Description of the attribute")
+    description: str = Field(description="Description of the attribute")
+
+class ToolDocs_Summary_OptionalConfigParameters_Parameter(BaseModel):
+    name: str = Field(description="Description of the attribute")
+    type: str = Field(description="Description of the attribute")
+    description: str = Field(description="Description of the attribute")
+
+class ToolDocs_Summary(BaseModel):
+    what_you_want_to_do: str = Field(description="Description of the attribute")
+    how_to_do_it: str = Field(description="Description of the attribute")
+    required_parameters: List[ToolDocs_Summary_RequiredParameters_Parameter] = \
+        Field(description="Description of the attribute")
+    optional_config_parameters: \
+        List[ToolDocs_Summary_OptionalConfigParameters_Parameter] = \
+        Field(description="Description of the attribute")
+
+class ToolDocs_Example(BaseModel):
+    situation: str = Field(description="Description of the attribute")
+    tool_use_in_english: str = Field(description="Description of the attribute")
+    tool_use: str = Field(description="Description of the attribute")
+    parameters_choice_explanation: str = \
+        Field(description="Description of the attribute")
+    exceptions_to_the_parameters_choice_explanation: str = \
+        Field(description="Description of the attribute")
+
+class ToolDocs(BaseModel):
+    summary_of_the_tool: ToolDocs_Summary = \
+        Field(description="Description of the attribute")
+    examples_of_the_tool_being_used: List[ToolDocs_Example] = \
+        Field(description="Description of the attribute")
+
 class Tool(BaseModel):
     name: str = Field(description="Description of the attribute")
-    description: str = Field(description="Description of the attribute")
+    docs: ToolDocs = Field(description="Description of the attribute")
     function_signature: str = Field(description="Description of the attribute")
     
 class Tools(BaseModel):
@@ -151,18 +185,18 @@ class CallStats(BaseModel):
     model_name: str = Field(description="Description of the attribute")
     temperature: Optional[float] = Field(description="Description of the attribute")
     tools: Optional[Tools] = Field(description="Description of the attribute")
-    completion_format_description: Optional[str] = \
-        Field(description="Description of the attribute")
     completion_format: Type[BaseModel]  = \
         Field(description="Description of the attribute")
     instruction: str = Field(description="Description of the attribute")
     backstory: str = Field(description="Description of the attribute")
     tips: Optional[str] = Field(description="Description of the attribute")
     image: Optional[str] = Field(description="Description of the attribute")
-    image_format: Optional[Dict[str, str]] = Field(description="Description of the attribute")
+    image_format: Optional[Dict[str, str]] = \
+        Field(description="Description of the attribute")
     image_examples: Optional[List[Dict[str, str]]] = \
         Field(description="Description of the attribute")
-    examples: Optional[List[Dict[str, str]]] = Field(description="Description of the attribute")
+    examples: Optional[List[Dict[str, str]]] = \
+        Field(description="Description of the attribute")
     constraints: Optional[str] = Field(description="Description of the attribute")
 
     response: LmChatResponseReconstruct = \

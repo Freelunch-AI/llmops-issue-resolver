@@ -41,7 +41,6 @@ def temporary_sys_path(path):
 
 with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                      '..', '..', '..'))):
-    from experimentation.code.imports.constants.constants import SWE_BACKSTORY
     from experimentation.code.imports.schemas.schema_models import (
         CompletionFormat,
         DictOptionalModel,
@@ -54,7 +53,8 @@ with temporary_sys_path(os.path.abspath(os.path.join(os.path.dirname(__file__),
         Tools,
         ValidateLmChatResponse,
     )
-    from experimentation.code.imports.utils.exceptions import CostThresholdExceededError
+    from experimentation.code.imports.utils.exceptions import CostThresholdExcededError
+    from experimentation.data.constants import COST_MAPPING_1M_TOKENS, SWE_BACKSTORY
 
 # Usage example:
 # tracker = TrackLLMCalls()
@@ -76,45 +76,6 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
     def decorator(cls):
 
         original_call_lm = cls.call_lm
-        
-        cost_mapping_1M_tokens = {
-            "gpt-4o-mini": {
-                "batch": {
-                    "input_tokens": 1.25,
-                    "cached_input_tokens": None,
-                    "output_tokens": 5.0
-                },
-                "single": {
-                    "input_tokens": 2.5,
-                    "cached_input_tokens": 1.25,
-                    "output_tokens": 10.0
-                }
-            },
-            "gpt-4o": { # prices are not real
-                "batch": {
-                    "input_tokens": 1.25,
-                    "cached_input_tokens": None,
-                    "output_tokens": 5.0
-                },
-                "single": {
-                    "input_tokens": 2.5,
-                    "cached_input_tokens": 1.25,
-                    "output_tokens": 10.0
-                }
-            },
-            "gpt-4": { # prices are not real
-                "batch": {
-                    "input_tokens": 1.25,
-                    "cached_input_tokens": None,
-                    "output_tokens": 5.0
-                },
-                "single": {
-                    "input_tokens": 2.5,
-                    "cached_input_tokens": 1.25,
-                    "output_tokens": 10.0
-                }
-            }
-        }
 
         def new_init(self) -> None:
             self.history = []
@@ -173,7 +134,6 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
             image: Optional[str] = None,
             image_format: Optional[Dict[str, str]] = None, 
             constraints: Optional[str] = None,
-            completion_format_description: Optional[str] = None,
             examples: Optional[List[Dict[str, str]]] = None,
             image_examples: Optional[List[Dict[str, str]]] = None,
             completion_format: CompletionFormat = StringModel,
@@ -186,7 +146,6 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                 CompletionFormat(completion_format=completion_format)
                 Examples(items=examples)
                 Examples(items=image_examples)
-                StringOptionalModel(items=completion_format_description)
                 StringModel(items=model_name)
                 StringModel(items=instruction)
                 StringOptionalModel(items=tips)
@@ -208,7 +167,6 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                 image=image,
                 image_format=image_format,
                 constraints=constraints,
-                completion_format_description=completion_format_description,
                 examples=examples,
                 image_examples=image_examples,
                 completion_format=completion_format,
@@ -236,7 +194,6 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                     'model_name': model_name,
                     'temperature': temperature,
                     'tools': tools,
-                    'completion_format_description': completion_format_description,
                     'completion_format': completion_format,
                     'instruction': instruction,
                     'backstory': backstory,
@@ -261,7 +218,7 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
                 / self.state['number_of_calls_made']
 
                 if self.state['total_cost'] > self.cost_threshold:
-                    raise CostThresholdExceededError(
+                    raise CostThresholdExcededError(
                         f"Total cost {self.state['total_cost']} \
                         exceeded the threshold of {self.cost_threshold}")
 
@@ -280,7 +237,7 @@ def lm_caller_extensor(cost_threshold: float = 3) -> type:
             
         cls.__init__ = new_init
 
-        cls.cost_mapping_1M_tokens = cost_mapping_1M_tokens
+        cls.cost_mapping_1M_tokens = COST_MAPPING_1M_TOKENS
         cls.calculate_cost = calculate_cost
         cls.call_lm = new_call_lm
         cls.get_summary = get_summary
