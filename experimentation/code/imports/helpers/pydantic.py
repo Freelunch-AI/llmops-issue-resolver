@@ -1,9 +1,8 @@
 import os  # noqa: I001
 import sys
 from contextlib import contextmanager
-from typing import List, Type, Set, Literal
 
-from pydantic import BaseModel, ValidationError, create_model
+from pydantic import ValidationError, create_model
 from rich import print
 
 
@@ -54,7 +53,8 @@ def create_tools_use_pydantic_model(tools: Tools) -> None:
     args_dict = {}
     fields_tools_use_model = {}
     for i, tool in enumerate(tools.tools):
-        # function singautre is a string with the format: "func_name(arg1: type1, arg2: type2) -> return_type"
+        # function singautre is a string with the format: 
+        # "func_name(arg1: type1, arg2: type2) -> return_type"
 
         func_signature = tool.function_signature
         args_part = func_signature.split('->')[0].strip()
@@ -83,7 +83,7 @@ def create_tools_use_pydantic_model(tools: Tools) -> None:
             "args": (tool_use_args_model, ...)
         }
 
-        tool_use_model = create_model(f"{func_name_camel_case }Use", 
+        tool_use_model = create_model(f"{func_name_camel_case}Use", 
                                       **tool_use_model_fields)
         
         fields_tools_use_model[f"{func_name}"] = (tool_use_model, ...)
