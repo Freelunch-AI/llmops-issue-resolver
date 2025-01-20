@@ -1,27 +1,14 @@
 from datetime import datetime, timedelta
 import secrets
-from typing import Optional, Tuple, Pattern
+from typing import Optional, Tuple
 import redis
 import re
-from pydantic import BaseModel, SecretStr, validator
+from pydantic import SecretStr
 from fastapi import HTTPException, Security
 from fastapi.security import APIKeyHeader
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_429_TOO_MANY_REQUESTS
 
-SANDBOX_ID_PATTERN: Pattern = re.compile(r'^[a-zA-Z0-9-_]{4,32}$')
-
-class APIKey(BaseModel):
-    """API key with metadata."""
-    key: SecretStr
-    sandbox_id: str
-    created_at: datetime
-    expires_at: Optional[datetime] = None
-    
-    @validator('sandbox_id')
-    def validate_sandbox_id(cls, v):
-        if not SANDBOX_ID_PATTERN.match(v):
-            raise ValueError('Invalid sandbox ID format')
-        return v
+from .models import APIKey, SANDBOX_ID_PATTERN
 
 class AuthManager:
     def __init__(

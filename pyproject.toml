@@ -19,6 +19,16 @@ dependencies = [
     "typer",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "coverage",
+]
+dev = [
+    "ruff",
+    "mypy",
+]
+
 [project.urls]
 Homepage = "https://github.com/Freelunch-AI/llmops-issue-resolver"
 Issues = "https://github.com/Freelunch-AI/llmops-issue-resolver/issues"

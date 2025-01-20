@@ -6,7 +6,10 @@ requires-python = ">=3.9"
 dependencies = [
     "httpx>=0.25.1",
     "pydantic>=2.5.1",
-    "cryptography>=41.0.0"
+    "cryptography>=41.0.0",
+    "docker>=6.1.0",
+    "docker-compose>=1.29.2",
+    "aiohttp>=3.8.0"
 ]
 
 [build-system]

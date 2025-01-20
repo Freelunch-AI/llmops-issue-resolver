@@ -22,6 +22,16 @@ dependencies = [
     "pillow>=11.1.0",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "coverage",
+]
+dev = [
+    "ruff",
+    "mypy",
+]
+
 [[tool.uv.index]]
 url = "https://test.pypi.org/simple/"
 default = true

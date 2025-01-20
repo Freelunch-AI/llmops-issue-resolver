@@ -9,5 +9,7 @@ __all__ = [
     "DatabasesConfig",
     "SandboxConfig",
     "ResourceConfig",
-    "SecurityConfig"
+    "SecurityConfig",
+    "SandboxEndpoint",
+    "SandboxGroupEndpoints"
 ]

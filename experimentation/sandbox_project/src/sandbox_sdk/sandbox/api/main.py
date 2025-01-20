@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict, List
+from typing import List
+from .models import ActionRequest, ObservationModel, ActionResponse
 import logging
 from pathlib import Path
 
@@ -12,17 +12,6 @@ logger = logging.getLogger(__name__)
 
 # Create global executor
 executor = ActionExecutor()
-
-class ActionRequest(BaseModel):
-    actions: Dict[str, Dict]
-
-class ObservationModel(BaseModel):
-    stdout: str
-    stderr: str
-    terminal_still_running: bool
-
-class ActionResponse(BaseModel):
-    observations: List[ObservationModel]
 
 @app.post("/execute", response_model=ActionResponse)
 async def execute_actions(request: ActionRequest):

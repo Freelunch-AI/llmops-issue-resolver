@@ -2,35 +2,11 @@ from typing import Optional, Dict, Any
 import httpx
 from fastapi import Request, Response, HTTPException
 import asyncio
-from pydantic import BaseModel, HttpUrl
+from pydantic import HttpUrl
+from .models import ProxyConfig
 import logging
 
 logger = logging.getLogger(__name__)
-
-class ProxyConfig(BaseModel):
-    """Configuration for request proxying."""
-    max_request_size: int = 10 * 1024 * 1024  # 10MB
-    connect_timeout: float = 5.0
-    read_timeout: float = 30.0
-    total_timeout: float = 60.0  # Total request timeout
-    max_retries: int = 3
-    initial_backoff: float = 0.1  # Initial backoff in seconds
-    max_backoff: float = 10.0     # Maximum backoff in seconds
-    backoff_factor: float = 2.0   # Multiplicative factor for backoff
-    max_connections: int = 100    # Maximum number of concurrent connections
-    allowed_url_patterns: list[str] = []  # List of allowed URL patterns
-    chunk_size: int = 8192  # Chunk size for streaming
-    filtered_headers: set[str] = {
-        "host",
-        "connection",
-        "keep-alive",
-        "proxy-authenticate",
-        "proxy-authorization",
-        "te",
-        "trailers",
-        "transfer-encoding",
-        "upgrade"
-    }
 
 class RequestProxy:
     def __init__(self, config: Optional[ProxyConfig] = None):

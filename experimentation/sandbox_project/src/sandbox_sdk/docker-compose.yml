@@ -1,4 +1,3 @@
-version: '3.8'
 
 networks:
   orchestrator_network:  # Network for orchestrator and gateway communication
@@ -14,7 +13,7 @@ networks:
 services:
   gateway:
     build:
-      context: ./sandbox_gateway
+      context: ../sandbox_gateway
       dockerfile: Dockerfile
     ports:
       - "8000:8000"  # API endpoint
@@ -24,7 +23,7 @@ services:
       - SANDBOX_NETWORK=sandbox_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # For managing sandbox containers
-      - ./sandbox_gateway/sandboxes:/app/sandboxes  # For sandbox compose files
+      - ../sandbox_gateway/sandboxes:/app/sandboxes  # For sandbox compose files
     networks:
       - orchestrator_network
       - gateway_network
@@ -34,7 +33,7 @@ services:
 
   orchestrator:
     build:
-      context: ./sandbox_orchestrator
+      context: ../sandbox_orchestrator
       dockerfile: Dockerfile
     environment:
       - GATEWAY_URL=http://gateway:8000

@@ -2,12 +2,14 @@ from datetime import datetime
 from pydantic import BaseModel, PositiveInt, PositiveFloat, validator, Field
 from typing import Optional, List
 
+
 class ResourceLimits(BaseModel):
     """System-wide resource limits for sandboxes."""
     max_cpu_cores: PositiveInt = 8
     max_ram_gb: PositiveInt = 32
     max_disk_gb: PositiveInt = 100
     max_sandboxes: PositiveInt = 10
+
 
 class ComputeResources(BaseModel):
     """Resource configuration for a sandbox."""

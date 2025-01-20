@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from sandbox_orchestrator.core.models.sandbox import (
+from ...models import (
     ResourceConfig,
     SecurityConfig,
     SandboxConfig

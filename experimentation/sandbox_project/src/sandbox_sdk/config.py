@@ -1,21 +1,10 @@
 from pathlib import Path
 from typing import Dict, Optional, Union
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import Field
+from .models import ServiceManagementConfig, DatabaseConfig, SandboxConfig
 
-class DatabaseConfig(BaseModel):
-    host: str
-    port: int
-    credentials: Dict[str, str] = Field(default_factory=dict)
-
-class SandboxConfig(BaseModel):
-    orchestrator_url: str = "http://localhost:8000"
-    default_compute_resources: Dict[str, Union[int, float, str]]
-    database_configs: Dict[str, DatabaseConfig]
-    tools_directory: Optional[Path] = None
-    log_level: str = "INFO"
-    log_file: Optional[str] = None
-
+class SandboxConfigManager(SandboxConfig):
     @classmethod
     def from_yaml(cls, path: Union[str, Path]) -> "SandboxConfig":
         """Load configuration from a YAML file."""

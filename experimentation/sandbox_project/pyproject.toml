@@ -1,7 +1,7 @@
 [project]
 name = "sandbox-sdk"
 version = "0.1.0"
-description = "SDK for creating and managing sandboxed environments for executing actions"
+description = "SDK for creating, managing, and interacting with sandboxed environments for executing actions"
 authors = [
     {name = "OpenHands", email = "openhands@all-hands.dev"}
 ]
@@ -13,6 +13,7 @@ dependencies = [
     "PyYAML>=6.0.1",
     "neo4j>=5.14.0",
     "qdrant-client>=1.6.0",
+    "cryptography>=41.0.0",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -34,7 +35,7 @@ build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests"]
+testpaths = ["src/sandbox_sdk/tests"]
 
 [tool.ruff]
 line-length = 88
@@ -55,9 +56,8 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
-
 [tool.ruff.isort]
-known-first-party = ["sandbox_sdk", "sandbox_orchestrator"]
+known-first-party = ["sandbox_sdk"]
 
 [tool.mypy]
 python_version = "3.9"
