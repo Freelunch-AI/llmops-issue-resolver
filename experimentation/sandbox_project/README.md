@@ -1,6 +1,30 @@
 # Sandbox SDK
 
-A Python library for creating and managing sandboxed environments for executing actions.
+## Project Overview
+
+The Sandbox SDK is a comprehensive Python library designed for creating and managing secure, isolated environments for executing actions. It provides a robust framework for running untrusted code, managing resources, and handling database operations in a controlled environment.
+
+### Key Benefits
+
+- **Security**: Isolated execution environments with strict resource controls
+- **Flexibility**: Support for various operations including filesystem, terminal, web, and database access
+- **Scalability**: Automatic resource management and optimization
+- **Reliability**: Built-in monitoring and error handling
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Sandbox SDK                       │
+├─────────────────┬──────────────────┬───────────────┤
+│   SDK Client    │     Sandbox      │  Orchestrator │
+│  (/src/sdk)     │   (/sandbox)     │(/orchestrator)│
+├─────────────────┼──────────────────┼───────────────┤
+│ - API Client    │ - Docker Runtime │ - Lifecycle   │
+│ - Auth Handlers │ - Action Engine  │ - Resources   │
+│ - Type Models   │ - Tools Manager  │ - Scheduling  │
+└─────────────────┴──────────────────┴───────────────┘
+```
 
 ## Features
 
@@ -102,9 +126,36 @@ observations = await sandbox.send_actions({
 # Cleanup
 await sandbox.end()
 await group.end_group()
+```
+
 ## Documentation
 
-See the [tutorial](docs/tutorial/getting_started.md) for detailed usage instructions.
+The project documentation is organized as follows:
+
+### Getting Started
+
+- [Quick Start Tutorial](docs/tutorial/getting_started.md)
+- [Installation Guide](docs/installation.md)
+- [Configuration Guide](docs/configuration.md)
+
+### Component Documentation
+
+- [SDK Client Documentation](/src/sandbox_sdk/README.md)
+- [Sandbox Runtime Documentation](/sandbox/README.md)
+- [Orchestrator Documentation](/sandbox_orchestrator/README.md)
+
+### API Reference
+
+- [API Documentation](docs/api/README.md)
+- [Models Reference](docs/api/models.md)
+- [Tools Reference](docs/api/tools.md)
+
+### Guides
+
+- [Security Best Practices](docs/guides/security.md)
+- [Resource Management](docs/guides/resources.md)
+- [Custom Tool Development](docs/guides/custom_tools.md)
+- [Database Integration](docs/guides/database.md)
 
 ## Security
 
@@ -119,6 +170,7 @@ The sandbox environment implements several security measures:
 ## Configuration
 
 ### Resource Management
+
 ```yaml
 resource_limits:
   cpu_limit: 2.0
@@ -128,6 +180,7 @@ resource_limits:
 ```
 
 ### Database Connection
+
 ```yaml
 database_config:
   pool_size: 20
@@ -141,6 +194,7 @@ database_config:
 1. Clone the repository
 2. Install dependencies: `pip install -r requirements.txt`
 3. Start required Docker containers:
+
    ```bash
    # Start all required services including Qdrant and Neo4j
    docker-compose up -d
@@ -148,10 +202,10 @@ database_config:
    # Verify containers are running
    docker-compose ps
    ```
-   
+
    > **Important**: Ensure that Qdrant and Neo4j containers are running before executing tests.
    > These services are required for the test suite to function properly.
-   
+
    The following services must be running:
    - Qdrant (Vector Database) - Ports 6333, 6334
    - Neo4j (Graph Database) - Ports 7474, 7687
@@ -161,6 +215,7 @@ database_config:
 ## License
 
 MIT License
+
 ## Contributing
 
 1. Fork the repository

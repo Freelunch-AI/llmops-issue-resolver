@@ -2,7 +2,34 @@
 
 This tutorial will show you how to use the Sandbox SDK to create and manage sandboxed environments for executing actions.
 
+## Prerequisites
+
+Before getting started, ensure you have the following installed:
+
+- Python 3.9 or higher
+- Docker Desktop or Docker Engine
+- Git
+- uv package manager (recommended)
+- At least 8GB RAM and 20GB free disk space
+- Linux or macOS (Windows support via WSL2)
+
 ## Installation
+
+### Environment Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-org/sandbox-sdk.git
+   cd sandbox-sdk
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Linux/macOS
+   # or
+   .venv\Scripts\activate  # On Windows
+   ```
 
 ```bash
 pip install sandbox-sdk
@@ -18,6 +45,22 @@ from sandbox.models import DatabaseAccess, ComputeResources, DatabaseType, Datab
 from pathlib import Path
 
 # Configure database access
+```
+
+## Running the Sandbox
+
+1. Start the sandbox services:
+   ```bash
+   sandbox-cli start
+   ```
+
+2. Verify the sandbox is running:
+   ```bash
+   sandbox-cli status
+   ```
+
+The sandbox should show all services (database, compute, etc.) as running.
+
 db_access = DatabaseAccess(
     database_type=DatabaseType.VECTOR,
     access_type=DatabaseAccessType.READ_WRITE,
@@ -100,6 +143,9 @@ The SDK comes with several built-in tools:
 - uv_remove_package
 - run_python_script
 - get_current_directory
+- install_system_package
+- get_system_info
+- monitor_process
 
 ### Web Tools
 - scrape_website
@@ -135,14 +181,17 @@ def my_custom_tool(param1: str, param2: int) -> Tuple[str, str, bool]:
         return result, "", False
     except Exception as e:
         return "", str(e), False
-```
-
 ## Security Considerations
 
 - Sandboxes run in isolated Docker containers
 - Database access is controlled per sandbox
 - Resource limits are enforced
 - Tools run with restricted permissions
+- Network access is restricted by default
+- Filesystem access is limited to sandbox workspace
+- Memory isolation between sandboxes
+- Regular security updates and patches
+- Audit logging for all operations
 
 ## Error Handling
 

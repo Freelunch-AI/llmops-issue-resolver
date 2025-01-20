@@ -4,9 +4,9 @@ import numpy as np
 import psutil
 import time
 from sandbox_sdk.sandbox import Sandbox
-from sandbox_sdk.models import ComputeResources, AttachedDatabases, ResourceUnit
-from sandbox_sdk.exceptions import ActionExecutionError
-from sandbox_sdk.exceptions import ResourceError
+from sandbox_sdk.helpers.models import ComputeResources, AttachedDatabases, ResourceUnit
+from sandbox_sdk.helpers.exceptions import ActionExecutionError
+from sandbox_sdk.helpers.exceptions import ResourceError
 from sandbox_sdk.resource_manager import get_current_resources, adjust_resource_limits
 
 @pytest.fixture

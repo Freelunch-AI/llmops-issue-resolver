@@ -1,5 +1,5 @@
-from .sdk.sandbox import SandboxGroup, Sandbox
-from .sdk.models import (
+from .sdk.sdk_sandbox.client import SandboxGroup, Sandbox
+from .sdk.sdk_orchestrator.models import (
     DatabaseAccess,
     ComputeResources,
     DatabaseType,
