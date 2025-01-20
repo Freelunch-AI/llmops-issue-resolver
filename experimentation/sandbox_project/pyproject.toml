@@ -1,0 +1,79 @@
+[project]
+name = "sandbox-sdk"
+version = "0.1.0"
+description = "SDK for creating and managing sandboxed environments for executing actions"
+authors = [
+    {name = "OpenHands", email = "openhands@all-hands.dev"}
+]
+dependencies = [
+    "fastapi>=0.104.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.5.0",
+    "docker>=7.0.0",
+    "PyYAML>=6.0.1",
+    "neo4j>=5.14.0",
+    "qdrant-client>=1.6.0",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-cov>=4.1.0",
+]
+dev = [
+    "ruff>=0.1.6",
+    "mypy>=1.7.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.isort]
+known-first-party = ["sandbox_sdk", "sandbox_orchestrator"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = ["docker.*", "httpx.*", "uvicorn.*", "neo4j.*", "qdrant_client.*"]
+ignore_missing_imports = true

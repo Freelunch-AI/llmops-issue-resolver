@@ -1,0 +1,23 @@
+[project]
+name = "sandbox"
+version = "0.1.0"
+description = "Python package for sandbox"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "httpx>=0.25.0",
+    "playwright>=1.40.0",
+    "scrapy>=2.11.0",
+    "qdrant-client>=1.6.0",
+    "neo4j>=5.14.0",
+    "pydantic>=2.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

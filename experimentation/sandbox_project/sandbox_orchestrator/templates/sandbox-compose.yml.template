@@ -1,0 +1,64 @@
+version: '3.8'
+networks:
+  gateway_network:
+    name: gateway_network
+    driver: bridge
+    internal: true
+    attachable: true
+    enable_ipv6: false
+  sandbox_internet_{id}:
+    name: sandbox_internet_{id}
+    driver: bridge
+    attachable: true
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  qdrant_sandbox_{id}:
+    name: qdrant_sandbox_{id}
+    driver: bridge
+    internal: true
+    attachable: true
+    enable_ipv6: false
+  neo4j_sandbox_{id}:
+    name: neo4j_sandbox_{id}
+    driver: bridge
+    internal: true
+
+services:
+  sandbox-{id}:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      gateway_network:
+        aliases:
+          - sandbox-{id}
+      sandbox_internet_{id}:
+        aliases:
+          - sandbox-{id}
+      qdrant_sandbox_{id}:
+        aliases:
+          - sandbox-{id}
+      neo4j_sandbox_{id}:
+        aliases:
+          - sandbox-{id}
+          - neo4j-client-{id}
+    environment:
+      - SANDBOX_ID={id}
+      - API_KEY={api_key}
+    expose:
+      - 8000
+    deploy:
+      resources:
+        limits:
+          cpus: {cpu_limit}
+          memory: {memory_limit}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+volumes:

@@ -1,0 +1,63 @@
+{
+    "nodes": [
+        {
+            "label": "Person",
+            "properties": {
+                "name": "John Doe",
+                "age": 30,
+                "occupation": "Developer",
+                "skills": ["Python", "Docker", "Kubernetes"]
+            }
+        },
+        {
+            "label": "Company",
+            "properties": {
+                "name": "Tech Corp",
+                "industry": "Technology",
+                "founded": 2020,
+                "location": "San Francisco"
+            }
+        },
+        {
+            "label": "Project",
+            "properties": {
+                "name": "AI Platform",
+                "status": "In Progress",
+                "priority": "High"
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "from_label": "Person",
+            "from_properties": {
+                "name": "John Doe"
+            },
+            "to_label": "Company",
+            "to_properties": {
+                "name": "Tech Corp"
+            },
+            "type": "WORKS_AT",
+            "properties": {
+                "since": 2021,
+                "position": "Senior Developer",
+                "department": "Engineering"
+            }
+        },
+        {
+            "from_label": "Person",
+            "from_properties": {
+                "name": "John Doe"
+            },
+            "to_label": "Project",
+            "to_properties": {
+                "name": "AI Platform"
+            },
+            "type": "WORKS_ON",
+            "properties": {
+                "role": "Tech Lead",
+                "hours_per_week": 30
+            }
+        }
+    ]
+}

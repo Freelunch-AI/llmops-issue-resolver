@@ -1,0 +1,61 @@
+databases:
+  vector_db:
+    collections:
+      - name: default
+        vector_size: 768
+        initial_data: []
+      
+      - name: test
+        vector_size: 128
+        initial_data:
+          - id: 1
+            vector: [0.1, 0.2, 0.3]
+            payload:
+              text: "Test document 1"
+          - id: 2
+            vector: [0.4, 0.5, 0.6]
+            payload:
+              text: "Test document 2"
+  
+  graph_db:
+    nodes:
+      - label: "TestNode"
+        properties:
+          name: "Test 1"
+          value: 123
+      
+      - label: "TestNode"
+        properties:
+          name: "Test 2"
+          value: 456
+    
+    relationships:
+      - from_label: "TestNode"
+        from_properties:
+          name: "Test 1"
+        to_label: "TestNode"
+        to_properties:
+          name: "Test 2"
+        type: "CONNECTS_TO"
+        properties:
+          weight: 0.8
+sandbox_defaults:
+  resources:
+    cpus: '2'
+    memory: '4G'
+    memory_reservation: '1G'
+    storage_quota: '10G'
+    pids_limit: 100
+  
+  security:
+    read_only_root: true
+    drop_capabilities:
+      - SYS_ADMIN
+      - SYS_PTRACE
+  
+  environment:
+    PYTHONPATH: /workspace
+    PYTHONUNBUFFERED: "1"
+    SANDBOX_ENV: "test"
+    COMPOSE_PROJECT_NAME: "sandbox"
+    DOCKER_BUILDKIT: "1"

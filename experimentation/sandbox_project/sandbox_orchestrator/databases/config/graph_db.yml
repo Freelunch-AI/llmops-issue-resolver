@@ -1,0 +1,21 @@
+host: localhost
+port: 7687
+credentials:
+  user: "neo4j"
+  password: "neo4j_password"
+
+initial_data_file: "databases/data/graph_db_initial_data.json"
+security:
+  ssl_enabled: false
+  ssl_cert_path: "/path/to/cert.pem"
+  ssl_key_path: "/path/to/key.pem"
+  encryption_enabled: true
+performance:
+  max_connections: 50
+  connection_timeout_ms: 5000
+  max_transaction_retry_time_ms: 30000
+
+backup:
+  enabled: true
+  schedule: "0 0 * * *"  # daily at midnight
+  retention_days: 7

@@ -1,0 +1,85 @@
+version: '3.8'
+
+networks:
+  orchestrator_network:  # Network for orchestrator and gateway communication
+    name: orchestrator_network
+    internal: true  # Not accessible from outside
+  gateway_network:  # Network for sandboxes to communicate with gateway
+    name: gateway_network
+    internal: true
+  redis_network:  # Isolated network for redis and gateway
+    name: redis_network
+    internal: true
+
+services:
+  gateway:
+    build:
+      context: ./sandbox_gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"  # API endpoint
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SANDBOX_NETWORK=sandbox_network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # For managing sandbox containers
+      - ./sandbox_gateway/sandboxes:/app/sandboxes  # For sandbox compose files
+    networks:
+      - orchestrator_network
+      - gateway_network
+      - redis_network
+    depends_on:
+      - redis
+
+  orchestrator:
+    build:
+      context: ./sandbox_orchestrator
+      dockerfile: Dockerfile
+    environment:
+      - GATEWAY_URL=http://gateway:8000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - orchestrator_network
+    depends_on:
+      - gateway
+
+  redis:
+    image: redis:alpine
+    networks:
+      - redis_network
+    volumes:
+      - redis-data:/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"  # REST API
+      - "6334:6334"  # GRPC API
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - gateway_network
+
+  neo4j:
+    image: neo4j:4.4
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_memory_heap_initial__size=1G
+      - NEO4J_dbms_memory_heap_max__size=1G
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - gateway_network
+
+volumes:
+  redis-data:
+  qdrant_data:
+  neo4j_data:
+  neo4j_logs:
