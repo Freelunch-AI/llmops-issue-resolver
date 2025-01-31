@@ -1,0 +1,13 @@
+database:
+  type: neo4j
+  host: neo4j_db
+  port: 7687
+  credentials:
+    user: neo4j
+    password: password
+  security:
+    ssl_enabled: false
+  performance:
+    max_heap_size: "2G"
+    page_cache_size: "512M"
+initial_data: /workspace/src/sandbox_toolkit/infra/databases/neo4j_initial_data.cypher

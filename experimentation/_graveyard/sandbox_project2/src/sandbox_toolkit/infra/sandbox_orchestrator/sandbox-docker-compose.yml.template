@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  sandbox:
+    image: sandbox_image:{id} # Image name will be dynamically replaced
+    ports:
+      - "{port}:5000"      # Host port will be dynamically replaced, container port is fixed to 5000
+    networks:
+      - sandbox_network_{id} # Network name will be dynamically replaced
+
+  vector_db:
+    image: qdrant/qdrant:v1.7.3
+    ports:
+      - "6333" # HTTP port - host port is dynamically assigned
+      - "6334" # GRPC port - host port is dynamically assigned
+    networks:
+      - sandbox_network_{id} # Network name will be dynamically replaced
+    volumes:
+      - vector_db_data_{id}:/qdrant/storage # Volume name will be dynamically replaced
+
+  graph_db:
+    image: neo4j:5.14.0-community
+    ports:
+      - "7474" # Browser interface - host port is dynamically assigned
+      - "7687" # Bolt port - host port is dynamically assigned
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_PLUGINS_UNMANAGED__0: '["apoc-5.14", "graph-data-science-2.5"]'
+      NEO4J_APOC_EXPORT_FILE_ENABLED: 'true'
+      NEO4J_APOC_IMPORT_FILE_ENABLED: 'true'
+      NEO4J_APOC_IMPORT_FILE_USE_NEO4J_CONFIG: 'true'
+    volumes:
+      - neo4j_data_{id}:/data # Volume name will be dynamically replaced
+      - ./graph_db/plugins:/plugins
+      - ./graph_db/import:/import
+    networks:
+      - sandbox_network_{id} # Network name will be dynamically replaced
+
+volumes:
+  vector_db_data_{id}: # Volume name will be dynamically replaced
+  neo4j_data_{id}: # Volume name will be dynamically replaced
+
+networks:
+  sandbox_network_{id}: # Network name will be dynamically replaced
+    name: sandbox_network_{id} # Network name will be dynamically replaced

@@ -1,0 +1,426 @@
+2025-01-22 21:51:25,054 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 21:51:25,055 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 21:51:25,055 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 21:51:25,057 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 21:51:25,062 - root - DEBUG - SandboxGroup.start called
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup started.
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 21:51:25,063 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 21:51:25,063 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 1 started.
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 2 started.
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:51:25,063 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 21:51:25,063 - root - DEBUG - SandboxGroup context finished.
+2025-01-22 21:55:48,830 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 21:55:48,831 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 21:55:48,831 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 21:55:48,832 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.start called
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup started.
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 21:55:48,838 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 21:55:48,838 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 21:55:48,838 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 21:55:48,839 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 21:55:48,839 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:55:48,839 - root - DEBUG - Sandbox 1 started.
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:55:48,839 - root - DEBUG - Sandbox 2 started.
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 21:55:48,839 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 21:55:48,839 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 21:55:48,839 - root - DEBUG - SandboxGroup context finished.
+2025-01-22 22:01:50,141 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:01:50,142 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:01:50,142 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:01:50,143 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:01:50,152 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:01:50,152 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup context finished.
+2025-01-22 22:05:34,339 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:05:34,340 - root - DEBUG - Starting manual test: test_user_tools.py
+2025-01-22 22:05:34,340 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:05:34,342 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:05:34,349 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: test_sandbox_with_tool, internal_id: test_sandbox_id
+2025-01-22 22:05:34,349 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: test_sandbox_id
+2025-01-22 22:05:34,350 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:06:56,665 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:06:56,665 - root - DEBUG - Starting manual test: test_user_tools.py
+2025-01-22 22:06:56,666 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:06:56,667 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:06:56,673 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:06:56,673 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:06:56,673 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:06:56,673 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:06:56,673 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:06:56,673 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: test_sandbox_with_tool, internal_id: test_sandbox_id
+2025-01-22 22:06:56,674 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:06:56,674 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: test_sandbox_id
+2025-01-22 22:06:56,674 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:07:39,643 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:07:39,644 - root - DEBUG - Starting manual test: test_user_tools.py
+2025-01-22 22:07:39,644 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:07:39,646 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:07:39,653 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: test_sandbox_with_tool, internal_id: test_sandbox_id
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:07:39,653 - root - DEBUG - Sandbox.start called with sandbox_id: test_sandbox_id
+2025-01-22 22:07:39,653 - root - DEBUG - Sandbox.start - sandbox_url: None
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: test_sandbox_id
+2025-01-22 22:07:39,653 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: test_sandbox_with_tool
+2025-01-22 22:09:49,484 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:09:49,485 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:09:49,486 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:09:49,487 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:09:49,495 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:09:49,496 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:09:49,497 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,497 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,828 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:12:04,829 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:12:04,829 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:12:04,831 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:04,837 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:04,837 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,838 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:12:04,838 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,222 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:12:45,223 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:12:45,223 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:12:45,225 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:45,232 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:45,232 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,508 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:18:06,509 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:18:06,509 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:18:06,511 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:18:06,518 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:18:06,519 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,520 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,073 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:22:15,074 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:22:15,075 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:22:15,077 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:22:15,089 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:22:15,089 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:22:15,089 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:22:15,089 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:22:15,091 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup context finished.
+2025-01-22 22:32:44,742 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:32:44,743 - root - DEBUG - Starting example.py - Comprehensive SDK Test
+2025-01-22 22:32:44,743 - root - DEBUG - --- Sandbox Group Creation with Custom Tools ---
+2025-01-22 22:32:44,744 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:32:44,745 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_with_tools
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:32:44,751 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_with_tools, internal_id: test_sandbox_id
+2025-01-22 22:32:44,751 - root - DEBUG - Sandbox Group with custom tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:32:44,751 - root - DEBUG - --- Sandbox Creation within Group with Custom Tools ---
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_inherits_tools
+2025-01-22 22:32:44,751 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:32:44,751 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:32:44,752 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_inherits_tools, internal_id: test_sandbox_id
+2025-01-22 22:32:44,752 - root - DEBUG - Sandbox in group with inherited tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:32:44,752 - root - DEBUG - --- Sandbox Creation Directly with Custom Tools ---
+2025-01-22 22:32:44,752 - root - DEBUG - Sandbox.start called with sandbox_id: sandbox_direct_with_tools
+2025-01-22 22:32:44,752 - root - DEBUG - Sandbox.start - sandbox_url: None
+2025-01-22 22:32:44,752 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox_direct_with_tools
+2025-01-22 22:35:00,288 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:35:00,289 - root - DEBUG - Starting example.py - Comprehensive SDK Test
+2025-01-22 22:35:00,289 - root - DEBUG - --- Sandbox Group Creation with Custom Tools ---
+2025-01-22 22:35:00,289 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:35:00,291 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_with_tools
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:35:00,297 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_with_tools, internal_id: test_sandbox_id
+2025-01-22 22:35:00,297 - root - DEBUG - Sandbox Group with custom tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:35:00,297 - root - DEBUG - --- Sandbox Creation within Group with Custom Tools ---
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_inherits_tools
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:35:00,297 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:35:00,297 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_inherits_tools, internal_id: test_sandbox_id
+2025-01-22 22:35:00,297 - root - DEBUG - Sandbox in group with inherited tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:35:00,297 - root - DEBUG - --- Sandbox Creation Directly with Custom Tools ---
+2025-01-22 22:35:00,298 - root - DEBUG - Sandbox.start called with sandbox_id: sandbox_direct_with_tools
+2025-01-22 22:35:00,298 - root - DEBUG - Sandbox.start - sandbox_url: None
+2025-01-22 22:35:00,298 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox_direct_with_tools
+2025-01-22 22:35:47,246 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:35:47,247 - root - DEBUG - Starting example.py - Comprehensive SDK Test
+2025-01-22 22:35:47,247 - root - DEBUG - --- Sandbox Group Creation with Custom Tools ---
+2025-01-22 22:35:47,247 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:35:47,248 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:35:47,255 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:35:47,255 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:35:47,256 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_with_tools
+2025-01-22 22:35:47,256 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:35:47,256 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:35:47,257 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_with_tools, internal_id: test_sandbox_id
+2025-01-22 22:35:47,257 - root - DEBUG - Sandbox Group with custom tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:35:47,257 - root - DEBUG - --- Sandbox Creation within Group with Custom Tools ---
+2025-01-22 22:35:47,257 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox_in_group_inherits_tools
+2025-01-22 22:35:47,257 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:35:47,257 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:35:47,257 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox_in_group_inherits_tools, internal_id: test_sandbox_id
+2025-01-22 22:35:47,257 - root - DEBUG - Sandbox in group with inherited tools created, sandbox_id: test_sandbox_id
+2025-01-22 22:35:47,257 - root - DEBUG - --- Sandbox Creation Directly with Custom Tools ---
+2025-01-22 22:35:47,258 - root - DEBUG - Sandbox.start called with sandbox_id: sandbox_direct_with_tools
+2025-01-22 22:35:47,258 - root - DEBUG - Sandbox.start - sandbox_group: <sandbox_toolkit.sdk.core.core.SandboxGroup object at 0x7f18677270b0>
+2025-01-22 22:35:47,259 - root - DEBUG - Sandbox.start - sandbox_url: None
+2025-01-22 22:35:47,259 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox_direct_with_tools
+2025-01-22 23:49:18,313 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 23:49:18,314 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-22 23:56:28,186 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 23:56:28,187 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:00:00,370 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:00:00,371 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:00:00,372 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox test_sandbox_id
+2025-01-23 00:00:54,345 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:00:54,347 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:00:54,347 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox test_sandbox_id
+2025-01-23 00:00:54,347 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox-image:test_sandbox_id
+2025-01-23 00:00:54,348 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-image-id-sandbox-image:test_sandbox_id
+2025-01-23 00:03:27,848 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:03:27,849 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:05:33,143 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:05:33,144 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:05:33,144 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox test_sandbox_id
+2025-01-23 00:08:20,082 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:08:20,083 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:09:16,521 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:09:16,522 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:09:16,522 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:09:16,522 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:09:16,523 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:09:16,523 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:09:16,523 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:10:13,829 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:10:13,830 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:10:13,830 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:10:13,830 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:10:13,830 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:10:13,830 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:10:13,830 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:10:13,831 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:10:13,831 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:11:10,824 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:11:10,825 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:11:10,825 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:11:10,826 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_sandbox_1, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:11:10,827 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Stopping sandbox sandbox_1
+2025-01-23 00:17:01,135 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:17:01,136 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:17:01,137 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:17:01,137 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:17:01,137 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:17:01,137 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:17:01,138 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:17:01,138 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:17:01,138 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:17:01,138 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_sandbox_1, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:17:01,139 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Stopping sandbox sandbox_1
+2025-01-23 00:23:04,155 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:23:04,156 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running sandbox container: sandbox_container_sandbox_1, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:25:36,711 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:25:36,713 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:29:56,427 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:29:56,428 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:29:56,428 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:30:58,006 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:30:58,007 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:30:58,007 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:30:58,007 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:30:58,007 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:30:58,008 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:30:58,008 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379
+2025-01-23 00:34:06,643 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:34:06,645 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_simulated-image-id-sandbox_image_sandbox_1, id: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:34:06,646 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379
+2025-01-23 00:35:13,891 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:35:13,892 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 00:35:13,892 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:35:13,892 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:35:13,892 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:35:13,893 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_simulated-image-id-sandbox_image_sandbox_1, id: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:35:13,893 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379
+2025-01-23 00:35:13,893 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Stopping sandbox sandbox_1
+2025-01-23 00:35:13,893 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Deleting Docker network: sandbox_1
+2025-01-23 01:42:20,537 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:42:20,538 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 01:42:20,539 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 01:42:20,539 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 01:42:20,539 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 01:42:20,539 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 01:46:28,811 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:46:28,812 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 01:56:15,621 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:56:15,622 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 01:56:15,622 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Starting sandbox sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_simulated-image-id-sandbox_image_sandbox_1, id: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379
+2025-01-23 01:57:34,863 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:57:34,864 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 01:58:59,995 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:58:59,996 - root - DEBUG - Starting example.py - Orchestrator Lifecycle Test
+2025-01-23 01:58:59,996 - docker.utils.config - DEBUG - Trying paths: ['/root/.docker/config.json', '/root/.dockercfg']
+2025-01-23 01:58:59,999 - docker.utils.config - DEBUG - No config file found
+2025-01-23 01:58:59,999 - docker.utils.config - DEBUG - Trying paths: ['/root/.docker/config.json', '/root/.dockercfg']
+2025-01-23 01:58:59,999 - docker.utils.config - DEBUG - No config file found

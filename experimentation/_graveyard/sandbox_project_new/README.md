@@ -108,15 +108,11 @@ namespaces=["default"]
 Tools
 - tools: Optional[Union[List[Callable], List[Path]]]
 
-### Directory Semantic Search Built-in Tool
+### Document Store Built-in Tool
 
-Need to build a Directory Semantic Search tool that will be a wrapper around the vector database. It will
-allow users to store directories and retrive relevant pieces of files within specifiec directories fora given query.
-
-Under the hod it is: (1) adding the file path at the top of the file and treating each file as a document; (2) hunking documents, 
-(3) using an embedding model to embed chunks; (4) using the vector database to store the chunks long with their embeddings; (5) embedding query with embedding model;
-(6) using vector databse to get relevant chunks; (7) builsding a search reuslt object with the chunks where each shunk has a file_name property 
-and a file_path property where filereferes to the file the hcunk is in.
+Need to build a document store tool that will be a wrapper around the vector database. It will
+allow users to store documents and retrive similar documents, also allows users to pick how to chunk stored documents.
+Under the hod it is: (1) chunking documents, (2) using an embedding model to embed chunks; (3) then using the vect database to store the chunks long with their embeddings.
 
 ### Default tools
 
@@ -135,26 +131,26 @@ Sandboxes already come with deafult built-in tools:
 - create_directory
 
 ### Terminal Tools
-- execute_command
 - change_directory
-- get_current_directory
+- execute_command
 - uv_add_package
 - uv_remove_package
-- uv_sync_packages
-- uv_run_python_script
+- run_python_script
+- get_current_directory
 - install_system_package
-- get_total_available_and_used_compute_resources
+- get_system_info
+- monitor_process
 
 ### Web Tools
 - scrape_website
-- google_search
-- get_most_voted_coding_forum_answers_to_similar_problems (e.g., of coding forum: stack overflow)
+- web_search
+- extract_data_from_website
 
 ### Database Tools
-- Semantic Search (on top of Qdrant vector db)
-  - store_directory_of_files
-  - given_a_query_and_dreictory_retrive_relevant_parts_of_files_within_the_directory
-
+- Document Store (on top of Qdrant vector db)
+  - store documents
+  - retrieve similar documents
+  - chunk documents
 - Graph Database (Neo4j)
   - execute_query
   - create_node

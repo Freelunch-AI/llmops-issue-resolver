@@ -1,0 +1,35 @@
+2025-01-22 23:49:18,313 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 23:49:18,314 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-22 23:56:28,186 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 23:56:28,187 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:03:27,848 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:03:27,849 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:23:04,155 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:23:04,156 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image build simulated for image: sandbox_image_sandbox_1, id: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_sandbox_1, id: simulated-network-id-sandbox_network_sandbox_1
+2025-01-23 00:23:04,157 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker container run simulated, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:23:04,158 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running sandbox container: sandbox_container_sandbox_1, container_id: simulated-container-id-sandbox_container_sandbox_1, url: http://localhost:51379
+2025-01-23 00:25:36,711 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:25:36,713 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:29:56,427 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:29:56,428 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:29:56,428 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:34:06,643 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 00:34:06,645 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Starting sandbox sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:34:06,645 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_simulated-image-id-sandbox_image_sandbox_1, id: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 00:34:06,646 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379
+2025-01-23 01:56:15,621 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-23 01:56:15,622 - root - DEBUG - Starting manual test: test_orchestrator.py
+2025-01-23 01:56:15,622 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Creating sandbox with id sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - SandboxOrchestrator: Starting sandbox sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker image built: simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Docker network created: sandbox_network_simulated-image-id-sandbox_image_sandbox_1, id: simulated-network-id-sandbox_network_simulated-image-id-sandbox_image_sandbox_1
+2025-01-23 01:56:15,623 - sandbox_toolkit.infra.sandbox_orchestrator.sandbox_orchestrator - DEBUG - Orchestrator: Running Docker container: sandbox_container_simulated-image-id-sandbox_image_sandbox_1, container_id: simulated-container-id-sandbox_container_simulated-image-id-sandbox_image_sandbox_1, url: http://localhost:51379

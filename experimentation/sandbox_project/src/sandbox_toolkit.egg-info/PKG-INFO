@@ -1,0 +1,6 @@
+Metadata-Version: 2.2
+Name: sandbox_toolkit
+Version: 0.1.0
+Requires-Dist: httpx
+Requires-Dist: pydantic
+Dynamic: requires-dist

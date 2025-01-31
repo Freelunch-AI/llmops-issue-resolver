@@ -1,0 +1,149 @@
+2025-01-22 22:01:50,141 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:01:50,142 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:01:50,142 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:01:50,143 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:01:50,152 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:01:50,152 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,152 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:01:50,152 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:01:50,153 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 22:01:50,153 - root - DEBUG - SandboxGroup context finished.
+2025-01-22 22:09:49,484 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:09:49,485 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:09:49,486 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:09:49,487 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:09:49,495 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:09:49,495 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:09:49,496 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:09:49,496 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:09:49,496 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:09:49,497 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:09:49,497 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,828 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:12:04,829 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:12:04,829 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:12:04,831 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:04,837 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:04,837 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:12:04,837 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,837 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:04,838 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:12:04,838 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:04,838 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,222 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:12:45,223 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:12:45,223 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:12:45,225 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:45,232 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:12:45,232 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:12:45,232 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:12:45,232 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:12:45,233 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:12:45,233 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,508 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:18:06,509 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:18:06,509 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:18:06,511 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:18:06,518 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:18:06,518 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:18:06,519 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:18:06,519 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:18:06,519 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:18:06,520 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,073 - asyncio - DEBUG - Using selector: EpollSelector
+2025-01-22 22:22:15,074 - root - DEBUG - Starting manual test: test_sandbox_group.py
+2025-01-22 22:22:15,075 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2025-01-22 22:22:15,077 - httpx - DEBUG - load_verify_locations cafile='/openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/certifi/cacert.pem'
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.start called
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.start finished
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup started.
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,088 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:22:15,089 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:22:15,089 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox1, internal_id: test_sandbox_id
+2025-01-22 22:22:15,089 - root - DEBUG - Sandbox 1 created: test_sandbox_id
+2025-01-22 22:22:15,089 - root - DEBUG - SandboxGroup.create_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.create_sandbox - infra_started: True
+2025-01-22 22:22:15,091 - root - DEBUG - Creating sandbox via orchestrator client...
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.create_sandbox - sandbox created with id: sandbox2, internal_id: test_sandbox_id
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 2 created: test_sandbox_id
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 1 started.
+2025-01-22 22:22:15,091 - root - DEBUG - SandboxGroup.start_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,091 - root - DEBUG - Sandbox 2 started.
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox Group Resource Stats: {'sandbox1': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps'), 'sandbox2': SandboxComputeResourceStats(sandbox_name='test_sandbox', sandbox_id='test_sandbox_id', cpu_usage=0.1, cpu_unit='CPU %', ram_usage=0.2, ram_unit='GB', disk_usage=0.3, disk_unit='GB', memory_bandwidth_usage=0.4, memory_bandwidth_unit='Gbps', networking_bandwith_usage=0.5, networking_bandwith_unit='Gbps')}
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox1
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox 1 ended.
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup.end_sandbox called with sandbox_name: sandbox2
+2025-01-22 22:22:15,092 - root - DEBUG - Sandbox 2 ended.
+2025-01-22 22:22:15,092 - root - DEBUG - SandboxGroup context finished.

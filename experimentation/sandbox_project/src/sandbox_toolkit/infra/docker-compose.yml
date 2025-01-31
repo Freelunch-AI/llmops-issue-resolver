@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  sandbox-orchestrator:
+    build:
+      context: ./sandbox_orchestrator
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000" # Orchestrator API port
+    depends_on:
+      - qdrant_db
+      - neo4j_db
+    networks:
+      - sandbox_orchestrator_network
+
+  qdrant_db:
+    image: qdrant/qdrant:v1.7.3
+    ports:
+      - "6333:6333" # REST port
+      - "6334:6334" # GRPC port
+    environment:
+      QDRANT_STORAGE_PATH: /qdrant/storage
+    networks:
+      - graph_db_network
+    volumes:
+      - qdrant_data:/qdrant/storage
+      - ./databases/vector_db:/qdrant/storage # Mount initial data
+      - databases/vector_db/config:/etc/qdrant
+
+  neo4j_db:
+    image: neo4j:5.14.0-community
+    ports:
+      - "7474:7474" # Browser interface
+      - "7687:7687" # Bolt port
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_PLUGINS_UNMANAGED__0: '["apoc-5.14", "graph-data-science-2.5"]'
+      NEO4J_APOC_EXPORT_FILE_ENABLED: 'true'
+      NEO4J_APOC_IMPORT_FILE_ENABLED: 'true'
+      NEO4J_APOC_IMPORT_FILE_USE_NEO4J_CONFIG: 'true'
+    volumes:
+      - neo4j_data:/data
+      - ./databases/graph_db:/docker-entrypoint-initdb.d # Mount initial data script
+      - databases/graph_db/config:/etc/neo4j
+    networks:
+      - vector_db_network
+
+volumes:
+  qdrant_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./databases/qdrant_data # Host path for Qdrant data
+  neo4j_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./databases/neo4j_data # Host path for Neo4j data
+
+networks:
+  sandbox_orchestrator_network:
+    name: sandbox_orchestrator_network
+  vector_db_network:
+    name: vector_db_network
+  graph_db_network:
+    name: graph_db_network

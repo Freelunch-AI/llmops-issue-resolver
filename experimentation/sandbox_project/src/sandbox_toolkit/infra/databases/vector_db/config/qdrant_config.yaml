@@ -1,0 +1,14 @@
+database:
+  type: qdrant
+  host: qdrant_db
+  port: 6333
+  credentials: null
+  security:
+    ssl_enabled: false
+  performance:
+    indexing_threads: 2
+    max_search_threads: 4
+collections:
+  - name: "default"
+    vector_size: 128
+    distance: "Cosine"
